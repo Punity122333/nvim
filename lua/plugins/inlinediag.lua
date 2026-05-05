@@ -13,7 +13,7 @@ return {
 				},
 				show_source = false,
 				enable_on_insert = false,
-				throttle = 500,
+				throttle = 1500,
 				overflow = { mode = "truncate" },
 				max_width = 60,
 			},
@@ -57,11 +57,19 @@ return {
 			end,
 		})
 
-		local _holding = false
+		local tid = require("tiny-inline-diagnostic")
 		local _uv = vim.uv or vim.loop
+		local _tid_timer = _uv.new_timer()
 		local _hold_timer = _uv.new_timer()
+		local _holding = false
+		local _in_insert = false
 		local last_line = -1
+
 		local function render_cursor_diag()
+			-- never render while in insert mode; tiny-inline-diagnostic handles that
+			if _in_insert then
+				return
+			end
 			local buf = vim.api.nvim_get_current_buf()
 			if vim.bo[buf].filetype == "lazy" then
 				return
@@ -99,51 +107,97 @@ return {
 				priority = 999,
 			})
 		end
-		vim.on_key(function(key)
+
+		-- tiny-inline-diagnostic registers a buffer-local ModeChanged autocmd in
+		-- "TinyInlineDiagnosticAutocmds" on every LspAttach. Clear it now and
+		-- re-clear after each future LspAttach (scheduled so we run after the plugin).
+		local function clear_tid_modechanged()
+			pcall(vim.api.nvim_clear_autocmds, {
+				event = "ModeChanged",
+				group = "TinyInlineDiagnosticAutocmds",
+			})
+		end
+		vim.schedule(clear_tid_modechanged)
+		vim.api.nvim_create_autocmd("LspAttach", {
+			callback = function()
+				vim.schedule(clear_tid_modechanged)
+			end,
+		})
+
+		vim.api.nvim_create_autocmd("InsertLeave", {
+			callback = function()
+				_in_insert = false
+				_tid_timer:stop()
+				_tid_timer:start(800, 0, vim.schedule_wrap(function()
+					if not _in_insert then
+						tid.enable()
+						render_cursor_diag()
+					end
+				end))
+			end,
+		})
+
+		vim.api.nvim_create_autocmd("InsertEnter", {
+			callback = function()
+				_in_insert = true
+				_hold_timer:stop()
+				_holding = false
+				_tid_timer:stop()
+				_tid_timer:start(800, 0, vim.schedule_wrap(function()
+					if _in_insert then
+						tid.disable()
+						local buf = vim.api.nvim_get_current_buf()
+						pcall(vim.api.nvim_buf_del_extmark, buf, ns, diag_id)
+					end
+				end))
+			end,
+		})
+
+		vim.on_key(function()
+			if _in_insert then
+				return
+			end
 			_holding = true
 			_hold_timer:stop()
-			_hold_timer:start(
-				120,
-				0,
-				vim.schedule_wrap(function()
-					_holding = false
-					render_cursor_diag()
-				end)
-			)
+			_hold_timer:start(120, 0, vim.schedule_wrap(function()
+				_holding = false
+				render_cursor_diag()
+			end))
 		end)
+
 		vim.api.nvim_create_autocmd("WinLeave", {
 			callback = function()
 				local buf = vim.api.nvim_get_current_buf()
 				pcall(vim.api.nvim_buf_del_extmark, buf, ns, diag_id)
 			end,
 		})
-		vim.api.nvim_create_autocmd("WinLeave", {
-			callback = function()
-				local buf = vim.api.nvim_get_current_buf()
-				pcall(vim.api.nvim_buf_del_extmark, buf, ns, diag_id)
-			end,
-		})
+
 		vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 			callback = function()
 				local curr_line = vim.api.nvim_win_get_cursor(0)[1]
 				if curr_line ~= last_line then
 					pcall(vim.api.nvim_buf_del_extmark, 0, ns, diag_id)
 					last_line = curr_line
-					if not _holding then
+					if not _holding and not _in_insert then
 						render_cursor_diag()
 					end
 				end
 			end,
 		})
+
 		vim.api.nvim_create_autocmd("DiagnosticChanged", {
 			callback = function()
-				if not _holding then
+				if not _holding and not _in_insert then
 					render_cursor_diag()
 				end
 			end,
 		})
 	end,
 }
+
+
+
+
 
 
 

@@ -126,7 +126,7 @@ return {
 								disable = { "lowercase-global", "undefined-global", "missing-fields" },
 								-- Delay workspace-wide recheck by 3s after last change.
 								-- Prevents spam-publishing diagnostics for every file on each keystroke.
-								workspaceDelay = 3000,
+								workspaceDelay = 5000,
 							},
 							checkThirdParty = false,
 							workspace = {
@@ -358,4 +358,3 @@ return {
 		end,
 	},
 }
-

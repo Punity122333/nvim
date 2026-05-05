@@ -278,10 +278,11 @@ return {
 				},
 			},
 			cmdline_popup = {
-				border = {
-					style = "rounded",
-					padding = { 0, 1 },
-				},
+        enabled = false,
+				-- border = {
+				-- 	style = "rounded",
+				-- 	padding = { 0, 1 },
+				-- },
 			},
 		},
 		routes = {

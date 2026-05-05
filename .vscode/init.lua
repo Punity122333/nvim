@@ -1,9 +1,7 @@
 -- lua/snippet_engine/init.lua
 -- Custom snippet engine: LSP snippet syntax, extmark sessions, mirroring,
 -- regex transforms, choice UI, nested snippet history (session stack).
-
 local M                    = {}
-
 local ns                   = vim.api.nvim_create_namespace("snip_engine")
 
 -- Localised API upvalues (avoid table-lookup overhead in hot paths)

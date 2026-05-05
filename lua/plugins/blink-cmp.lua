@@ -1,3 +1,4 @@
+local project = require "lazyvim.plugins.extras.util.project"
 return {
 	"saghen/blink.cmp",
 	dependencies = { "rafamadriz/friendly-snippets" },
@@ -82,6 +83,26 @@ return {
 		end
 
 		local _paren_ctx = nil
+		local _callable_kinds = nil
+		local function callable_kinds()
+			if not _callable_kinds then
+				local kinds = vim.lsp.protocol.CompletionItemKind
+				_callable_kinds = {
+					[kinds.Function] = true,
+					[kinds.Method] = true,
+					[kinds.Constructor] = true,
+				}
+			end
+			return _callable_kinds
+		end
+
+		local _snippet_format = nil
+		local function snippet_format()
+			if not _snippet_format then
+				_snippet_format = vim.lsp.protocol.InsertTextFormat.Snippet
+			end
+			return _snippet_format
+		end
 
 		local function smart_accept(cmp)
 			if not cmp.is_visible() then
@@ -151,6 +172,36 @@ return {
 			return _emoji_kind
 		end
 
+		local function strip_call_parens(item, field)
+			if field == "insertText" then
+				if item.insertText then
+					item.insertText = item.insertText:gsub("%b()", "", 1)
+				end
+				return
+			end
+
+			if field == "textEdit" then
+				local te = item.textEdit
+				if te and te.newText then
+					te.newText = te.newText:gsub("%b()", "", 1)
+				end
+				return
+			end
+
+			local it = item.insertText
+			if it and it:find("(", 1, true) then
+				item.insertText = it:gsub("%b()", "", 1)
+			end
+
+			local te = item.textEdit
+			if te then
+				local nt = te.newText
+				if nt and nt:find("(", 1, true) then
+					te.newText = nt:gsub("%b()", "", 1)
+				end
+			end
+		end
+
 		return vim.tbl_deep_extend("force", opts or {}, {
 			enabled = function()
 				return vim.b.blink_enabled ~= false and vim.bo.buftype ~= "prompt"
@@ -185,6 +236,8 @@ return {
 				},
 				documentation = {
 					auto_show = true,
+          auto_show_delay_ms = 500,
+          update_delay_ms = 300,
 					window = {
 						scrollbar = false,
 						border = "rounded",
@@ -271,6 +324,38 @@ return {
 						timeout_ms = 1000,
 
 						transform_items = function(ctx, items)
+							local count = #items
+							if count == 0 then
+								return items
+							end
+
+							local format = snippet_format()
+							local kinds = callable_kinds()
+							local candidates = nil
+
+							for i = 1, count do
+								local item = items[i]
+								local kind = item.kind
+								if kind and kinds[kind] and item.insertTextFormat == format then
+									local it = item.insertText
+									if it and it:find("(", 1, true) then
+										candidates = candidates or {}
+										candidates[#candidates + 1] = { item = item, field = "insertText" }
+									else
+										local te = item.textEdit
+										local nt = te and te.newText
+										if nt and nt:find("(", 1, true) then
+											candidates = candidates or {}
+											candidates[#candidates + 1] = { item = item, field = "textEdit" }
+										end
+									end
+								end
+							end
+
+							if not candidates then
+								return items
+							end
+
 							local pos = vim.api.nvim_win_get_cursor(0)
 							local line = vim.api.nvim_get_current_line()
 							local state = get_paren_state(line, pos[2])
@@ -278,22 +363,11 @@ return {
 								return items
 							end
 
-							for i = 1, #items do
-								local item = items[i]
-
-								local it = item.insertText
-								if it and it:find("(", 1, true) then
-									item.insertText = it:gsub("%b()", "", 1)
-								end
-
-								local te = item.textEdit
-								if te then
-									local nt = te.newText
-									if nt and nt:find("(", 1, true) then
-										te.newText = nt:gsub("%b()", "", 1)
-									end
-								end
+							for i = 1, #candidates do
+								local candidate = candidates[i]
+								strip_call_parens(candidate.item, candidate.field)
 							end
+
 							return items
 						end,
 					},

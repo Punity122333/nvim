@@ -5,7 +5,7 @@ return {
 			suggestion = {
 				enabled = false,
 				auto_trigger = false,
-        debounce = 150,
+        debounce = 300,
 				keymap = {
 					accept = false, -- handled by blink-cmp Tab keymap
 					accept_word = false,
