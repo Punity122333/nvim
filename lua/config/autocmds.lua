@@ -269,7 +269,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		local ft = vim.bo.filetype
 		local bufname = vim.api.nvim_buf_get_name(0):lower()
-
+     
 		if
 			vim.bo.buftype == ""
 			and ft ~= ""
@@ -293,6 +293,13 @@ vim.api.nvim_create_autocmd("FileType", {
 				return false
 			end,
 		})
+	end,
+})
+
+vim.api.nvim_create_autocmd("TermOpen", {
+	callback = function()
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
 	end,
 })
 

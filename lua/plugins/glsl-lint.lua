@@ -2,6 +2,7 @@ local GlslangEvent = { "BufReadPre", "BufNewFile" }
 local GlslangCmd = "glslangValidator"
 local GlslangStream = "stderr"
 local GlslangIgnoreExitcode = true
+
 local GlslangStageMap = {
 	vert = "vert",
 	frag = "frag",
@@ -11,12 +12,14 @@ local GlslangStageMap = {
 	comp = "comp",
 	glsl = "vert",
 }
+
 return {
 	{
 		"mfussenegger/nvim-lint",
 		event = GlslangEvent,
 		config = function()
 			local lint = require("lint")
+
 			lint.linters.glslangValidator = {
 				cmd = GlslangCmd,
 				stdin = false,
@@ -27,31 +30,37 @@ return {
 				end,
 				stream = GlslangStream,
 				ignore_exitcode = GlslangIgnoreExitcode,
+
 				parser = function(output, bufnr)
 					local diagnostics = {}
+
 					for line in output:gmatch("[^\r\n]+") do
 						local severity, file, lnum, msg = line:match("^(%w+):%s*(.-):%s*(%d+):%s*(.+)$")
+
 						if severity and lnum and msg then
-							local diagnostic_severity = vim.diagnostic.severity.ERROR
+							local sev = vim.diagnostic.severity.ERROR
 							if severity == "WARNING" then
-								diagnostic_severity = vim.diagnostic.severity.WARN
+								sev = vim.diagnostic.severity.WARN
 							elseif severity == "INFO" then
-								diagnostic_severity = vim.diagnostic.severity.INFO
+								sev = vim.diagnostic.severity.INFO
 							end
-							table.insert(diagnostics, {
+
+							diagnostics[#diagnostics + 1] = {
 								lnum = tonumber(lnum) - 1,
 								col = 0,
 								end_lnum = tonumber(lnum) - 1,
 								end_col = 0,
 								message = msg:gsub("^'([^']+)'%s*:%s*", ""),
-								severity = diagnostic_severity,
+								severity = sev,
 								source = "glslangValidator",
-							})
+							}
 						end
 					end
+
 					return diagnostics
 				end,
 			}
+
 			lint.linters_by_ft = {
 				glsl = { "glslangValidator" },
 				vert = { "glslangValidator" },
@@ -61,18 +70,39 @@ return {
 				geom = { "glslangValidator" },
 				comp = { "glslangValidator" },
 			}
+
 			local lint_augroup = vim.api.nvim_create_augroup("nvim_lint_glsl", { clear = true })
-			vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave", "TextChanged" }, {
+
+			-- 🔥 main lint triggers (low spam, high signal)
+			vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
 				group = lint_augroup,
 				callback = function()
 					local ft = vim.bo.filetype
-					local glsl_filetypes = { "glsl", "vert", "frag", "tesc", "tese", "geom", "comp" }
-					for _, glsl_ft in ipairs(glsl_filetypes) do
-						if ft == glsl_ft then
-							require("lint").try_lint()
-							break
-						end
+					if lint.linters_by_ft[ft] then
+						lint.try_lint()
 					end
+				end,
+			})
+
+			-- 😈 optional: debounced live linting while typing
+			local timer = (vim.uv or vim.loop).new_timer()
+
+			vim.api.nvim_create_autocmd("TextChanged", {
+				group = lint_augroup,
+				callback = function()
+					local ft = vim.bo.filetype
+					if not lint.linters_by_ft[ft] then
+						return
+					end
+
+					timer:stop()
+					timer:start(
+						300,
+						0,
+						vim.schedule_wrap(function()
+							lint.try_lint()
+						end)
+					)
 				end,
 			})
 		end,

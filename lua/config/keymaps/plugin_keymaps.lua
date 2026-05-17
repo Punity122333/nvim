@@ -3,9 +3,7 @@ local function toggle_lazygit()
 	local lazygit = Terminal:new({ cmd = "lazygit", hidden = true, direction = "float" })
 	lazygit:toggle()
 end
-
 vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm direction=float<cr>", { desc = "ToggleTerm Float" })
-
 local opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<leader>t<Up>", "<cmd>ToggleTerm direction=horizontal<cr>", opts)
 vim.keymap.set("n", "<leader>t<Down>", "<cmd>ToggleTerm direction=horizontal<cr>", opts)
@@ -14,9 +12,11 @@ vim.keymap.set("n", "<leader>t<Right>", "<cmd>ToggleTerm direction=vertical<cr>"
 
 vim.keymap.set("n", "<leader>\\\\", toggle_lazygit, { desc = "ToggleTerm Lazygit" })
 vim.keymap.set("n", "<leader>gg", toggle_lazygit, { desc = "ToggleTerm Lazygit" })
-vim.keymap.set("n", "<leader>gG", toggle_lazygit, { desc = "ToggleTerm Lazygit" })
 
 vim.keymap.set("n", "<leader>fv", function()
+	Snacks.terminal(nil, { win = { position = "right", width = 0.25 } })
+end, { desc = "Terminal Vertical (Right)" })
+vim.keymap.set("n", "<C-/>", function()
 	Snacks.terminal(nil, { win = { position = "right", width = 0.25 } })
 end, { desc = "Terminal Vertical (Right)" })
 
@@ -24,15 +24,24 @@ vim.keymap.set("n", "<leader>fV", function()
 	Snacks.terminal(nil, { win = { position = "left", width = 0.25 } })
 end, { desc = "Terminal Vertical (Left)" })
 
-vim.keymap.set("n", "<leader>Pv", "<cmd>vsplit | term<cr>a", { desc = "Terminal Vertical Split" })
-vim.keymap.set("n", "<leader>Ph", "<cmd>split | term<cr>a", { desc = "Terminal Horizontal Split" })
+vim.keymap.set("n", "<leader>Pv", function()
+	vim.cmd("vsplit | term")
+	vim.opt_local.number = false
+	vim.opt_local.relativenumber = false
+end, { desc = "Terminal Vertical Split" })
 
+vim.keymap.set("n", "<leader>Ph", function()
+	vim.cmd("split | term")
+	vim.opt_local.number = false
+	vim.opt_local.relativenumber = false
+end, { desc = "Terminal Horizontal Split" })
 vim.keymap.set("n", "<leader>br", function()
 	Snacks.bufdelete()
 end, { desc = "Remove Current Buffer" })
 vim.keymap.set("n", "<leader>bn", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Buffer" })
 vim.keymap.set("n", "<leader>bp", "<cmd>BufferLineCyclePrev<cr>", { desc = "Previous Buffer" })
 vim.keymap.set("n", "<leader>rb", "<cmd>edit!<cr>", { desc = "Refresh Buffer" })
+
 
 vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
 vim.keymap.set("n", "<A-S-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
@@ -82,8 +91,8 @@ local function wrap_saga(cmd)
 end
 
 -- Lua (init.lua)
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "gT", wrap_saga("Lspsaga finder"), { desc = "LSP Finder" })
 vim.keymap.set("n", "K", wrap_saga("Lspsaga hover_doc"), { desc = "Hover Docs" })
 vim.keymap.set("n", "gjd", wrap_saga("Lspsaga goto_definition"), { desc = "Goto Definition" })
@@ -306,8 +315,8 @@ end, opts2)
 vim.keymap.del("n", "hi", {})
 
 vim.keymap.set({ "i", "s" }, "<C-Tab>", function()
-  if vim.snippet and vim.snippet.active({ direction = 1 }) then
-    vim.snippet.jump(1)
-    return
-  end
+	if vim.snippet and vim.snippet.active({ direction = 1 }) then
+		vim.snippet.jump(1)
+		return
+	end
 end, { silent = true })
