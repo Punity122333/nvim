@@ -1,0 +1,569 @@
+{
+  "cmain": {
+    "prefix": "cmain",
+    "body": [
+      "#include <stdio.h>",
+      "",
+      "int main(int argc, char *argv[]) {",
+      "    $1",
+      "    return 0;",
+      "}"
+    ]
+  },
+  "includes_common": {
+    "prefix": "incc",
+    "body": [
+      "#include <stdio.h>",
+      "#include <stdlib.h>",
+      "#include <string.h>",
+      "#include <stdbool.h>",
+      "#include <stdint.h>"
+    ]
+  },
+  "header_guard": {
+    "prefix": "guard",
+    "body": [
+      "#ifndef ${1:${TM_FILENAME_BASE/(.*)/${1:/upcase}/}}_H",
+      "#define ${1:${TM_FILENAME_BASE/(.*)/${1:/upcase}/}}_H",
+      "",
+      "$0",
+      "",
+      "#endif // ${1:${TM_FILENAME_BASE/(.*)/${1:/upcase}/}}_H"
+    ]
+  },
+  "pragma_once": {
+    "prefix": "pragmaonce",
+    "body": ["#pragma once", "", "$0"]
+  },
+  "struct_def": {
+    "prefix": "struct",
+    "body": [
+      "typedef struct ${1:Name} {",
+      "    $2",
+      "} ${1:Name};"
+    ]
+  },
+  "enum_def": {
+    "prefix": "enum",
+    "body": [
+      "typedef enum {",
+      "    ${1:VALUE_ONE},",
+      "    ${2:VALUE_TWO}",
+      "} ${3:Name};"
+    ]
+  },
+  "union_def": {
+    "prefix": "union",
+    "body": [
+      "typedef union {",
+      "    $1",
+      "} ${2:Name};"
+    ]
+  },
+  "function_def": {
+    "prefix": "func",
+    "body": [
+      "${1:void} ${2:function_name}(${3:void}) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "static_func": {
+    "prefix": "sfunc",
+    "body": [
+      "static ${1:void} ${2:function_name}(${3:void}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Internal-linkage (translation-unit-local) function"
+  },
+  "malloc_check": {
+    "prefix": "malloc",
+    "body": [
+      "${1:int} *${2:ptr} = malloc(${3:n} * sizeof(${1:int}));",
+      "if (${2:ptr} == NULL) {",
+      "    fprintf(stderr, \"malloc failed\\n\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "calloc_check": {
+    "prefix": "calloc",
+    "body": [
+      "${1:int} *${2:ptr} = calloc(${3:n}, sizeof(${1:int}));",
+      "if (${2:ptr} == NULL) {",
+      "    fprintf(stderr, \"calloc failed\\n\");",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "realloc_check": {
+    "prefix": "realloc",
+    "body": [
+      "${1:int} *${2:tmp} = realloc(${3:ptr}, ${4:n} * sizeof(${1:int}));",
+      "if (${2:tmp} == NULL) {",
+      "    fprintf(stderr, \"realloc failed\\n\");",
+      "    free(${3:ptr});",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "${3:ptr} = ${2:tmp};"
+    ]
+  },
+  "free_null": {
+    "prefix": "freenull",
+    "body": [
+      "free(${1:ptr});",
+      "${1:ptr} = NULL;"
+    ]
+  },
+  "file_read": {
+    "prefix": "fread",
+    "body": [
+      "FILE *${1:fp} = fopen(\"${2:filename}\", \"r\");",
+      "if (${1:fp} == NULL) {",
+      "    perror(\"fopen\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "",
+      "$0",
+      "",
+      "fclose(${1:fp});"
+    ]
+  },
+  "file_write": {
+    "prefix": "fwrite",
+    "body": [
+      "FILE *${1:fp} = fopen(\"${2:filename}\", \"w\");",
+      "if (${1:fp} == NULL) {",
+      "    perror(\"fopen\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "",
+      "$0",
+      "",
+      "fclose(${1:fp});"
+    ]
+  },
+  "file_read_all": {
+    "prefix": "freadall",
+    "body": [
+      "FILE *${1:fp} = fopen(\"${2:filename}\", \"rb\");",
+      "if (!${1:fp}) { perror(\"fopen\"); exit(EXIT_FAILURE); }",
+      "",
+      "fseek(${1:fp}, 0, SEEK_END);",
+      "long ${3:size} = ftell(${1:fp});",
+      "fseek(${1:fp}, 0, SEEK_SET);",
+      "",
+      "char *${4:buf} = malloc(${3:size} + 1);",
+      "if (!${4:buf}) { fclose(${1:fp}); exit(EXIT_FAILURE); }",
+      "",
+      "fread(${4:buf}, 1, ${3:size}, ${1:fp});",
+      "${4:buf}[${3:size}] = '\\0';",
+      "fclose(${1:fp});",
+      "$0"
+    ],
+    "description": "Read entire file into a heap buffer"
+  },
+  "readline": {
+    "prefix": "readline",
+    "body": [
+      "char ${1:buf}[${2:256}];",
+      "if (fgets(${1:buf}, sizeof(${1:buf}), stdin) != NULL) {",
+      "    ${1:buf}[strcspn(${1:buf}, \"\\n\")] = '\\0';",
+      "    $0",
+      "}"
+    ]
+  },
+  "getline_dyn": {
+    "prefix": "getlinedyn",
+    "body": [
+      "char *${1:line} = NULL;",
+      "size_t ${2:len} = 0;",
+      "ssize_t ${3:nread};",
+      "",
+      "while ((${3:nread} = getline(&${1:line}, &${2:len}, stdin)) != -1) {",
+      "    $0",
+      "}",
+      "",
+      "free(${1:line});"
+    ],
+    "description": "POSIX getline loop for reading arbitrary-length lines"
+  },
+  "error_exit": {
+    "prefix": "errexit",
+    "body": [
+      "fprintf(stderr, \"Error: ${1:message}\\n\");",
+      "exit(EXIT_FAILURE);"
+    ]
+  },
+  "goto_cleanup": {
+    "prefix": "gotocleanup",
+    "body": [
+      "int ret = 0;",
+      "",
+      "${1:void} *${2:resource} = ${3:acquire()};",
+      "if (!${2:resource}) {",
+      "    ret = -1;",
+      "    goto cleanup;",
+      "}",
+      "",
+      "$0",
+      "",
+      "cleanup:",
+      "    ${4:release}(${2:resource});",
+      "    return ret;"
+    ],
+    "description": "goto-based cleanup pattern for single-exit error handling"
+  },
+  "for_loop": {
+    "prefix": "for",
+    "body": [
+      "for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "while_loop": {
+    "prefix": "while",
+    "body": [
+      "while (${1:condition}) {",
+      "    $0",
+      "}"
+    ]
+  },
+  "do_while_loop": {
+    "prefix": "dowhile",
+    "body": [
+      "do {",
+      "    $0",
+      "} while (${1:condition});"
+    ]
+  },
+  "switch_stmt": {
+    "prefix": "switch",
+    "body": [
+      "switch (${1:value}) {",
+      "    case ${2:CASE_ONE}:",
+      "        $3",
+      "        break;",
+      "    default:",
+      "        $0",
+      "        break;",
+      "}"
+    ]
+  },
+  "linked_list_node": {
+    "prefix": "llnode",
+    "body": [
+      "typedef struct ${1:Node} {",
+      "    ${2:int} data;",
+      "    struct ${1:Node} *next;",
+      "} ${1:Node};"
+    ]
+  },
+  "linked_list_push": {
+    "prefix": "llpush",
+    "body": [
+      "${1:Node} *${2:new_node} = malloc(sizeof(${1:Node}));",
+      "${2:new_node}->data = ${3:value};",
+      "${2:new_node}->next = ${4:head};",
+      "${4:head} = ${2:new_node};"
+    ]
+  },
+  "linked_list_free": {
+    "prefix": "llfree",
+    "body": [
+      "while (${1:head} != NULL) {",
+      "    ${2:Node} *tmp = ${1:head};",
+      "    ${1:head} = ${1:head}->next;",
+      "    free(tmp);",
+      "}"
+    ]
+  },
+  "stack_array": {
+    "prefix": "stackarr",
+    "body": [
+      "typedef struct {",
+      "    ${1:int} data[${2:MAX_SIZE}];",
+      "    int top;",
+      "} Stack;",
+      "",
+      "void stack_init(Stack *s) { s->top = -1; }",
+      "bool stack_is_empty(Stack *s) { return s->top == -1; }",
+      "bool stack_push(Stack *s, ${1:int} val) {",
+      "    if (s->top >= ${2:MAX_SIZE} - 1) return false;",
+      "    s->data[++s->top] = val;",
+      "    return true;",
+      "}",
+      "bool stack_pop(Stack *s, ${1:int} *out) {",
+      "    if (stack_is_empty(s)) return false;",
+      "    *out = s->data[s->top--];",
+      "    return true;",
+      "}"
+    ]
+  },
+  "queue_array": {
+    "prefix": "queuearr",
+    "body": [
+      "typedef struct {",
+      "    ${1:int} data[${2:MAX_SIZE}];",
+      "    int front, rear, count;",
+      "} Queue;",
+      "",
+      "void queue_init(Queue *q) { q->front = q->rear = q->count = 0; }",
+      "bool queue_is_empty(Queue *q) { return q->count == 0; }",
+      "bool queue_push(Queue *q, ${1:int} val) {",
+      "    if (q->count >= ${2:MAX_SIZE}) return false;",
+      "    q->data[q->rear] = val;",
+      "    q->rear = (q->rear + 1) % ${2:MAX_SIZE};",
+      "    q->count++;",
+      "    return true;",
+      "}",
+      "bool queue_pop(Queue *q, ${1:int} *out) {",
+      "    if (queue_is_empty(q)) return false;",
+      "    *out = q->data[q->front];",
+      "    q->front = (q->front + 1) % ${2:MAX_SIZE};",
+      "    q->count--;",
+      "    return true;",
+      "}"
+    ]
+  },
+  "binary_tree_node": {
+    "prefix": "btnode",
+    "body": [
+      "typedef struct ${1:TreeNode} {",
+      "    ${2:int} data;",
+      "    struct ${1:TreeNode} *left;",
+      "    struct ${1:TreeNode} *right;",
+      "} ${1:TreeNode};"
+    ]
+  },
+  "dynamic_array_c": {
+    "prefix": "vecc",
+    "body": [
+      "int *${1:arr} = malloc(${2:n} * sizeof(int));",
+      "if (!${1:arr}) { perror(\"malloc\"); exit(1); }",
+      "$0",
+      "free(${1:arr});"
+    ]
+  },
+  "pthread_create": {
+    "prefix": "pthread",
+    "body": [
+      "#include <pthread.h>",
+      "",
+      "void *${1:worker}(void *arg) {",
+      "    $2",
+      "    return NULL;",
+      "}",
+      "",
+      "pthread_t ${3:tid};",
+      "if (pthread_create(&${3:tid}, NULL, ${1:worker}, ${4:NULL}) != 0) {",
+      "    perror(\"pthread_create\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "pthread_join(${3:tid}, NULL);"
+    ]
+  },
+  "mutex_lock": {
+    "prefix": "mutex",
+    "body": [
+      "pthread_mutex_t ${1:lock} = PTHREAD_MUTEX_INITIALIZER;",
+      "",
+      "pthread_mutex_lock(&${1:lock});",
+      "$0",
+      "pthread_mutex_unlock(&${1:lock});"
+    ]
+  },
+  "socket_server_tcp": {
+    "prefix": "tcpserver",
+    "body": [
+      "#include <sys/socket.h>",
+      "#include <netinet/in.h>",
+      "#include <unistd.h>",
+      "",
+      "int sockfd = socket(AF_INET, SOCK_STREAM, 0);",
+      "if (sockfd < 0) { perror(\"socket\"); exit(EXIT_FAILURE); }",
+      "",
+      "struct sockaddr_in addr = {0};",
+      "addr.sin_family = AF_INET;",
+      "addr.sin_addr.s_addr = INADDR_ANY;",
+      "addr.sin_port = htons(${1:8080});",
+      "",
+      "if (bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {",
+      "    perror(\"bind\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "",
+      "if (listen(sockfd, ${2:10}) < 0) {",
+      "    perror(\"listen\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "",
+      "int client_fd = accept(sockfd, NULL, NULL);",
+      "$0",
+      "close(client_fd);",
+      "close(sockfd);"
+    ],
+    "description": "Minimal blocking TCP server boilerplate (POSIX)"
+  },
+  "socket_client_tcp": {
+    "prefix": "tcpclient",
+    "body": [
+      "#include <sys/socket.h>",
+      "#include <netinet/in.h>",
+      "#include <arpa/inet.h>",
+      "#include <unistd.h>",
+      "",
+      "int sockfd = socket(AF_INET, SOCK_STREAM, 0);",
+      "if (sockfd < 0) { perror(\"socket\"); exit(EXIT_FAILURE); }",
+      "",
+      "struct sockaddr_in addr = {0};",
+      "addr.sin_family = AF_INET;",
+      "addr.sin_port = htons(${1:8080});",
+      "inet_pton(AF_INET, \"${2:127.0.0.1}\", &addr.sin_addr);",
+      "",
+      "if (connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {",
+      "    perror(\"connect\");",
+      "    exit(EXIT_FAILURE);",
+      "}",
+      "",
+      "$0",
+      "close(sockfd);"
+    ]
+  },
+  "swap_macro": {
+    "prefix": "swap",
+    "body": [
+      "#define SWAP(a, b) do { typeof(a) _tmp = (a); (a) = (b); (b) = _tmp; } while (0)"
+    ]
+  },
+  "array_len_macro": {
+    "prefix": "arrlen",
+    "body": [
+      "#define ARRAY_LEN(arr) (sizeof(arr) / sizeof((arr)[0]))"
+    ]
+  },
+  "min_max_macro_c": {
+    "prefix": "minmax",
+    "body": [
+      "#define MIN(a, b) ((a) < (b) ? (a) : (b))",
+      "#define MAX(a, b) ((a) > (b) ? (a) : (b))"
+    ]
+  },
+  "clamp_macro": {
+    "prefix": "clamp",
+    "body": [
+      "#define CLAMP(x, lo, hi) ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))"
+    ]
+  },
+  "assert_msg": {
+    "prefix": "assertmsg",
+    "body": [
+      "#include <assert.h>",
+      "assert(${1:condition} && \"${2:message}\");"
+    ]
+  },
+  "getopt_boiler": {
+    "prefix": "getopt",
+    "body": [
+      "#include <unistd.h>",
+      "",
+      "int opt;",
+      "while ((opt = getopt(argc, argv, \"${1:h}\")) != -1) {",
+      "    switch (opt) {",
+      "        case '${1:h}':",
+      "            $0",
+      "            break;",
+      "        default:",
+      "            fprintf(stderr, \"Usage: %s [-${1:h}]\\n\", argv[0]);",
+      "            exit(EXIT_FAILURE);",
+      "    }",
+      "}"
+    ]
+  },
+  "typedef_fnptr": {
+    "prefix": "fnptr",
+    "body": [
+      "typedef ${1:int} (*${2:FuncName})(${3:int});"
+    ]
+  },
+  "bitfield_struct": {
+    "prefix": "bitfield",
+    "body": [
+      "typedef struct {",
+      "    unsigned int ${1:flag_a} : 1;",
+      "    unsigned int ${2:flag_b} : 1;",
+      "    unsigned int ${3:reserved} : 6;",
+      "} ${4:Flags};"
+    ],
+    "description": "Packed bitfield struct, common in embedded/register mapping"
+  },
+  "mmio_register": {
+    "prefix": "mmioreg",
+    "body": [
+      "#define ${1:REG_NAME} (*(volatile uint32_t *)(${2:0x40000000}))"
+    ],
+    "description": "Memory-mapped I/O register access macro (embedded)"
+  },
+  "isr_handler": {
+    "prefix": "isr",
+    "body": [
+      "void ${1:TIMER0}_Handler(void) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Interrupt service routine stub (adjust name to your MCU's vector table)"
+  },
+  "unit_test_assert": {
+    "prefix": "utest",
+    "body": [
+      "void test_${1:name}(void) {",
+      "    ${2:int} result = ${3:function_under_test()};",
+      "    if (result != ${4:expected}) {",
+      "        fprintf(stderr, \"FAIL: test_${1:name} (got %d, expected %d)\\n\", result, ${4:expected});",
+      "        exit(EXIT_FAILURE);",
+      "    }",
+      "    printf(\"PASS: test_${1:name}\\n\");",
+      "}"
+    ],
+    "description": "Minimal hand-rolled unit test without a framework"
+  },
+  "cli_usage": {
+    "prefix": "usage",
+    "body": [
+      "void print_usage(const char *prog_name) {",
+      "    fprintf(stderr, \"Usage: %s ${1:[options]}\\n\", prog_name);",
+      "    exit(EXIT_FAILURE);",
+      "}"
+    ]
+  },
+  "compare_qsort": {
+    "prefix": "cmpqsort",
+    "body": [
+      "int cmp_${1:int}(const void *a, const void *b) {",
+      "    ${1:int} x = *(const ${1:int} *)a;",
+      "    ${1:int} y = *(const ${1:int} *)b;",
+      "    return (x > y) - (x < y);",
+      "}",
+      "",
+      "qsort(${2:arr}, ${3:n}, sizeof(${1:int}), cmp_${1:int});"
+    ],
+    "description": "qsort comparator plus call"
+  },
+  "extern_c_guard": {
+    "prefix": "externc",
+    "body": [
+      "#ifdef __cplusplus",
+      "extern \"C\" {",
+      "#endif",
+      "",
+      "$0",
+      "",
+      "#ifdef __cplusplus",
+      "}",
+      "#endif"
+    ],
+    "description": "extern \"C\" guard for headers usable from C++"
+  }
+}

@@ -55,17 +55,17 @@ vim.api.nvim_set_hl(0, "BlinkCmpSignatureHelp", { bg = COLOR_BACKGROUND_PRIMARY,
 vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "@string", force = true })
 vim.api.nvim_set_hl(0, "@mutable", { fg = "#ff9e64", italic = true, bold = true })
 vim.api.nvim_set_hl(0, "@type.builtin", { link = "Type" })
-vim.api.nvim_set_hl(0, "BufferLineError", { fg = "#f7768e", bg = COLOR_BACKGROUND_PRIMARY, blend = 0, force = true })
+vim.api.nvim_set_hl(0, "BufferLineError", { fg = "#f9a0aa", bg = COLOR_BACKGROUND_PRIMARY, blend = 0, force = true })
 vim.api.nvim_set_hl(
 	0,
 	"BufferLineErrorSelected",
-	{ fg = "#f7768e", bg = COLOR_BACKGROUND_PRIMARY, bold = true, force = true }
+	{ fg = "#f9a0aa", bg = COLOR_BACKGROUND_PRIMARY, bold = true, force = true }
 )
-vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f7768e", bg = COLOR_BACKGROUND_PRIMARY, force = true })
+vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f9a0aa", bg = COLOR_BACKGROUND_PRIMARY, force = true })
 vim.api.nvim_set_hl(
 	0,
 	"BufferLineErrorDiagnosticSelected",
-	{ fg = "#f7768e", bg = COLOR_BACKGROUND_PRIMARY, bold = true, force = true }
+	{ fg = "#f9a0aa", bg = COLOR_BACKGROUND_PRIMARY, bold = true, force = true }
 )
 
 -- WARNING
@@ -95,8 +95,8 @@ vim.api.nvim_set_hl(
 	{ fg = "#7dcfff", bg = COLOR_BACKGROUND_PRIMARY, bold = true, force = true }
 )
 
-vim.api.nvim_set_hl(0, "@io.cout", { fg = "#f7768e" })
-vim.api.nvim_set_hl(0, "@io.cin", { fg = "#f7768e" })
+vim.api.nvim_set_hl(0, "@io.cout", { fg = "#f9a0aa" })
+vim.api.nvim_set_hl(0, "@io.cin", { fg = "#f9a0aa" })
 vim.api.nvim_set_hl(0, "@io.endl", { fg = "#ff9e64" })
 -- HINT
 vim.api.nvim_set_hl(0, "BufferLineHint", { fg = "#1abc9c", bg = COLOR_BACKGROUND_PRIMARY, blend = 0, force = true })
@@ -168,7 +168,8 @@ vim.api.nvim_set_hl(0, "DapUIStepOver", { fg = "#7dcfff", bg = BG })
 vim.api.nvim_set_hl(0, "DapUIStepInto", { fg = "#7dcfff", bg = BG })
 vim.api.nvim_set_hl(0, "DapUIStepOut", { fg = "#7dcfff", bg = BG })
 vim.api.nvim_set_hl(0, "DapUIRestart", { fg = "#ff9e64", bg = BG })
-vim.api.nvim_set_hl(0, "DapUIStop", { fg = "#f7768e", bg = BG })
+vim.api.nvim_set_hl(0, "DapUIStop", { fg = "#f9a0aa", bg = BG })
+vim.api.nvim_set_hl(0, "@variable.builtin", { fg = "#f9a0aa", bold = false, italic = false })
 vim.api.nvim_set_hl(0, "DapUIUnavailable", { fg = "#565f89", bg = BG })
 vim.api.nvim_set_hl(0, "DapUIControls", { bg = BG })
 vim.api.nvim_set_hl(0, "DapUIControlsButton", { bg = BG })
