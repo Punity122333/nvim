@@ -53,7 +53,7 @@ return {
 				},
 				basedpyright = {
 					mason = false,
-					cmd = { "/home/pxnity/.local/bin/basedpyright-langserver", "--stdio" },
+					cmd = { "~/.local/bin/basedpyright-langserver", "--stdio" },
 					settings = {
 						basedpyright = {
 							analysis = {

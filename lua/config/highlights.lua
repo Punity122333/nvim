@@ -214,6 +214,7 @@ vim.api.nvim_set_hl(0, "StatusLineNC", { bg = COLOR_STATUS_LINE, force = true })
 vim.api.nvim_set_hl(0, "BufferLineBuffer", { bg = COLOR_BACKGROUND_PRIMARY, force = true })
 vim.api.nvim_set_hl(0, "Substitute", { link = "SubstituteRange" })
 vim.api.nvim_set_hl(0, "@punctuation.bracket", { fg = "#ff9e64" })
+vim.api.nvim_set_hl(0, "@operator", { link = "Constant" })
 vim.cmd.highlight("MyTerminalBorder guifg=" .. COLOR_BACKGROUND_PRIMARY)
 
 vim.opt.guicursor = GUICURSOR_DEFAULT
@@ -229,3 +230,7 @@ hl2.bold = false
 ---@diagnostic disable-next-line: param-type-mismatch
 vim.api.nvim_set_hl(0, "Comment", hl2)
 vim.api.nvim_set_hl(0, "@module.haskell", { link = "@type.haskell" })
+
+local hl = vim.api.nvim_get_hl(0, { name = "@constructor.python", link = false })
+hl.bold = true
+vim.api.nvim_set_hl(0, "@constructor.python", hl)

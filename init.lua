@@ -5,6 +5,8 @@ local COLOR_UNUSED_DIAGNOSTIC = "#6c7086"
 local COLOR_CURSOR_FG = "#000000"
 local COLOR_CURSOR_BG = "#00ff00"
 local FLAG_FORCE_ALL = os.getenv("NO_LAZY") == "1"
+
+vim.g.python3_host_prog = vim.fn.expand("~/.local/share/molten/venv/bin/python")
 if vim.loader then
   vim.loader.enable()
 end
@@ -241,3 +243,6 @@ vim.opt.paste = false
 vim.opt.autoindent = false
 vim.opt.smartindent = false
 vim.opt.cindent = false
+
+vim.g.copilot_debug = 1
+
