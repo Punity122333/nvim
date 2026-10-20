@@ -1,7 +1,9 @@
+local INDENT_WIDTH = require("config.indent_width").width
+
 vim.bo.commentstring = "// %s"
-vim.bo.shiftwidth = 4
-vim.bo.tabstop = 4
+vim.bo.shiftwidth = INDENT_WIDTH
+vim.bo.tabstop = INDENT_WIDTH
 vim.bo.expandtab = true
-vim.bo.softtabstop = 4
+vim.bo.softtabstop = INDENT_WIDTH
 
 vim.opt_local.syntax = "hlsl"
