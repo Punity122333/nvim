@@ -205,12 +205,9 @@ return {
 					local did_move = false
 
 					if state == "open" then
-						local has_close =
-							line2:find(")", col2 + 1, true) ~= nil
-
-						if not has_close then
-							has_close = has_closing_paren_ts(row2, col2)
-						end
+						-- `or` short circuits, so the treesitter lookup only
+						-- happens when the cheap check found nothing
+						local has_close = line2:find(")", col2 + 1, true) ~= nil or has_closing_paren_ts(row2, col2)
 
 						if not has_close then
 							vim.api.nvim_buf_set_text(
@@ -464,6 +461,7 @@ return {
 							max_items = 25,
 							timeout_ms = 1000,
 
+							---@diagnostic disable-next-line: unused-local
 							transform_items = function(ctx, items)
 								local count = #items
 
@@ -563,6 +561,7 @@ return {
 							name = "emoji",
 							module = "blink.compat.source",
 
+							---@diagnostic disable-next-line: unused-local
 							transform_items = function(ctx, items)
 								local kind = emoji_kind()
 

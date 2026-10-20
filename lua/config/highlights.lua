@@ -236,21 +236,21 @@ function M.apply()
 
 	vim.opt.guicursor = GUICURSOR_DEFAULT
 
-	local hl = vim.api.nvim_get_hl(0, { name = "@keyword" })
-	hl.bold = true
+	local hl_keyword = vim.api.nvim_get_hl(0, { name = "@keyword" })
+	hl_keyword.bold = true
 	---@diagnostic disable-next-line: param-type-mismatch
-	vim.api.nvim_set_hl(0, "@keyword", hl)
+	vim.api.nvim_set_hl(0, "@keyword", hl_keyword)
 
-	local hl2 = vim.api.nvim_get_hl(0, { name = "Comment" })
-	hl2.italic = true
-	hl2.bold = false
+	local hl_comment = vim.api.nvim_get_hl(0, { name = "Comment" })
+	hl_comment.italic = true
+	hl_comment.bold = false
 	---@diagnostic disable-next-line: param-type-mismatch
-	vim.api.nvim_set_hl(0, "Comment", hl2)
+	vim.api.nvim_set_hl(0, "Comment", hl_comment)
 	vim.api.nvim_set_hl(0, "@module.haskell", { link = "@type.haskell" })
 
-	local hl = vim.api.nvim_get_hl(0, { name = "@constructor.python", link = false })
-	hl.bold = true
-	vim.api.nvim_set_hl(0, "@constructor.python", hl)
+	local hl_constructor = vim.api.nvim_get_hl(0, { name = "@constructor.python", link = false })
+	hl_constructor.bold = true
+	vim.api.nvim_set_hl(0, "@constructor.python", hl_constructor)
 
 	M.apply_overrides()
 end

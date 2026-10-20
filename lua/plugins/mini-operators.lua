@@ -8,7 +8,9 @@ return {
 					prefix = "gz=",
 					func = function(content)
 						local expr = table.concat(content.lines, "\n")
-						local f, err = load("return " .. expr)
+						-- the second return value of `load` is the syntax
+						-- error, which is not needed here
+						local f = load("return " .. expr)
 						if f then
 							local ok, res = pcall(f)
 							if ok then
