@@ -1,0 +1,347 @@
+{
+  "dart_class": {
+    "prefix": ["class"],
+    "description": "Class with final fields and a const constructor",
+    "body": [
+      "class ${1:User} {",
+      "  final String id;",
+      "  final String name;",
+      "",
+      "  const User({required this.id, required this.name});",
+      "",
+      "  @override",
+      "  String toString() => 'User(id: \\$id, name: \\$name)';",
+      "}"
+    ]
+  },
+
+  "dart_constructor": {
+    "prefix": ["ctor"],
+    "description": "Constructor with an initializer body and validation",
+    "body": [
+      "class ${1:Product} {",
+      "  final String title;",
+      "  final double price;",
+      "  double discount = 0;",
+      "",
+      "  Product(this.title, this.price) {",
+      "    if (price < 0) {",
+      "      throw ArgumentError.value(price, 'price', 'must not be negative');",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_named_constructor": {
+    "prefix": ["namedctor"],
+    "description": "Named constructor using an initializer list",
+    "body": [
+      "class ${1:ApiClient} {",
+      "  final String baseUrl;",
+      "  final Duration timeout;",
+      "",
+      "  ApiClient({required this.baseUrl, this.timeout = const Duration(seconds: 30)});",
+      "",
+      "  ApiClient.withToken(String url)",
+      "      : baseUrl = url,",
+      "        timeout = const Duration(seconds: 10);",
+      "}"
+    ]
+  },
+
+  "dart_factory": {
+    "prefix": ["factory"],
+    "description": "Factory constructors delegating to a private one",
+    "body": [
+      "class ${1:Storage} {",
+      "  final String path;",
+      "",
+      "  Storage._(this.path);",
+      "",
+      "  factory Storage.local() => Storage._('/tmp/local');",
+      "",
+      "  factory Storage.remote(String url) => Storage._(url);",
+      "}"
+    ]
+  },
+
+  "dart_getter": {
+    "prefix": ["getter"],
+    "description": "Getter exposing a computed value",
+    "body": [
+      "class ${1:Rectangle} {",
+      "  final double width;",
+      "  final double height;",
+      "",
+      "  Rectangle(this.width, this.height);",
+      "",
+      "  double get area => width * height;",
+      "}"
+    ]
+  },
+
+  "dart_setter": {
+    "prefix": ["setter"],
+    "description": "Setter that validates the assigned value",
+    "body": [
+      "class ${1:Counter} {",
+      "  int _value = 0;",
+      "",
+      "  int get value => _value;",
+      "",
+      "  set value(int newValue) {",
+      "    if (newValue < 0) {",
+      "      throw ArgumentError.value(newValue, 'value', 'must not be negative');",
+      "    }",
+      "    _value = newValue;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_static_method": {
+    "prefix": ["staticmethod"],
+    "description": "Static helper method on a class",
+    "body": [
+      "class ${1:AppConfig} {",
+      "  static const String apiBaseUrl = 'https://api.example.com';",
+      "",
+      "  static Uri endpoint(String path) {",
+      "    return Uri.parse('\\$apiBaseUrl\\$path');",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_final_field": {
+    "prefix": ["finalfield"],
+    "description": "Class with a final field and a derived getter",
+    "body": [
+      "class ${1:Session} {",
+      "  final String token;",
+      "  final DateTime expiresAt;",
+      "",
+      "  const Session({required this.token, required this.expiresAt});",
+      "",
+      "  bool get isExpired => DateTime.now().isAfter(expiresAt);",
+      "}"
+    ]
+  },
+
+  "dart_mixin": {
+    "prefix": ["mixin"],
+    "description": "Mixin adding logging behaviour to a class",
+    "body": [
+      "mixin ${1:Loggable} {",
+      "  void log(String message) {",
+      "    print('[\\$runtimeType] \\$message');",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_abstract_class": {
+    "prefix": ["abstractclass"],
+    "description": "Abstract class with asynchronous method contracts",
+    "body": [
+      "abstract class ${1:Repository} {",
+      "  Future<List<Map<String, dynamic>>> fetchAll();",
+      "",
+      "  Future<Map<String, dynamic>?> findById(String id);",
+      "",
+      "  Future<void> delete(String id);",
+      "}"
+    ]
+  },
+
+  "dart_interface": {
+    "prefix": ["interface"],
+    "description": "Interface declaring a contract for implementations",
+    "body": [
+      "abstract interface class ${1:Cache} {",
+      "  Object? read(String key);",
+      "",
+      "  void write(String key, Object? value);",
+      "",
+      "  bool containsKey(String key);",
+      "}"
+    ]
+  },
+
+  "dart_extension": {
+    "prefix": ["extension"],
+    "description": "Extension adding helpers to an existing type",
+    "body": [
+      "extension ${1:StringExtensions} on String {",
+      "  bool get isBlank => trim().isEmpty;",
+      "",
+      "  String truncate(int maxLength) {",
+      "    if (length <= maxLength) {",
+      "      return this;",
+      "    }",
+      "    return '\\${substring(0, maxLength)}...';",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_nullable_guard": {
+    "prefix": ["ifnull"],
+    "description": "Guard against a null value before using it",
+    "body": [
+      "final ${1:user} = repository.findById(id);",
+      "if (user == null) {",
+      "  throw StateError('No user found for id \\$id');",
+      "}"
+    ]
+  },
+
+  "dart_cascade": {
+    "prefix": ["cascade"],
+    "description": "Cascade chaining calls on a single object",
+    "body": [
+      "final ${1:buffer} = StringBuffer()",
+      "  ..write('Hello')",
+      "  ..write(', ')",
+      "  ..write('world');"
+    ]
+  },
+
+  "dart_collection_literal": {
+    "prefix": ["collectionlit"],
+    "description": "Set and map literals with explicit type arguments",
+    "body": [
+      "final ${1:tags} = <String>{",
+      "  'dart',",
+      "  'flutter',",
+      "};",
+      "",
+      "final ${2:scores} = <String, int>{",
+      "  'alice': 42,",
+      "  'bob': 17,",
+      "};"
+    ]
+  },
+
+  "dart_async_function": {
+    "prefix": ["asyncfunc"],
+    "description": "Async function awaiting an HTTP request",
+    "body": [
+      "Future${1:User} fetchUser(String id) async {",
+      "  final response = await http.get(Uri.parse('/users/\\$id'));",
+      "  if (response.statusCode != 200) {",
+      "    throw Exception('Request failed with status \\${response.statusCode}');",
+      "  }",
+      "  return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);",
+      "}"
+    ]
+  },
+
+  "dart_stream": {
+    "prefix": ["stream"],
+    "description": "Stream generator producing values over time",
+    "body": [
+      "Stream<int> ${1:counter}({int interval = 1}) async* {",
+      "  var value = 0;",
+      "  while (true) {",
+      "    await Future<void>.delayed(Duration(seconds: interval));",
+      "    value += 1;",
+      "    yield value;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_stateful_widget": {
+    "prefix": ["statefulwidget"],
+    "description": "Stateful widget with a state class and setState",
+    "body": [
+      "class ${1:CounterPage} extends StatefulWidget {",
+      "  const ${1:CounterPage}({super.key});",
+      "",
+      "  @override",
+      "  State${1:CounterPage} createState() => _CounterPageState();",
+      "}",
+      "",
+      "class _CounterPageState extends State<CounterPage> {",
+      "  int _count = 0;",
+      "",
+      "  void _increment() {",
+      "    setState(() {",
+      "      _count += 1;",
+      "    });",
+      "  }",
+      "",
+      "  @override",
+      "  Widget build(BuildContext context) {",
+      "    return Scaffold(",
+      "      appBar: AppBar(title: const Text('Counter')),",
+      "      body: Center(child: Text('\\$_count')),",
+      "    );",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_stateless_widget": {
+    "prefix": ["statelesswidget"],
+    "description": "Stateless widget rendering a list tile",
+    "body": [
+      "class ${1:UserTile} extends StatelessWidget {",
+      "  final User user;",
+      "",
+      "  const ${1:UserTile}({super.key, required this.user});",
+      "",
+      "  @override",
+      "  Widget build(BuildContext context) {",
+      "    return ListTile(",
+      "      title: Text(user.name),",
+      "      subtitle: Text(user.email),",
+      "      trailing: const Icon(Icons.chevron_right),",
+      "    );",
+      "  }",
+      "}"
+    ]
+  },
+
+  "dart_custom_painter": {
+    "prefix": ["painter"],
+    "description": "CustomPainter drawing a small line chart",
+    "body": [
+      "class ${1:SparklinePainter} extends CustomPainter {",
+      "  final List<double> values;",
+      "",
+      "  const SparklinePainter({required this.values});",
+      "",
+      "  @override",
+      "  void paint(Canvas canvas, Size size) {",
+      "    if (values.length < 2) {",
+      "      return;",
+      "    }",
+      "",
+      "    final paint = Paint()",
+      "      ..color = const Color(0xFF2196F3)",
+      "      ..strokeWidth = 2;",
+      "",
+      "    final path = Path();",
+      "    for (var i = 0; i < values.length; i++) {",
+      "      final x = size.width * i / (values.length - 1);",
+      "      final y = size.height * (1 - values[i]);",
+      "      if (i == 0) {",
+      "        path.moveTo(x, y);",
+      "      } else {",
+      "        path.lineTo(x, y);",
+      "      }",
+      "    }",
+      "    canvas.drawPath(path, paint);",
+      "  }",
+      "",
+      "  @override",
+      "  bool shouldRepaint(covariant SparklinePainter oldDelegate) {",
+      "    return oldDelegate.values != values;",
+      "  }",
+      "}"
+    ]
+  }
+}

@@ -1,0 +1,489 @@
+{
+  "ts_generic_function": {
+    "prefix": ["genericfn"],
+    "description": "Generic helpers that pick a key or pick the first element",
+    "body": [
+      "function firstOrDefault<T>(items: T[], fallback: T): T {",
+      "  return items.length > 0 ? items[0] : fallback;",
+      "}",
+      "",
+      "function pluck<T, K extends keyof T>(items: T[], key: K): T[K][] {",
+      "  return items.map((item) => item[key]);",
+      "}",
+      "",
+      "function groupBy<T, K extends keyof T>(items: T[], key: K): Map<T[K], T[]> {",
+      "  const groups = new Map<T[K], T[]>();",
+      "  for (const item of items) {",
+      "    const bucket = groups.get(item[key]) ?? [];",
+      "    bucket.push(item);",
+      "    groups.set(item[key], bucket);",
+      "  }",
+      "  return groups;",
+      "}"
+    ]
+  },
+
+  "ts_interface": {
+    "prefix": ["iface"],
+    "description": "Interface for a user plus a generic repository interface",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "  email?: string;",
+      "  roles: readonly string[];",
+      "  createdAt: Date;",
+      "}",
+      "",
+      "interface Repository<T> {",
+      "  get(id: string): Promise<T | null>;",
+      "  save(entity: T): Promise<T>;",
+      "  remove(id: string): Promise<void>;",
+      "}"
+    ]
+  },
+
+  "ts_union_type": {
+    "prefix": ["union"],
+    "description": "Result and status types written as string literal unions",
+    "body": [
+      "type Result<T, E = Error> =",
+      "  | { ok: true; value: T }",
+      "  | { ok: false; error: E };",
+      "",
+      "type Status = 'idle' | 'loading' | 'success' | 'error';",
+      "",
+      "type Primitive = string | number | boolean | null | undefined;",
+      "",
+      "function describe(result: Result<number>): string {",
+      "  return result.ok ? `value: \\${result.value}` : `error: \\${result.error.message}`;",
+      "}"
+    ]
+  },
+
+  "ts_enum": {
+    "prefix": ["enum"],
+    "description": "Numeric and string enums with a lookup helper",
+    "body": [
+      "enum LogLevel {",
+      "  Debug = 0,",
+      "  Info = 1,",
+      "  Warn = 2,",
+      "  Error = 3,",
+      "}",
+      "",
+      "enum Direction {",
+      "  Up = 'UP',",
+      "  Down = 'DOWN',",
+      "}",
+      "",
+      "function logLevelName(level: LogLevel): string {",
+      "  return LogLevel[level].toLowerCase();",
+      "}"
+    ]
+  },
+
+  "ts_type_guard": {
+    "prefix": ["typeguard"],
+    "description": "Type guards that narrow an unknown value to a type",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "}",
+      "",
+      "function isUser(value: unknown): value is User {",
+      "  return (",
+      "    typeof value === 'object' &&",
+      "    value !== null &&",
+      "    'id' in value &&",
+      "    'name' in value",
+      "  );",
+      "}",
+      "",
+      "function isDefined<T>(value: T | null | undefined): value is T {",
+      "  return value !== null && value !== undefined;",
+      "}",
+      "",
+      "function greet(value: unknown): string {",
+      "  return isUser(value) ? `Hello, \\${value.name}` : 'Hello, stranger';",
+      "}"
+    ]
+  },
+
+  "ts_generic_class": {
+    "prefix": ["genericclass"],
+    "description": "Generic class that keeps entities in a map by id",
+    "body": [
+      "class Repository<T extends { id: string }> {",
+      "  private readonly items = new Map<string, T>();",
+      "",
+      "  constructor(seed: T[] = []) {",
+      "    for (const item of seed) {",
+      "      this.items.set(item.id, item);",
+      "    }",
+      "  }",
+      "",
+      "  get(id: string): T | undefined {",
+      "    return this.items.get(id);",
+      "  }",
+      "",
+      "  save(entity: T): T {",
+      "    this.items.set(entity.id, entity);",
+      "    return entity;",
+      "  }",
+      "",
+      "  all(): T[] {",
+      "    return [...this.items.values()];",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ts_mapped_type": {
+    "prefix": ["mappedtype"],
+    "description": "Mapped type that turns keys into optional flags",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "  email: string;",
+      "  role: string;",
+      "}",
+      "",
+      "type UserFlags = {",
+      "  [K in keyof User]?: boolean;",
+      "};",
+      "",
+      "type Getters<T> = {",
+      "  [K in keyof T as `get\\${Capitalize<string & K>}`]: () => T[K];",
+      "};",
+      "",
+      "const flags: UserFlags = { name: true };",
+      "const getName: Getters<User>['getName'] = () => 'Ada';"
+    ]
+  },
+
+  "ts_conditional_type": {
+    "prefix": ["condtype"],
+    "description": "Conditional types that unwrap promises and array items",
+    "body": [
+      "type Unwrap<T> = T extends Promise<infer U> ? U : T;",
+      "",
+      "type Nullable<T> = T extends null | undefined ? T : T | null;",
+      "",
+      "type ElementOf<T> = T extends readonly (infer U)[] ? U : never;",
+      "",
+      "type ApiResponse = Unwrap<Promise<{ id: string }>>;",
+      "",
+      "const ids: ElementOf<number[]> = 42;"
+    ]
+  },
+
+  "ts_partial_pick": {
+    "prefix": ["partialpick"],
+    "description": "Build update payloads with Partial and Pick",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "  email: string;",
+      "  role: string;",
+      "}",
+      "",
+      "type UserDraft = Partial<Pick<User, 'name' | 'email'>>;",
+      "type UserSummary = Pick<User, 'id' | 'name'>;",
+      "type UserPatch = Partial<User> & { id: string };",
+      "",
+      "const draft: UserDraft = { name: 'Ada' };",
+      "const summary: UserSummary = { id: 'u1', name: 'Ada' };"
+    ]
+  },
+
+  "ts_discriminated_union": {
+    "prefix": ["discunion"],
+    "description": "Discriminated union of actions handled by a reducer",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "}",
+      "",
+      "type Action =",
+      "  | { type: 'loading' }",
+      "  | { type: 'success'; payload: User }",
+      "  | { type: 'error'; message: string };",
+      "",
+      "function reduce(state: Action): string {",
+      "  switch (state.type) {",
+      "    case 'loading':",
+      "      return 'loading';",
+      "    case 'success':",
+      "      return state.payload.name;",
+      "    case 'error':",
+      "      return state.message;",
+      "    default:",
+      "      return 'unknown';",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ts_function_overload": {
+    "prefix": ["overload"],
+    "description": "Overloaded function with a typed implementation signature",
+    "body": [
+      "function parse(input: string): string;",
+      "function parse(input: number): number;",
+      "function parse(input: string | number): string | number {",
+      "  if (typeof input === 'number') {",
+      "    return Math.round(input);",
+      "  }",
+      "  return input.trim();",
+      "}",
+      "",
+      "const label: string = parse('  Ada  ');",
+      "const total: number = parse(3.7);"
+    ]
+  },
+
+  "ts_readonly_tuple": {
+    "prefix": ["tuptype"],
+    "description": "Readonly tuple types with labelled elements",
+    "body": [
+      "type Coordinates = readonly [number, number];",
+      "",
+      "type DateRange = readonly [start: number, end: number];",
+      "",
+      "type HeaderPair = readonly [key: string, value: string];",
+      "",
+      "function distance([x1, y1]: Coordinates, [x2, y2]: Coordinates): number {",
+      "  return Math.hypot(x2 - x1, y2 - y1);",
+      "}",
+      "",
+      "const start: Coordinates = [0, 0];"
+    ]
+  },
+
+  "ts_promise_wrapper": {
+    "prefix": ["promisewrap"],
+    "description": "Generic promise helper that retries with a backoff",
+    "body": [
+      "async function withRetry<T>(",
+      "  operation: () => Promise<T>,",
+      "  attempts = 3,",
+      "  delayMs = 200,",
+      "): Promise<T> {",
+      "  let lastError: unknown;",
+      "",
+      "  for (let attempt = 1; attempt <= attempts; attempt += 1) {",
+      "    try {",
+      "      return await operation();",
+      "    } catch (error) {",
+      "      lastError = error;",
+      "      await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));",
+      "    }",
+      "  }",
+      "",
+      "  throw new Error(`failed after \\${attempts} attempts: \\${String(lastError)}`);",
+      "}"
+    ]
+  },
+
+  "ts_assertion_function": {
+    "prefix": ["assertfn"],
+    "description": "Assertion functions that narrow types at the call site",
+    "body": [
+      "function assertDefined<T>(",
+      "  value: T | undefined,",
+      "  message = '${1:value} is undefined',",
+      "): asserts value is T {",
+      "  if (value === undefined) {",
+      "    throw new Error(message);",
+      "  }",
+      "}",
+      "",
+      "function assertNever(value: never): never {",
+      "  throw new Error(`unexpected value: \\${JSON.stringify(value)}`);",
+      "}",
+      "",
+      "function requireUser(user: { id: string } | undefined): { id: string } {",
+      "  assertDefined(user, 'a user is required');",
+      "  return user;",
+      "}"
+    ]
+  },
+
+  "ts_namespace": {
+    "prefix": ["namespace"],
+    "description": "Namespace that groups the api helpers and their types",
+    "body": [
+      "namespace Api {",
+      "  export const baseUrl = 'https://api.example.com';",
+      "",
+      "  export interface Response<T> {",
+      "    data: T;",
+      "    status: number;",
+      "  }",
+      "",
+      "  export function endpoint(path: string): string {",
+      "    return `\\${baseUrl}\\${path}`;",
+      "  }",
+      "}",
+      "",
+      "const url: string = Api.endpoint('/users');"
+    ]
+  },
+
+  "ts_decorator": {
+    "prefix": ["decorator"],
+    "description": "Method decorator that logs every call of the class",
+    "body": [
+      "function Logged(target: Function, context: ClassMethodDecoratorContext) {",
+      "  const methodName = String(context.name);",
+      "",
+      "  return function (this: unknown, ...args: unknown[]) {",
+      "    console.log(`calling \\${methodName}`);",
+      "    return Reflect.apply(target, this, args);",
+      "  };",
+      "}",
+      "",
+      "class TaskService {",
+      "  @Logged",
+      "  run(task: string): string {",
+      "    return `done: \\${task}`;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ts_unit_test": {
+    "prefix": ["unittest"],
+    "description": "Table driven unit test without any test framework",
+    "body": [
+      "interface User {",
+      "  id: string;",
+      "  name: string;",
+      "}",
+      "",
+      "function formatGreeting(user: User): string {",
+      "  return `Hello, \\${user.name}`;",
+      "}",
+      "",
+      "const cases: Array<[User, string]> = [",
+      "  [{ id: '1', name: 'Ada' }, 'Hello, Ada'],",
+      "  [{ id: '2', name: 'Grace' }, 'Hello, Grace'],",
+      "];",
+      "",
+      "for (const [user, expected] of cases) {",
+      "  const actual = formatGreeting(user);",
+      "  if (actual !== expected) {",
+      "    throw new Error(`expected \"\\${expected}\", got \"\\${actual}\"`);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ts_async_iteration": {
+    "prefix": ["asynciter"],
+    "description": "Async generator that pages through a remote collection",
+    "body": [
+      "interface Page<T> {",
+      "  items: T[];",
+      "  next: string | null;",
+      "}",
+      "",
+      "async function* paginate<T>(",
+      "  loadPage: (cursor: string | null) => Promise<Page<T>>,",
+      "): AsyncGenerator<T, void, undefined> {",
+      "  let cursor: string | null = null;",
+      "",
+      "  do {",
+      "    const page = await loadPage(cursor);",
+      "    for (const item of page.items) {",
+      "      yield item;",
+      "    }",
+      "    cursor = page.next;",
+      "  } while (cursor !== null);",
+      "}"
+    ]
+  },
+
+  "ts_typed_emitter": {
+    "prefix": ["emitter"],
+    "description": "Event emitter whose events and payloads are typed",
+    "body": [
+      "type EventMap = {",
+      "  open: { source: string };",
+      "  close: { reason: string };",
+      "};",
+      "",
+      "type Listener<T> = (payload: T) => void;",
+      "",
+      "class TypedEmitter {",
+      "  private readonly listeners = new Map<keyof EventMap, Set<Listener<never>>>();",
+      "",
+      "  on<K extends keyof EventMap>(event: K, listener: Listener<EventMap[K]>): () => void {",
+      "    const bucket = this.listeners.get(event) ?? new Set<Listener<never>>();",
+      "    bucket.add(listener as Listener<never>);",
+      "    this.listeners.set(event, bucket);",
+      "    return () => bucket.delete(listener as Listener<never>);",
+      "  }",
+      "",
+      "  emit<K extends keyof EventMap>(event: K, payload: EventMap[K]): void {",
+      "    for (const listener of this.listeners.get(event) ?? []) {",
+      "      (listener as Listener<EventMap[K]>)(payload);",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ts_builder_pattern": {
+    "prefix": ["builder"],
+    "description": "Builder that assembles request options step by step",
+    "body": [
+      "interface RequestOptions {",
+      "  method: string;",
+      "  url: string;",
+      "  headers: Record<string, string>;",
+      "  body?: string;",
+      "  timeout: number;",
+      "}",
+      "",
+      "class RequestBuilder {",
+      "  private readonly options: RequestOptions = {",
+      "    method: 'GET',",
+      "    url: '',",
+      "    headers: {},",
+      "    timeout: 5000,",
+      "  };",
+      "",
+      "  url(url: string): this {",
+      "    this.options.url = url;",
+      "    return this;",
+      "  }",
+      "",
+      "  method(method: string): this {",
+      "    this.options.method = method;",
+      "    return this;",
+      "  }",
+      "",
+      "  header(key: string, value: string): this {",
+      "    this.options.headers[key] = value;",
+      "    return this;",
+      "  }",
+      "",
+      "  body(body: string): this {",
+      "    this.options.method = 'POST';",
+      "    this.options.body = body;",
+      "    return this;",
+      "  }",
+      "",
+      "  build(): RequestOptions {",
+      "    return { ...this.options, headers: { ...this.options.headers } };",
+      "  }",
+      "}"
+    ]
+  }
+}

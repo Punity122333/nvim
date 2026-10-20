@@ -1,161 +1,673 @@
 {
   "go_base": {
     "prefix": "gobase",
+    "description": "Go base template",
     "body": [
       "package main",
       "",
       "import (",
-      "    \"fmt\"",
+      "\t\"fmt\"",
       ")",
       "",
       "func main() {",
-      "    $1",
+      "\t$1",
       "}"
-    ],
-    "description": "Go base template"
+    ]
   },
 
   "go_print": {
     "prefix": "pr",
-    "body": ["fmt.Println(${1:\"hello\"})"],
-    "description": "Print line"
+    "description": "Print line",
+    "body": ["fmt.Println(${1:\"hello\"})"]
   },
 
   "go_printf": {
     "prefix": "pf",
-    "body": ["fmt.Printf(\"${1:%v}\\n\", ${2:val})"],
-    "description": "Printf"
+    "description": "Printf",
+    "body": ["fmt.Printf(\"${1:%v}\\n\", ${2:val})"]
   },
 
   "go_for_basic": {
     "prefix": "for",
+    "description": "basic for loop",
     "body": [
       "for ${1:i} := ${2:0}; ${1:i} < ${3:n}; ${1:i}++ {",
-      "    $4",
+      "\t$4",
       "}"
-    ],
-    "description": "basic for loop"
+    ]
   },
 
   "go_for_range": {
     "prefix": "forr",
-    "body": ["for ${1:i}, ${2:v} := range ${3:arr} {", "    $4", "}"],
-    "description": "range loop"
+    "description": "range loop",
+    "body": [
+      "for ${1:i}, ${2:v} := range ${3:arr} {",
+      "\t$4",
+      "}"
+    ]
   },
 
   "go_if": {
     "prefix": "if",
-    "body": ["if ${1:cond} {", "    $2", "}"],
-    "description": "if statement"
+    "description": "if statement",
+    "body": [
+      "if ${1:cond} {",
+      "\t$2",
+      "}"
+    ]
   },
 
   "go_if_err": {
     "prefix": "ife",
-    "body": ["if ${1:err} != nil {", "    return ${2:nil}, ${1:err}", "}"],
-    "description": "error handling pattern"
+    "description": "error handling pattern",
+    "body": [
+      "if ${1:err} != nil {",
+      "\treturn ${2:nil}, ${1:err}",
+      "}"
+    ]
   },
 
   "go_func": {
     "prefix": "fn",
-    "body": ["func ${1:name}(${2:args}) ${3:ret} {", "    $4", "}"],
-    "description": "function"
+    "description": "function",
+    "body": [
+      "func ${1:name}(${2:args}) ${3:ret} {",
+      "\t$4",
+      "}"
+    ]
   },
 
   "go_struct": {
     "prefix": "struct",
-    "body": ["type ${1:Name} struct {", "    ${2:Field} ${3:type}", "}"],
-    "description": "struct definition"
+    "description": "struct definition",
+    "body": [
+      "type ${1:Name} struct {",
+      "\t${2:Field} ${3:type}",
+      "}"
+    ]
   },
 
   "go_method": {
     "prefix": "method",
+    "description": "method with receiver",
     "body": [
       "func (s *${1:Struct}) ${2:Method}(${3:args}) ${4:ret} {",
-      "    $5",
+      "\t$5",
       "}"
-    ],
-    "description": "method with receiver"
+    ]
   },
 
   "go_map": {
     "prefix": "map",
-    "body": ["m := make(map[${1:string}]${2:int})"],
-    "description": "map init"
+    "description": "map init",
+    "body": ["m := make(map[${1:string}]${2:int})"]
   },
 
   "go_slice": {
     "prefix": "slice",
-    "body": ["s := make([]${1:int}, ${2:0}, ${3:10})"],
-    "description": "slice init"
+    "description": "slice init",
+    "body": ["s := make([]${1:int}, ${2:0}, ${3:10})"]
   },
 
   "go_append": {
     "prefix": "app",
-    "body": ["${1:s} = append(${1:s}, ${2:val})"],
-    "description": "append to slice"
+    "description": "append to slice",
+    "body": ["${1:s} = append(${1:s}, ${2:val})"]
   },
 
   "go_error_new": {
     "prefix": "err",
-    "body": ["return ${1:nil}, fmt.Errorf(\"${2:error}\")"],
-    "description": "return error"
+    "description": "return error",
+    "body": ["return ${1:nil}, fmt.Errorf(\"${2:error}\")"]
   },
 
   "go_goroutine": {
     "prefix": "go",
-    "body": ["go func() {", "    $1", "}()"],
-    "description": "goroutine"
+    "description": "goroutine",
+    "body": [
+      "go func() {",
+      "\t$1",
+      "}()"
+    ]
   },
 
   "go_channel": {
     "prefix": "ch",
-    "body": ["ch := make(chan ${1:int})"],
-    "description": "channel"
+    "description": "channel",
+    "body": ["ch := make(chan ${1:int})"]
   },
 
   "go_select": {
     "prefix": "sel",
+    "description": "select statement",
     "body": [
       "select {",
       "case ${1:v} := <-${2:ch}:",
-      "    $3",
+      "\t$3",
       "case ${4:ch} <- ${5:v}:",
-      "    $6",
+      "\t$6",
       "default:",
-      "    $7",
+      "\t$7",
       "}"
-    ],
-    "description": "select statement"
-  },
-
-  "go_http_handler": {
-    "prefix": "handler",
-    "body": [
-      "func ${1:handler}(w http.ResponseWriter, r *http.Request) {",
-      "    $2",
-      "}"
-    ],
-    "description": "HTTP handler"
+    ]
   },
 
   "go_main_http": {
     "prefix": "http",
+    "description": "simple HTTP server",
     "body": [
       "http.HandleFunc(\"${1:/}\", ${2:handler})",
       "http.ListenAndServe(\":${3:8080}\", nil)"
-    ],
-    "description": "simple HTTP server"
+    ]
   },
 
   "go_defer": {
     "prefix": "defer",
-    "body": ["defer ${1:funcCall}"],
-    "description": "defer statement"
+    "description": "defer statement",
+    "body": ["defer ${1:funcCall}"]
   },
 
   "go_log": {
     "prefix": "log",
-    "body": ["log.Println(${1:\"debug\"})"],
-    "description": "log print"
+    "description": "log print",
+    "body": ["log.Println(${1:\"debug\"})"]
+  },
+
+  "go_main_func": {
+    "prefix": ["main"],
+    "description": "Program entry point with error logging and cleanup",
+    "body": [
+      "func main() {",
+      "\tcfg, err := loadConfig()",
+      "\tif err != nil {",
+      "\t\tlog.Fatalf(\"${1:load config}: %v\", err)",
+      "\t}",
+      "",
+      "\tserver := newServer(cfg)",
+      "\tdefer server.Close()",
+      "",
+      "\tif err := server.ListenAndServe(); err != nil {",
+      "\t\tlog.Fatalf(\"${2:serve}: %v\", err)",
+      "\t}",
+      "}"
+    ]
+  },
+
+  "go_json_struct": {
+    "prefix": ["jsonstruct"],
+    "description": "Struct with JSON tags for request and response payloads",
+    "body": [
+      "type User struct {",
+      "\tID        int       `json:\"id\"`",
+      "\tName      string    `json:\"name\"`",
+      "\tEmail     string    `json:\"email,omitempty\"`",
+      "\tRoles     []string  `json:\"roles\"`",
+      "\tCreatedAt time.Time `json:\"created_at\"`",
+      "}",
+      "",
+      "type CreateUserRequest struct {",
+      "\tName  string `json:\"name\" validate:\"required\"`",
+      "\tEmail string `json:\"email\" validate:\"email\"`",
+      "}"
+    ]
+  },
+
+  "go_error_wrap": {
+    "prefix": ["errwrap"],
+    "description": "Helper that wraps an error with an operation name",
+    "body": [
+      "var ErrNotFound = errors.New(\"not found\")",
+      "",
+      "func wrapError(op string, err error) error {",
+      "\tif err == nil {",
+      "\t\treturn nil",
+      "\t}",
+      "\treturn fmt.Errorf(\"${1:operation}: %w\", op, err)",
+      "}",
+      "",
+      "func getOrder(id string) (Order, error) {",
+      "\torder, err := orders.Get(id)",
+      "\tif errors.Is(err, sql.ErrNoRows) {",
+      "\t\treturn Order{}, ErrNotFound",
+      "\t}",
+      "\tif err != nil {",
+      "\t\treturn Order{}, wrapError(\"get order\", err)",
+      "\t}",
+      "\treturn order, nil",
+      "}"
+    ]
+  },
+
+  "go_goroutine_channel": {
+    "prefix": ["goroutine"],
+    "description": "Fan out work over goroutines and collect results by channel",
+    "body": [
+      "func processAll(ctx context.Context, items []Item) []Result {",
+      "\tresults := make(chan Result, len(items))",
+      "\tvar wg sync.WaitGroup",
+      "",
+      "\tfor _, item := range items {",
+      "\t\twg.Add(1)",
+      "\t\tgo func(item Item) {",
+      "\t\t\tdefer wg.Done()",
+      "\t\t\tvalue, err := process(ctx, item)",
+      "\t\t\tresults <- Result{Value: value, Err: err}",
+      "\t\t}(item)",
+      "\t}",
+      "",
+      "\twg.Wait()",
+      "\tclose(results)",
+      "",
+      "\tout := make([]Result, 0, len(items))",
+      "\tfor res := range results {",
+      "\t\tif res.Err != nil {",
+      "\t\t\tlog.Printf(\"process failed: %v\", res.Err)",
+      "\t\t\tcontinue",
+      "\t\t}",
+      "\t\tout = append(out, res)",
+      "\t}",
+      "\treturn out",
+      "}"
+    ]
+  },
+
+  "go_context_timeout": {
+    "prefix": ["ctx"],
+    "description": "Context with timeout plus cancellation of the request",
+    "body": [
+      "func fetchJSON(ctx context.Context, client *http.Client, url string) ([]byte, error) {",
+      "\tctx, cancel := context.WithTimeout(ctx, 5*time.Second)",
+      "\tdefer cancel()",
+      "",
+      "\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)",
+      "\tif err != nil {",
+      "\t\treturn nil, fmt.Errorf(\"build request: %w\", err)",
+      "\t}",
+      "",
+      "\tres, err := client.Do(req)",
+      "\tif err != nil {",
+      "\t\treturn nil, fmt.Errorf(\"call %s: %w\", url, err)",
+      "\t}",
+      "\tdefer res.Body.Close()",
+      "",
+      "\treturn io.ReadAll(res.Body)",
+      "}"
+    ]
+  },
+
+  "go_table_test": {
+    "prefix": ["testtable"],
+    "description": "Table driven unit test with subtests per case",
+    "body": [
+      "func TestFormatDuration(t *testing.T) {",
+      "\ttests := []struct {",
+      "\t\tname string",
+      "\t\tin   time.Duration",
+      "\t\twant string",
+      "\t}{",
+      "\t\t{name: \"minutes\", in: 90 * time.Second, want: \"1m30s\"},",
+      "\t\t{name: \"zero\", in: 0, want: \"0s\"},",
+      "\t}",
+      "",
+      "\tfor _, tt := range tests {",
+      "\t\tt.Run(tt.name, func(t *testing.T) {",
+      "\t\t\tif got := FormatDuration(tt.in); got != tt.want {",
+      "\t\t\t\tt.Errorf(\"FormatDuration(%v) = %q, want %q\", tt.in, got, tt.want)",
+      "\t\t\t}",
+      "\t\t})",
+      "\t}",
+      "}"
+    ]
+  },
+
+  "go_defer_cleanup": {
+    "prefix": ["deferclose"],
+    "description": "Open a resource, defer its cleanup and handle stat errors",
+    "body": [
+      "func readConfig(path string) ([]byte, error) {",
+      "\tfile, err := os.Open(path)",
+      "\tif err != nil {",
+      "\t\treturn nil, fmt.Errorf(\"open %s: %w\", path, err)",
+      "\t}",
+      "\tdefer file.Close()",
+      "",
+      "\tinfo, err := file.Stat()",
+      "\tif err != nil {",
+      "\t\treturn nil, fmt.Errorf(\"stat %s: %w\", path, err)",
+      "\t}",
+      "\tif info.IsDir() {",
+      "\t\treturn nil, fmt.Errorf(\"%s is a directory\", path)",
+      "\t}",
+      "",
+      "\treturn io.ReadAll(file)",
+      "}"
+    ]
+  },
+
+  "go_interface": {
+    "prefix": ["iface"],
+    "description": "Interface describing a repository with context aware methods",
+    "body": [
+      "type Store interface {",
+      "\tGet(ctx context.Context, id string) (User, error)",
+      "\tPut(ctx context.Context, user User) error",
+      "\tList(ctx context.Context) ([]User, error)",
+      "\tDelete(ctx context.Context, id string) error",
+      "}",
+      "",
+      "var _ Store = (*postgresStore)(nil)"
+    ]
+  },
+
+  "go_generic_helper": {
+    "prefix": ["generic"],
+    "description": "Generic slice helpers that map and filter every element",
+    "body": [
+      "func Map[T any, U any](items []T, fn func(T) U) []U {",
+      "\tout := make([]U, 0, len(items))",
+      "\tfor _, item := range items {",
+      "\t\tout = append(out, fn(item))",
+      "\t}",
+      "\treturn out",
+      "}",
+      "",
+      "func Filter[T any](items []T, keep func(T) bool) []T {",
+      "\tout := make([]T, 0, len(items))",
+      "\tfor _, item := range items {",
+      "\t\tif keep(item) {",
+      "\t\t\tout = append(out, item)",
+      "\t\t}",
+      "\t}",
+      "\treturn out",
+      "}"
+    ]
+  },
+
+  "go_select_loop": {
+    "prefix": ["selectloop"],
+    "description": "Select loop that reacts to jobs, a ticker and cancellation",
+    "body": [
+      "func consume(ctx context.Context, jobs <-chan Job, results chan<- Result, ticker *time.Ticker) error {",
+      "\tfor {",
+      "\t\tselect {",
+      "\t\tcase <-ctx.Done():",
+      "\t\t\treturn ctx.Err()",
+      "\t\tcase job := <-jobs:",
+      "\t\t\tresult, err := handle(job)",
+      "\t\t\tif err != nil {",
+      "\t\t\t\tlog.Printf(\"job failed: %v\", err)",
+      "\t\t\t\tcontinue",
+      "\t\t\t}",
+      "\t\t\tresults <- result",
+      "\t\tcase <-ticker.C:",
+      "\t\t\tlog.Println(\"still working\")",
+      "\t\t}",
+      "\t}",
+      "}"
+    ]
+  },
+
+  "go_mutex_counter": {
+    "prefix": ["mutexcounter"],
+    "description": "Counter guarded by a mutex with getter and incrementer",
+    "body": [
+      "type Counter struct {",
+      "\tmu sync.Mutex",
+      "\tn  int64",
+      "}",
+      "",
+      "func (c *Counter) Inc() int64 {",
+      "\tc.mu.Lock()",
+      "\tdefer c.mu.Unlock()",
+      "\tc.n++",
+      "\treturn c.n",
+      "}",
+      "",
+      "func (c *Counter) Value() int64 {",
+      "\tc.mu.Lock()",
+      "\tdefer c.mu.Unlock()",
+      "\treturn c.n",
+      "}"
+    ]
+  },
+
+  "go_retry_client": {
+    "prefix": ["retry"],
+    "description": "HTTP client that retries with a growing backoff delay",
+    "body": [
+      "func (c *Client) Get(ctx context.Context, url string) (*http.Response, error) {",
+      "\tvar lastErr error",
+      "",
+      "\tfor attempt := 1; attempt <= c.maxRetries; attempt++ {",
+      "\t\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)",
+      "\t\tif err != nil {",
+      "\t\t\treturn nil, fmt.Errorf(\"build request: %w\", err)",
+      "\t\t}",
+      "",
+      "\t\tres, err := c.http.Do(req)",
+      "\t\tif err == nil {",
+      "\t\t\treturn res, nil",
+      "\t\t}",
+      "\t\tlastErr = err",
+      "",
+      "\t\tdelay := time.Duration(attempt) * c.backoff",
+      "\t\tselect {",
+      "\t\tcase <-ctx.Done():",
+      "\t\t\treturn nil, ctx.Err()",
+      "\t\tcase <-time.After(delay):",
+      "\t\t}",
+      "\t}",
+      "",
+      "\treturn nil, fmt.Errorf(\"get %s after %d attempts: %w\", url, c.maxRetries, lastErr)",
+      "}"
+    ]
+  },
+
+  "go_slice_helper": {
+    "prefix": ["sliceutil"],
+    "description": "Generic slice helpers to filter and to split into chunks",
+    "body": [
+      "func Filter[T any](items []T, keep func(T) bool) []T {",
+      "\tout := make([]T, 0, len(items))",
+      "\tfor _, item := range items {",
+      "\t\tif keep(item) {",
+      "\t\t\tout = append(out, item)",
+      "\t\t}",
+      "\t}",
+      "\treturn out",
+      "}",
+      "",
+      "func Chunk[T any](items []T, size int) [][]T {",
+      "\tif size <= 0 {",
+      "\t\tpanic(\"chunk size must be positive\")",
+      "\t}",
+      "",
+      "\tchunks := make([][]T, 0, (len(items)+size-1)/size)",
+      "\tfor start := 0; start < len(items); start += size {",
+      "\t\tend := start + size",
+      "\t\tif end > len(items) {",
+      "\t\t\tend = len(items)",
+      "\t\t}",
+      "\t\tchunks = append(chunks, items[start:end])",
+      "\t}",
+      "\treturn chunks",
+      "}"
+    ]
+  },
+
+  "go_map_iteration": {
+    "prefix": ["maprange"],
+    "description": "Count words in a map and iterate over the keys in order",
+    "body": [
+      "func wordCounts(words []string) map[string]int {",
+      "\tcounts := map[string]int{}",
+      "\tfor _, word := range words {",
+      "\t\tcounts[word]++",
+      "\t}",
+      "\treturn counts",
+      "}",
+      "",
+      "func sortedKeys(counts map[string]int) []string {",
+      "\tkeys := make([]string, 0, len(counts))",
+      "\tfor key := range counts {",
+      "\t\tkeys = append(keys, key)",
+      "\t}",
+      "\tsort.Strings(keys)",
+      "\treturn keys",
+      "}"
+    ]
+  },
+
+  "go_file_io": {
+    "prefix": ["fileio"],
+    "description": "Read a file into memory and write it back with permissions",
+    "body": [
+      "func loadFile(path string) ([]byte, error) {",
+      "\tdata, err := os.ReadFile(path)",
+      "\tif err != nil {",
+      "\t\treturn nil, fmt.Errorf(\"read %s: %w\", path, err)",
+      "\t}",
+      "\treturn data, nil",
+      "}",
+      "",
+      "func saveFile(path string, data []byte) error {",
+      "\tif err := os.WriteFile(path, data, 0o644); err != nil {",
+      "\t\treturn fmt.Errorf(\"write %s: %w\", path, err)",
+      "\t}",
+      "\tlog.Printf(\"wrote %d bytes to %s\", len(data), path)",
+      "\treturn nil",
+      "}"
+    ]
+  },
+
+  "go_flag_parse": {
+    "prefix": ["flagparse"],
+    "description": "Parse command line flags into typed variables",
+    "body": [
+      "func parseFlags() (*Config, error) {",
+      "\tvar (",
+      "\t\tconfigPath = flag.String(\"config\", \"config.yaml\", \"path to the config file\")",
+      "\t\tverbose    = flag.Bool(\"verbose\", false, \"enable verbose logging\")",
+      "\t\ttimeout    = flag.Duration(\"timeout\", 30*time.Second, \"request timeout\")",
+      "\t)",
+      "",
+      "\tflag.Parse()",
+      "",
+      "\tif *verbose {",
+      "\t\tlog.SetOutput(os.Stdout)",
+      "\t}",
+      "",
+      "\treturn &Config{Path: *configPath, Verbose: *verbose, Timeout: *timeout}, nil",
+      "}"
+    ]
+  },
+
+  "go_worker_pool": {
+    "prefix": ["workerpool"],
+    "description": "Worker pool that processes jobs on several goroutines",
+    "body": [
+      "func runPool(tasks []Task, workers int) []Result {",
+      "\tjobs := make(chan Task, len(tasks))",
+      "\tresults := make(chan Result, len(tasks))",
+      "",
+      "\tvar wg sync.WaitGroup",
+      "\tfor i := 0; i < workers; i++ {",
+      "\t\twg.Add(1)",
+      "\t\tgo func() {",
+      "\t\t\tdefer wg.Done()",
+      "\t\t\tfor job := range jobs {",
+      "\t\t\t\tresults <- runJob(job)",
+      "\t\t\t}",
+      "\t\t}()",
+      "\t}",
+      "",
+      "\tfor _, task := range tasks {",
+      "\t\tjobs <- task",
+      "\t}",
+      "\tclose(jobs)",
+      "",
+      "\twg.Wait()",
+      "\tclose(results)",
+      "",
+      "\tout := make([]Result, 0, len(tasks))",
+      "\tfor res := range results {",
+      "\t\tout = append(out, res)",
+      "\t}",
+      "\treturn out",
+      "}"
+    ]
+  },
+
+  "go_ticker": {
+    "prefix": ["ticker"],
+    "description": "Periodic refresh with a ticker that is always stopped",
+    "body": [
+      "func refreshLoop(ctx context.Context, every time.Duration) error {",
+      "\tticker := time.NewTicker(every)",
+      "\tdefer ticker.Stop()",
+      "",
+      "\tfor {",
+      "\t\tselect {",
+      "\t\tcase <-ticker.C:",
+      "\t\t\tif err := refreshCache(); err != nil {",
+      "\t\t\t\tlog.Printf(\"refresh cache: %v\", err)",
+      "\t\t\t}",
+      "\t\tcase <-ctx.Done():",
+      "\t\t\treturn ctx.Err()",
+      "\t\t}",
+      "\t}",
+      "}"
+    ]
+  },
+
+  "go_http_request": {
+    "prefix": ["httpreq"],
+    "description": "HTTP GET request that checks the status and decodes JSON",
+    "body": [
+      "func getUser(ctx context.Context, client *http.Client, url string) (User, error) {",
+      "\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)",
+      "\tif err != nil {",
+      "\t\treturn User{}, fmt.Errorf(\"create request: %w\", err)",
+      "\t}",
+      "\treq.Header.Set(\"Accept\", \"application/json\")",
+      "",
+      "\tres, err := client.Do(req)",
+      "\tif err != nil {",
+      "\t\treturn User{}, fmt.Errorf(\"send request: %w\", err)",
+      "\t}",
+      "\tdefer res.Body.Close()",
+      "",
+      "\tif res.StatusCode != http.StatusOK {",
+      "\t\treturn User{}, fmt.Errorf(\"unexpected status: %s\", res.Status)",
+      "\t}",
+      "",
+      "\tvar payload User",
+      "\tif err := json.NewDecoder(res.Body).Decode(&payload); err != nil {",
+      "\t\treturn User{}, fmt.Errorf(\"decode body: %w\", err)",
+      "\t}",
+      "\treturn payload, nil",
+      "}"
+    ]
+  },
+
+  "go_http_json_handler": {
+    "prefix": ["httphandler"],
+    "description": "HTTP handler that encodes JSON and maps errors to status",
+    "body": [
+      "func getUser(w http.ResponseWriter, r *http.Request) {",
+      "\tid := r.PathValue(\"id\")",
+      "",
+      "\tuser, err := store.GetUser(r.Context(), id)",
+      "\tif err != nil {",
+      "\t\thttp.Error(w, \"user not found\", http.StatusNotFound)",
+      "\t\treturn",
+      "\t}",
+      "",
+      "\tw.Header().Set(\"Content-Type\", \"application/json\")",
+      "\tif err := json.NewEncoder(w).Encode(user); err != nil {",
+      "\t\tlog.Printf(\"encode user %s: %v\", id, err)",
+      "\t}",
+      "}"
+    ]
   }
 }

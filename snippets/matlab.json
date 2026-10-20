@@ -1,0 +1,155 @@
+{
+  "matlab_function": {
+    "prefix": ["function"],
+    "description": "Function file with an output argument",
+    "body": [
+      "function ${1:output} = ${2:functionName}(${3:input})",
+      "% ${4:Describe what the function does.}",
+      "${1:output} = ${3:input};",
+      "end"
+    ]
+  },
+
+  "matlab_function_multi": {
+    "prefix": ["functionmulti"],
+    "description": "Function with several output arguments",
+    "body": [
+      "function [${1:first}, ${2:second}] = ${3:functionName}(${4:input})",
+      "${1:first} = ${4:input};",
+      "${2:second} = ${4:input} * 2;",
+      "end"
+    ]
+  },
+
+  "matlab_script": {
+    "prefix": ["script"],
+    "description": "Script header with a cleared workspace",
+    "body": [
+      "clear;",
+      "clc;",
+      "close all;",
+      "",
+      "$0"
+    ]
+  },
+
+  "matlab_if": {
+    "prefix": ["if"],
+    "description": "If statement with an else branch",
+    "body": [
+      "if ${1:condition}",
+      "    ${2:statements}",
+      "else",
+      "    ${3:statements}",
+      "end"
+    ]
+  },
+
+  "matlab_for": {
+    "prefix": ["for"],
+    "description": "For loop over a range",
+    "body": [
+      "for ${1:i} = 1:${2:10}",
+      "    ${3:statements}",
+      "end"
+    ]
+  },
+
+  "matlab_while": {
+    "prefix": ["while"],
+    "description": "While loop",
+    "body": [
+      "while ${1:condition}",
+      "    ${2:statements}",
+      "end"
+    ]
+  },
+
+  "matlab_switch": {
+    "prefix": ["switch"],
+    "description": "Switch statement over a few cases",
+    "body": [
+      "switch ${1:value}",
+      "    case ${2:first}",
+      "        ${3:statements}",
+      "    case ${4:second}",
+      "        ${5:statements}",
+      "    otherwise",
+      "        ${6:statements}",
+      "end"
+    ]
+  },
+
+  "matlab_try_catch": {
+    "prefix": ["trycatch"],
+    "description": "Try and catch block with the error message",
+    "body": [
+      "try",
+      "    ${1:statements}",
+      "catch err",
+      "    fprintf('error: %s\\\\n', err.message);",
+      "end"
+    ]
+  },
+
+  "matlab_plot": {
+    "prefix": ["plot"],
+    "description": "Figure with a line plot",
+    "body": [
+      "figure;",
+      "plot(${1:x}, ${2:y}, 'LineWidth', 1.5);",
+      "grid on;",
+      "xlabel('${3:x axis}');",
+      "ylabel('${4:y axis}');",
+      "title('${5:title}');"
+    ]
+  },
+
+  "matlab_matrix": {
+    "prefix": ["matrix"],
+    "description": "Matrix literal",
+    "body": [
+      "[${1:1, 2, 3}; ${2:4, 5, 6}]"
+    ]
+  },
+
+  "matlab_cell": {
+    "prefix": ["cell"],
+    "description": "Cell array literal",
+    "body": [
+      "{${1:'first'}, ${2:'second'}}"
+    ]
+  },
+
+  "matlab_struct": {
+    "prefix": ["struct"],
+    "description": "Struct literal with a field",
+    "body": [
+      "struct('${1:field}', ${2:value})"
+    ]
+  },
+
+  "matlab_anon_function": {
+    "prefix": ["anon"],
+    "description": "Anonymous function handle",
+    "body": [
+      "@(x) ${1:x}.^2"
+    ]
+  },
+
+  "matlab_fprintf": {
+    "prefix": ["fprintf"],
+    "description": "Print a formatted message",
+    "body": [
+      "fprintf('${1:message}: %d\\\\n', ${2:value});"
+    ]
+  },
+
+  "matlab_comment": {
+    "prefix": ["mcomment"],
+    "description": "Comment line",
+    "body": [
+      "% ${1:TODO}"
+    ]
+  }
+}

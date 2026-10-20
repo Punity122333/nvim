@@ -1,0 +1,317 @@
+{
+  "jsonc_object": {
+    "prefix": ["jsoncobj"],
+    "description": "JSON with comments object and an inline comment",
+    "body": [
+      "{",
+      "  // The service name registered in the service registry",
+      "  \"name\": \"${1:my_service}\",",
+      "  \"version\": \"1.0.0\",",
+      "  \"enabled\": true",
+      "}"
+    ]
+  },
+
+  "jsonc_nested": {
+    "prefix": ["jsoncnest"],
+    "description": "JSON with comments nested objects",
+    "body": [
+      "{",
+      "  \"server\": {",
+      "    \"host\": \"localhost\",",
+      "    \"port\": 8080,",
+      "    // TLS is enabled only in staging and production",
+      "    \"tls\": {",
+      "      \"enabled\": true,",
+      "      \"cert_file\": \"/etc/ssl/server.pem\"",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "jsonc_array": {
+    "prefix": ["jsoncarr"],
+    "description": "JSON with comments array of objects",
+    "body": [
+      "[",
+      "  {",
+      "    \"id\": 1,",
+      "    \"name\": \"first item\"",
+      "  },",
+      "  {",
+      "    \"id\": 2,",
+      "    \"name\": \"second item\"",
+      "  },",
+      "]"
+    ]
+  },
+
+  "jsonc_empty": {
+    "prefix": ["jsoncempty"],
+    "description": "Empty object and empty array in a JSON with comments file",
+    "body": [
+      "{",
+      "  // Placeholders used while the schema is being written",
+      "  \"empty_object\": {},",
+      "  \"empty_array\": []",
+      "}"
+    ]
+  },
+
+  "jsonc_matrix": {
+    "prefix": ["jsoncmatrix"],
+    "description": "JSON with comments array of arrays",
+    "body": [
+      "{",
+      "  \"matrix\": [",
+      "    [1, 0],",
+      "    [0, 1]",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "jsonc_values": {
+    "prefix": ["jsoncvalues"],
+    "description": "JSON with comments string number boolean and null values",
+    "body": [
+      "{",
+      "  \"label\": \"${1:hello world}\",",
+      "  \"retries\": 3,",
+      "  \"enabled\": true,",
+      "  \"disabled\": false,",
+      "  \"parent_id\": null",
+      "}"
+    ]
+  },
+
+  "jsonc_comment_header": {
+    "prefix": ["jsonchdr"],
+    "description": "File header comment block on top of a config",
+    "body": [
+      "/*",
+      "  * Configuration for the billing service.",
+      "  * Keep it in sync with the deployment repository.",
+      "  */",
+      "{",
+      "  \"service\": \"billing\",",
+      "  \"region\": \"eu-central-1\"",
+      "}"
+    ]
+  },
+
+  "jsonc_line_comment": {
+    "prefix": ["jsoncline"],
+    "description": "Single line comment above a setting",
+    "body": [
+      "// TODO: rotate the signing key before the next release",
+      "{",
+      "  \"key_id\": \"key-2024-01\"",
+      "}"
+    ]
+  },
+
+  "jsonc_block_comment": {
+    "prefix": ["jsoncblock"],
+    "description": "Block comment explaining a single option",
+    "body": [
+      "/*",
+      "  * The timeout was raised from 3000 ms to 5000 ms",
+      "  * because the upstream service got slower.",
+      "  */",
+      "{",
+      "  \"timeout_ms\": 5000",
+      "}"
+    ]
+  },
+
+  "jsonc_commented_field": {
+    "prefix": ["jsoncfield"],
+    "description": "Setting with a trailing comment on the same line",
+    "body": [
+      "{",
+      "  \"name\": \"my_service\",",
+      "  \"timeout_ms\": 5000, // milliseconds before the request is aborted",
+      "  \"retries\": 3",
+      "}"
+    ]
+  },
+
+  "jsonc_commented_out_property": {
+    "prefix": ["jsoncdisabled"],
+    "description": "Property that is commented out and kept for later",
+    "body": [
+      "{",
+      "  \"name\": \"my_service\",",
+      "  // \"legacy_endpoint\": \"https://legacy.example.com\",",
+      "  \"endpoint\": \"https://api.example.com\"",
+      "}"
+    ]
+  },
+
+  "jsonc_commented_options": {
+    "prefix": ["jsoncopts"],
+    "description": "Commented out block of optional settings",
+    "body": [
+      "{",
+      "  // Optional overrides, enable them while tuning the cache",
+      "  // \"cache_ttl_seconds\": 60,",
+      "  // \"cache_size\": 1024,",
+      "  // \"prefetch\": true,",
+      "  \"cache_enabled\": false",
+      "}"
+    ]
+  },
+
+  "jsonc_trailing_comma": {
+    "prefix": ["jsonctrailing"],
+    "description": "Object and array using trailing commas",
+    "body": [
+      "{",
+      "  \"name\": \"my_service\",",
+      "  \"features\": [",
+      "    \"metrics\",",
+      "    \"tracing\",",
+      "  ],",
+      "  \"owner\": \"platform-team\",",
+      "}"
+    ]
+  },
+
+  "jsonc_key_with_comment": {
+    "prefix": ["jsonckey"],
+    "description": "Keys preceded by a comment describing their meaning",
+    "body": [
+      "{",
+      "  // How long to wait for a downstream response",
+      "  \"timeout_ms\": 5000,",
+      "  // How many times a failed request is retried",
+      "  \"retries\": 3,",
+      "  // Set to false to accept traffic on the passive port",
+      "  \"passive\": false",
+      "}"
+    ]
+  },
+
+  "jsonc_documented": {
+    "prefix": ["jsoncdoc"],
+    "description": "Configuration documented with doc comments",
+    "body": [
+      "{",
+      "  /**",
+      "    * The name of the service as registered in the service registry.",
+      "    */",
+      "  \"name\": \"${1:my_service}\",",
+      "  /**",
+      "    * The port the HTTP server binds to, 0 picks a free port.",
+      "    */",
+      "  \"port\": 8080,",
+      "  /**",
+      "    * Maximum number of requests handled concurrently.",
+      "    */",
+      "  \"max_concurrency\": 64",
+      "}"
+    ]
+  },
+
+  "jsonc_tsconfig": {
+    "prefix": ["jsonctsconfig"],
+    "description": "TypeScript tsconfig.json annotated with comments",
+    "body": [
+      "{",
+      "  \"compilerOptions\": {",
+      "    // Emit ES2022 compatible code",
+      "    \"target\": \"ES2022\",",
+      "    \"module\": \"ESNext\",",
+      "    \"moduleResolution\": \"bundler\",",
+      "    // Turn on every strict type check",
+      "    \"strict\": true,",
+      "    \"outDir\": \"dist\",",
+      "    \"sourceMap\": true",
+      "  },",
+      "  \"include\": [\"src\"],",
+      "  \"exclude\": [\"node_modules\", \"dist\"]",
+      "}"
+    ]
+  },
+
+  "jsonc_launch": {
+    "prefix": ["jsonclaunch"],
+    "description": "Debug launch configuration with comments",
+    "body": [
+      "{",
+      "  // Use \"debug\": true in launch.json to attach the debugger",
+      "  \"version\": \"0.2.0\",",
+      "  \"configurations\": [",
+      "    {",
+      "      \"type\": \"node\",",
+      "      \"request\": \"launch\",",
+      "      \"name\": \"Launch current file\",",
+      "      \"program\": \"\\${workspaceFolder}/${1:src/main.ts}\",",
+      "      \"skipFiles\": [\"<node_internals>/**\"],",
+      "      \"console\": \"integratedTerminal\"",
+      "    }",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "jsonc_settings": {
+    "prefix": ["jsoncsettings"],
+    "description": "Editor settings file with comments",
+    "body": [
+      "{",
+      "  // Workspace settings",
+      "  \"editor.formatOnSave\": true,",
+      "  \"editor.tabSize\": 2,",
+      "  \"editor.rulers\": [80, 120],",
+      "  \"files.exclude\": {",
+      "    \"**/.git\": true,",
+      "    \"**/dist\": true",
+      "  },",
+      "  \"search.exclude\": {",
+      "    \"**/node_modules\": true",
+      "  }",
+      "}"
+    ]
+  },
+
+  "jsonc_env": {
+    "prefix": ["jsoncenv"],
+    "description": "Environment configuration with explanatory comments",
+    "body": [
+      "{",
+      "  // Development environment variables",
+      "  \"APP_ENV\": \"development\",",
+      "  \"APP_PORT\": 3000,",
+      "  \"DATABASE_URL\": \"postgres://localhost:5432/app\",",
+      "  // Secrets are injected by the CI pipeline",
+      "  \"API_TOKEN\": \"${1:replace-me}\"",
+      "}"
+    ]
+  },
+
+  "jsonc_mixed": {
+    "prefix": ["jsoncmixed"],
+    "description": "Mixed config with comments trailing commas and every type",
+    "body": [
+      "{",
+      "  // Server settings",
+      "  \"server\": {",
+      "    \"host\": \"0.0.0.0\",",
+      "    \"port\": 8080,",
+      "  },",
+      "  // Feature flags",
+      "  \"features\": {",
+      "    \"metrics\": true,",
+      "    \"tracing\": false,",
+      "  },",
+      "  \"limits\": {",
+      "    \"max_body_bytes\": 1048576,",
+      "    \"max_connections\": 512,",
+      "  },",
+      "}"
+    ]
+  }
+}

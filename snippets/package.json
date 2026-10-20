@@ -2,12 +2,350 @@
   "name": "personal-snippets",
   "contributes": {
     "snippets": [
-      { "language": "python", "path": "./python.json" },
-      { "language": "rust", "path": "./rust.json" },
-      { "language": "cpp", "path": "./cpp.json" },
-      { "language": "javascript", "path": "./javascript.json" },
-      { "language": "html", "path": "./html.json" },
-      { "language": "css", "path": "./css.json" }
+      {
+        "language": "c",
+        "path": "./c.json"
+      },
+      {
+        "language": "cpp",
+        "path": "./cpp.json"
+      },
+      {
+        "language": "python",
+        "path": "./python.json"
+      },
+      {
+        "language": "rust",
+        "path": "./rust.json"
+      },
+      {
+        "language": "lua",
+        "path": "./lua.json"
+      },
+      {
+        "language": "go",
+        "path": "./go.json"
+      },
+      {
+        "language": "javascript",
+        "path": "./javascript.json"
+      },
+      {
+        "language": "typescript",
+        "path": "./typescript.json"
+      },
+      {
+        "language": ["tsx", "typescriptreact"],
+        "path": "./tsx.json"
+      },
+      {
+        "language": "java",
+        "path": "./java.json"
+      },
+      {
+        "language": "kotlin",
+        "path": "./kotlin.json"
+      },
+      {
+        "language": "scala",
+        "path": "./scala.json"
+      },
+      {
+        "language": "groovy",
+        "path": "./groovy.json"
+      },
+      {
+        "language": "clojure",
+        "path": "./clojure.json"
+      },
+      {
+        "language": "elixir",
+        "path": "./elixir.json"
+      },
+      {
+        "language": "erlang",
+        "path": "./erlang.json"
+      },
+      {
+        "language": "julia",
+        "path": "./julia.json"
+      },
+      {
+        "language": "haskell",
+        "path": "./haskell.json"
+      },
+      {
+        "language": "ocaml",
+        "path": "./ocaml.json"
+      },
+      {
+        "language": "fsharp",
+        "path": "./fsharp.json"
+      },
+      {
+        "language": ["csharp", "cs"],
+        "path": "./csharp.json"
+      },
+      {
+        "language": "swift",
+        "path": "./swift.json"
+      },
+      {
+        "language": "dart",
+        "path": "./dart.json"
+      },
+      {
+        "language": "nim",
+        "path": "./nim.json"
+      },
+      {
+        "language": "zig",
+        "path": "./zig.json"
+      },
+      {
+        "language": "r",
+        "path": "./r.json"
+      },
+      {
+        "language": "perl",
+        "path": "./perl.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./ruby.json"
+      },
+      {
+        "language": "php",
+        "path": "./php.json"
+      },
+      {
+        "language": "sh",
+        "path": "./sh.json"
+      },
+      {
+        "language": "zsh",
+        "path": "./zsh.json"
+      },
+      {
+        "language": "fish",
+        "path": "./fish.json"
+      },
+      {
+        "language": "ps1",
+        "path": "./ps1.json"
+      },
+      {
+        "language": "vim",
+        "path": "./vim.json"
+      },
+      {
+        "language": "sql",
+        "path": "./sql.json"
+      },
+      {
+        "language": "proto",
+        "path": "./proto.json"
+      },
+      {
+        "language": "graphql",
+        "path": "./graphql.json"
+      },
+      {
+        "language": "yaml",
+        "path": "./yaml.json"
+      },
+      {
+        "language": "toml",
+        "path": "./toml.json"
+      },
+      {
+        "language": ["ini", "dosini"],
+        "path": "./ini.json"
+      },
+      {
+        "language": "make",
+        "path": "./make.json"
+      },
+      {
+        "language": "cmake",
+        "path": "./cmake.json"
+      },
+      {
+        "language": "dockerfile",
+        "path": "./dockerfile.json"
+      },
+      {
+        "language": "terraform",
+        "path": "./terraform.json"
+      },
+      {
+        "language": "json",
+        "path": "./json.json"
+      },
+      {
+        "language": "jsonc",
+        "path": "./jsonc.json"
+      },
+      {
+        "language": "xml",
+        "path": "./xml.json"
+      },
+      {
+        "language": "markdown",
+        "path": "./markdown.json"
+      },
+      {
+        "language": "vue",
+        "path": "./vue.json"
+      },
+      {
+        "language": "svelte",
+        "path": "./svelte.json"
+      },
+      {
+        "language": "scss",
+        "path": "./scss.json"
+      },
+      {
+        "language": "sass",
+        "path": "./sass.json"
+      },
+      {
+        "language": "css",
+        "path": "./css.json"
+      },
+      {
+        "language": "html",
+        "path": "./html.json"
+      },
+      {
+        "language": "tex",
+        "path": "./tex.json"
+      },
+      {
+        "language": "bib",
+        "path": "./bib.json"
+      },
+      {
+        "language": "rst",
+        "path": "./rst.json"
+      },
+      {
+        "language": "org",
+        "path": "./org.json"
+      },
+      {
+        "language": "asm",
+        "path": "./asm.json"
+      },
+      {
+        "language": ["wasm", "wat"],
+        "path": "./wasm.json"
+      },
+      {
+        "language": "objc",
+        "path": "./objc.json"
+      },
+      {
+        "language": "pascal",
+        "path": "./pascal.json"
+      },
+      {
+        "language": "nix",
+        "path": "./nix.json"
+      },
+      {
+        "language": "solidity",
+        "path": "./solidity.json"
+      },
+      {
+        "language": "elm",
+        "path": "./elm.json"
+      },
+      {
+        "language": "crystal",
+        "path": "./crystal.json"
+      },
+      {
+        "language": "gleam",
+        "path": "./gleam.json"
+      },
+      {
+        "language": "odin",
+        "path": "./odin.json"
+      },
+      {
+        "language": "roc",
+        "path": "./roc.json"
+      },
+      {
+        "language": "awk",
+        "path": "./awk.json"
+      },
+      {
+        "language": "dosbatch",
+        "path": "./dosbatch.json"
+      },
+      {
+        "language": "matlab",
+        "path": "./matlab.json"
+      },
+      {
+        "language": "glsl",
+        "path": "./glsl.json"
+      },
+      {
+        "language": "nginx",
+        "path": "./nginx.json"
+      },
+      {
+        "language": "rego",
+        "path": "./rego.json"
+      },
+      {
+        "language": "jsonnet",
+        "path": "./jsonnet.json"
+      },
+      {
+        "language": "cue",
+        "path": "./cue.json"
+      },
+      {
+        "language": "less",
+        "path": "./less.json"
+      },
+      {
+        "language": "fortran",
+        "path": "./fortran.json"
+      },
+      {
+        "language": "lisp",
+        "path": "./lisp.json"
+      },
+      {
+        "language": "scheme",
+        "path": "./scheme.json"
+      },
+      {
+        "language": "racket",
+        "path": "./racket.json"
+      },
+      {
+        "language": "hcl",
+        "path": "./hcl.json"
+      },
+      {
+        "language": "liquid",
+        "path": "./liquid.json"
+      },
+      {
+        "language": "prisma",
+        "path": "./prisma.json"
+      },
+      {
+        "language": "bzl",
+        "path": "./bzl.json"
+      }
     ]
   }
 }

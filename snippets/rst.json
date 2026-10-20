@@ -1,0 +1,198 @@
+{
+  "document_title": {
+    "prefix": ["doctitle"],
+    "description": "Document title with an overline and a contents directive",
+    "body": [
+      "========================",
+      "${1:Project Handbook}",
+      "========================",
+      "",
+      ".. contents:: Table of Contents",
+      "  :local:"
+    ]
+  },
+
+  "section_heading": {
+    "prefix": ["section"],
+    "description": "Section heading underlined with equals signs",
+    "body": [
+      "Introduction",
+      "============"
+    ]
+  },
+
+  "subsection_heading": {
+    "prefix": ["subsection"],
+    "description": "Subsection heading underlined with dashes",
+    "body": [
+      "Getting Started",
+      "---------------"
+    ]
+  },
+
+  "bullet_list": {
+    "prefix": ["bulletlist"],
+    "description": "Unordered list of bullet points",
+    "body": [
+      "- ${1:Install the dependencies}",
+      "- ${2:Run the test suite}",
+      "- ${3:Open the report in your browser}"
+    ]
+  },
+
+  "enumerated_list": {
+    "prefix": ["numlist"],
+    "description": "Ordered list with explicit numbers",
+    "body": [
+      "1. ${1:Install the dependencies}",
+      "2. ${2:Run the test suite}",
+      "3. ${3:Open the report in your browser}"
+    ]
+  },
+
+  "definition_list": {
+    "prefix": ["deflist"],
+    "description": "List of terms with their definitions",
+    "body": [
+      "${1:Configuration file}",
+      "  The file that stores the runtime settings of the service.",
+      "",
+      "${2:Build target}",
+      "  The target used by the continuous integration job to compile the project."
+    ]
+  },
+
+  "literal_block": {
+    "prefix": ["literal"],
+    "description": "Literal block of preformatted text",
+    "body": [
+      "::",
+      "",
+      "  ${1:Raw output copied from the terminal}"
+    ]
+  },
+
+  "code_block": {
+    "prefix": ["codeblock"],
+    "description": "Code block directive with a language and highlighted source",
+    "body": [
+      ".. code-block:: python",
+      "",
+      "  <<1:def main() -> None:>>",
+      "    print(\"hello world\")"
+    ]
+  },
+
+  "doctest_block": {
+    "prefix": ["doctest"],
+    "description": "Doctest block with the expected output",
+    "body": [
+      ">>> ${1:print(\"hello world\")}",
+      "hello world"
+    ]
+  },
+
+  "block_quote": {
+    "prefix": ["blockquote"],
+    "description": "Indented block quote with an attribution line",
+    "body": [
+      "  ${1:Quoted text from the design review.}",
+      "",
+      "  -- ${2:Jane Doe, Lead Engineer}"
+    ]
+  },
+
+  "grid_table": {
+    "prefix": ["table"],
+    "description": "Grid table with two columns and a header row",
+    "body": [
+      "=====  =====",
+      "Col 1  Col 2",
+      "=====  =====",
+      "alpha  beta",
+      "=====  ====="
+    ]
+  },
+
+  "field_list": {
+    "prefix": ["fieldlist"],
+    "description": "Field list with names and values",
+    "body": [
+      ":Author: ${1:Jane Doe}",
+      ":Version: ${2:1.4}",
+      ":Date: ${3:2024-05-14}"
+    ]
+  },
+
+  "note_directive": {
+    "prefix": ["note"],
+    "description": "Note admonition directive",
+    "body": [
+      ".. note::",
+      "",
+      "  ${1:Restart the daemon after changing the configuration.}"
+    ]
+  },
+
+  "warning_directive": {
+    "prefix": ["warning"],
+    "description": "Warning admonition directive",
+    "body": [
+      ".. warning::",
+      "",
+      "  ${1:Running this migration on the production data is irreversible.}"
+    ]
+  },
+
+  "hyperlink": {
+    "prefix": ["link"],
+    "description": "External hyperlink with an anonymous label",
+    "body": ["`${1:Project documentation} <https://example.com/docs>`_"]
+  },
+
+  "image": {
+    "prefix": ["image"],
+    "description": "Image directive with alternative text and a width",
+    "body": [
+      ".. image:: ${1:images/architecture.png}",
+      "  :alt: ${2:System architecture}",
+      "  :width: 640px"
+    ]
+  },
+
+  "footnote": {
+    "prefix": ["footnote"],
+    "description": "Named footnote reference and its footnote text",
+    "body": [
+      "See the deployment guide for the full checklist[#deploy].",
+      "",
+      ".. [#deploy] The deployment guide lives in docs/deployment.md."
+    ]
+  },
+
+  "citation": {
+    "prefix": ["citation"],
+    "description": "Citation reference and the matching bibliography entry",
+    "body": [
+      "The caching strategy follows the original design [KNUTH1984]_.",
+      "",
+      ".. [KNUTH1984] D. E. Knuth. The TeXbook. Addison-Wesley, 1984."
+    ]
+  },
+
+  "comment": {
+    "prefix": ["comment"],
+    "description": "Comment paragraph that is not rendered",
+    "body": [".. This paragraph is a comment and is not part of the rendered output."]
+  },
+
+  "math_directive": {
+    "prefix": ["math"],
+    "description": "Math directive with a LaTeX formula",
+    "body": [
+      ".. math::",
+      "",
+      "  ${1:E = mc^2}"
+    ]
+  }
+}

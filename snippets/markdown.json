@@ -1,0 +1,246 @@
+{
+  "md_document": {
+    "prefix": ["mddoc"],
+    "description": "README style document header with intro and features",
+    "body": [
+      "# ${1:Project Name}",
+      "",
+      "One paragraph describing what the project does and who it is for.",
+      "",
+      "## Features",
+      "",
+      "- Fast and predictable",
+      "- Easy to configure",
+      "- Well documented",
+      "",
+      "## License",
+      "",
+      "Released under the MIT license."
+    ]
+  },
+
+  "md_heading": {
+    "prefix": ["mdheading"],
+    "description": "ATX and setext style headings",
+    "body": [
+      "# Top level heading",
+      "",
+      "## Second level heading",
+      "",
+      "### Third level heading",
+      "",
+      "Setext heading",
+      "==============",
+      "",
+      "Another setext heading",
+      "----------------------"
+    ]
+  },
+
+  "md_emphasis": {
+    "prefix": ["mdemph"],
+    "description": "Bold italic strikethrough and superscript inline styles",
+    "body": [
+      "**bold text**, *italic text*, ***bold italic***, ~~strikethrough~~, H~2~O, x^2^."
+    ]
+  },
+
+  "md_fenced_code": {
+    "prefix": ["mdfence"],
+    "description": "Fenced code block with a language and a titled variant",
+    "body": [
+      "```python",
+      "def greet(name: str) -> None:",
+      "    print(f\"Hello, {name}!\")",
+      "```",
+      "",
+      "```sh title=\"run.sh\"",
+      "echo \"hello\"",
+      "```"
+    ]
+  },
+
+  "md_inline_code": {
+    "prefix": ["mdinline"],
+    "description": "Inline code span for identifiers and commands",
+    "body": [
+      "Use `inline code` for identifiers such as `parse_config()` and for commands such",
+      "as `npm install`. Inline code keeps the formatting of the surrounding text."
+    ]
+  },
+
+  "md_links": {
+    "prefix": ["mdlinks"],
+    "description": "Inline link, image and reference style link",
+    "body": [
+      "[Link text](https://example.com)",
+      "",
+      "![Alt text](https://example.com/image.png)",
+      "",
+      "[Reference link][ref]",
+      "",
+      "[ref]: https://example.com/reference"
+    ]
+  },
+
+  "md_list": {
+    "prefix": ["mdlist"],
+    "description": "Unordered bulleted list",
+    "body": [
+      "- First item",
+      "- Second item",
+      "- Third item"
+    ]
+  },
+
+  "md_ordered_list": {
+    "prefix": ["mdordered"],
+    "description": "Ordered numbered list",
+    "body": [
+      "1. First step",
+      "2. Second step",
+      "3. Third step"
+    ]
+  },
+
+  "md_nested_list": {
+    "prefix": ["mdnested"],
+    "description": "Nested bullet list with two levels",
+    "body": [
+      "- Top level item",
+      "  - Second level item",
+      "    - Third level item",
+      "- Back to the top level"
+    ]
+  },
+
+  "md_task_list": {
+    "prefix": ["mdtask"],
+    "description": "Checklist with done and pending items",
+    "body": [
+      "- [ ] Write the tests",
+      "- [x] Implement the parser",
+      "- [ ] Update the documentation"
+    ]
+  },
+
+  "md_blockquote": {
+    "prefix": ["mdquote"],
+    "description": "Blockquote with an attribution line",
+    "body": [
+      "> Simplicity is the soul of efficiency.",
+      ">",
+      "> -- Austin Freeman"
+    ]
+  },
+
+  "md_table": {
+    "prefix": ["mdtable"],
+    "description": "Markdown table with a header row",
+    "body": [
+      "| Option | Type | Default | Description |",
+      "| ------ | ---- | ------- | ----------- |",
+      "| host | string | localhost | Interface the server binds to |",
+      "| port | number | 8080 | Port the server listens on |"
+    ]
+  },
+
+  "md_horizontal_rule": {
+    "prefix": ["mdrule"],
+    "description": "Horizontal rule in both common markdown styles",
+    "body": [
+      "* * *",
+      "",
+      "---"
+    ]
+  },
+
+  "md_footnote": {
+    "prefix": ["mdfootnote"],
+    "description": "Footnote reference and its definition",
+    "body": [
+      "Some text with a footnote reference.[^1]",
+      "",
+      "[^1]: The footnote body explains the detail in full."
+    ]
+  },
+
+  "md_definition_list": {
+    "prefix": ["mddeflist"],
+    "description": "Definition list of terms and descriptions",
+    "body": [
+      "Term",
+      ": Definition of the term",
+      "",
+      "Another term",
+      ": Its definition goes here"
+    ]
+  },
+
+  "md_details": {
+    "prefix": ["mddetails"],
+    "description": "Collapsible details and summary block",
+    "body": [
+      "<details>",
+      "<summary>Click to expand</summary>",
+      "",
+      "Hidden content goes here.",
+      "",
+      "</details>"
+    ]
+  },
+
+  "md_toc": {
+    "prefix": ["mdtoc"],
+    "description": "Table of contents with anchor links",
+    "body": [
+      "## Table of Contents",
+      "",
+      "- [Installation](#installation)",
+      "- [Configuration](#configuration)",
+      "- [Usage](#usage)",
+      "- [Contributing](#contributing)"
+    ]
+  },
+
+  "md_callout": {
+    "prefix": ["mdcallout"],
+    "description": "GitHub style callout or admonition block",
+    "body": [
+      "> [!NOTE]",
+      "> Useful information that users should know, even when skimming the content."
+    ]
+  },
+
+  "md_front_matter": {
+    "prefix": ["mdfront"],
+    "description": "YAML front matter block for static site generators",
+    "body": [
+      "---",
+      "title: ${1:Post title}",
+      "date: 2024-05-01",
+      "tags:",
+      "  - neovim",
+      "  - snippets",
+      "draft: false",
+      "---"
+    ]
+  },
+
+  "md_diagram": {
+    "prefix": ["mddiagram"],
+    "description": "Mermaid flowchart and a math block",
+    "body": [
+      "```mermaid",
+      "graph TD",
+      "  A[Start] --> B{Decision}",
+      "  B -->|yes| C[Done]",
+      "  B -->|no| A",
+      "```",
+      "",
+      "\\$\\$",
+      "E = mc^2",
+      "\\$\\$"
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "jsonnet_object": {
+    "prefix": ["jsonnetobj", "object"],
+    "description": "Jsonnet object with a local binding",
+    "body": [
+      "{",
+      "  local ${1:name} = \"${2:value}\",",
+      "  ${3:key}: ${1:name},",
+      "}"
+    ]
+  },
+
+  "jsonnet_local": {
+    "prefix": ["local"],
+    "description": "Local variable binding",
+    "body": [
+      "local ${1:name} = ${2:value};"
+    ]
+  },
+
+  "jsonnet_function": {
+    "prefix": ["jsonnetfn", "function"],
+    "description": "Local function with a default argument",
+    "body": [
+      "local ${1:name}(${2:arg}=${3:default}) = ${4:arg};",
+      "${1:name}()"
+    ]
+  },
+
+  "jsonnet_import": {
+    "prefix": ["import"],
+    "description": "Import another jsonnet file",
+    "body": [
+      "local ${1:lib} = import \"${2:./lib.libsonnet}\";",
+      "${1:lib}"
+    ]
+  },
+
+  "jsonnet_comprehension": {
+    "prefix": ["comprehension"],
+    "description": "Array comprehension with a filter",
+    "body": [
+      "[{ ${1:key}: ${2:value} } for ${2:value} in ${3:values} if ${4:condition}]"
+    ]
+  },
+
+  "jsonnet_if": {
+    "prefix": ["jsonnetif"],
+    "description": "Conditional expression",
+    "body": [
+      "if ${1:condition} then ${2:value1} else ${3:value2}"
+    ]
+  },
+
+  "jsonnet_assert": {
+    "prefix": ["assert"],
+    "description": "Assertion that must hold for the object to be built",
+    "body": [
+      "assert ${1:condition} : \"${2:the condition must hold}\";"
+    ]
+  },
+
+  "jsonnet_error": {
+    "prefix": ["error"],
+    "description": "Fail with an explicit error message",
+    "body": [
+      "error \"${1:something went wrong}\""
+    ]
+  },
+
+  "jsonnet_hidden_field": {
+    "prefix": ["hidden"],
+    "description": "Hidden field that is not part of the output",
+    "body": [
+      "${1:hidden}:: ${2:value},"
+    ]
+  },
+
+  "jsonnet_array": {
+    "prefix": ["jsonnetarr"],
+    "description": "Array literal",
+    "body": [
+      "[${1:first}, ${2:second}]"
+    ]
+  },
+
+  "jsonnet_extends": {
+    "prefix": ["extends"],
+    "description": "Inherit the fields of another object",
+    "body": [
+      "local ${1:base} = { ${2:field}: ${3:value} };",
+      "${1:base} + { ${4:extra}: ${5:value} }"
+    ]
+  },
+
+  "jsonnet_manifest": {
+    "prefix": ["manifest"],
+    "description": "Manifest yaml with the kustomize configuration",
+    "body": [
+      "{",
+      "  apiVersion: \"${1:apps/v1}\",",
+      "  kind: \"${2:Deployment}\",",
+      "  metadata: { name: \"${3:myapp}\" },",
+      "}"
+    ]
+  }
+}

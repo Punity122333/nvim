@@ -1,0 +1,231 @@
+{
+  "key_value": {
+    "prefix": ["keyval", "kv"],
+    "description": "TOML key and value pairs",
+    "body": [
+      "name = \"acme-service\"",
+      "version = \"1.4.0\""
+    ]
+  },
+
+  "string": {
+    "prefix": ["string", "str"],
+    "description": "TOML basic quoted string values",
+    "body": [
+      "title = \"Orders API\"",
+      "path = \"/v1/orders\""
+    ]
+  },
+
+  "multiline_string": {
+    "prefix": ["mlstring", "heredoc"],
+    "description": "TOML multi line basic string",
+    "body": [
+      "description = \"\"\"",
+      "First line of the description.",
+      "Second line of the description.",
+      "\"\"\""
+    ]
+  },
+
+  "literal_string": {
+    "prefix": ["litstring", "rawstring"],
+    "description": "TOML literal string keeping the text exactly as written",
+    "body": ["pattern = '''C:\\\\Users\\\\acme\\\\.*'''"]
+  },
+
+  "integer": {
+    "prefix": ["integer", "int"],
+    "description": "TOML integer values in several notations",
+    "body": [
+      "port = 8080",
+      "offset = -17",
+      "big = 1_000_000",
+      "mask = 0xFF"
+    ]
+  },
+
+  "float": {
+    "prefix": ["float", "num"],
+    "description": "TOML floating point values",
+    "body": [
+      "ratio = 0.75",
+      "threshold = 5e-3",
+      "negative = -2.5"
+    ]
+  },
+
+  "boolean": {
+    "prefix": ["boolean", "bool"],
+    "description": "TOML boolean values",
+    "body": [
+      "enabled = true",
+      "verbose = false"
+    ]
+  },
+
+  "dates": {
+    "prefix": ["dates", "datetime"],
+    "description": "TOML date, time and timestamp values",
+    "body": [
+      "started_at = 2024-01-15T09:30:00Z",
+      "local_time = 2024-01-15T09:30:00",
+      "release_date = 2024-01-15",
+      "daily_run = 09:30:00"
+    ]
+  },
+
+  "array": {
+    "prefix": ["array", "arr"],
+    "description": "TOML arrays of strings and numbers",
+    "body": [
+      "features = [\"metrics\", \"tracing\", \"rate-limiting\"]",
+      "ports = [8000, 8001, 8002]"
+    ]
+  },
+
+  "inline_table": {
+    "prefix": ["intable", "inlinetable"],
+    "description": "TOML inline table used as a value",
+    "body": ["server = { host = \"localhost\", port = 8080, tls = false }"]
+  },
+
+  "table": {
+    "prefix": ["table", "tbl"],
+    "description": "TOML table with its own set of keys",
+    "body": [
+      "[server]",
+      "host = \"localhost\"",
+      "port = 8080"
+    ]
+  },
+
+  "array_of_tables": {
+    "prefix": ["arroftables", "products"],
+    "description": "TOML array of tables for repeated records",
+    "body": [
+      "[[products]]",
+      "name = \"Widget\"",
+      "price = 19.99",
+      "",
+      "[[products]]",
+      "name = \"Gadget\"",
+      "price = 29.99"
+    ]
+  },
+
+  "nested_table": {
+    "prefix": ["subtable", "nesttable"],
+    "description": "TOML sub table declared with a dotted header",
+    "body": [
+      "[server.tls]",
+      "enabled = true",
+      "cert_file = \"/etc/ssl/server.crt\""
+    ]
+  },
+
+  "dotted_key": {
+    "prefix": ["dotted", "dotkey"],
+    "description": "TOML dotted keys building a table inline",
+    "body": [
+      "database.host = \"localhost\"",
+      "database.port = 5432",
+      "database.pool.size = 10"
+    ]
+  },
+
+  "multiline_array": {
+    "prefix": ["mlarray", "marray"],
+    "description": "TOML array spread over several lines",
+    "body": [
+      "include = [",
+      "  \"src/**/*.ts\",",
+      "  \"src/**/*.tsx\",",
+      "  \"test/**/*.spec.ts\",",
+      "]"
+    ]
+  },
+
+  "comment_block": {
+    "prefix": ["comments", "comment"],
+    "description": "TOML comment block describing a file",
+    "body": [
+      "# Build configuration",
+      "# ----------------",
+      "# Run `cargo build --release` to produce",
+      "# an optimised binary in target/release."
+    ]
+  },
+
+  "cargo_package": {
+    "prefix": ["cargo", "cargopkg"],
+    "description": "Cargo.toml package and dependency sections",
+    "body": [
+      "[package]",
+      "name = \"acme-service\"",
+      "version = \"0.4.0\"",
+      "edition = \"2021\"",
+      "rust-version = \"1.74\"",
+      "description = \"Internal service that processes orders\"",
+      "license = \"MIT\"",
+      "",
+      "[dependencies]",
+      "serde = { version = \"1.0\", features = [\"derive\"] }",
+      "tokio = { version = \"1\", features = [\"full\"] }"
+    ]
+  },
+
+  "pyproject": {
+    "prefix": ["pyproject", "pyp"],
+    "description": "pyproject.toml project and tool sections",
+    "body": [
+      "[project]",
+      "name = \"acme-service\"",
+      "version = \"0.4.0\"",
+      "description = \"Internal service for order processing\"",
+      "requires-python = \">=3.11\"",
+      "dependencies = [",
+      "  \"fastapi>=0.110\",",
+      "  \"pydantic>=2.6\",",
+      "]",
+      "",
+      "[tool.ruff]",
+      "line-length = 100",
+      "target-version = \"py311\""
+    ]
+  },
+
+  "array_of_inline_tables": {
+    "prefix": ["arrofintables", "hosts"],
+    "description": "TOML array holding several inline tables",
+    "body": [
+      "servers = [",
+      "  { host = \"alpha.internal\", port = 8080 },",
+      "  { host = \"beta.internal\", port = 8081 },",
+      "]"
+    ]
+  },
+
+  "config_file": {
+    "prefix": ["config", "conf"],
+    "description": "TOML configuration file with nested application sections",
+    "body": [
+      "[app]",
+      "name = \"acme-service\"",
+      "log_level = \"info\"",
+      "tags = []",
+      "",
+      "[app.http]",
+      "host = \"0.0.0.0\"",
+      "port = 8080",
+      "timeout = 30",
+      "",
+      "[app.database]",
+      "host = \"localhost\"",
+      "port = 5432",
+      "pool_size = 10",
+      "",
+      "[app.features]"
+    ]
+  }
+}

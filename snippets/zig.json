@@ -1,0 +1,285 @@
+{
+  "zig_main": {
+    "prefix": ["main"],
+    "description": "Program entry point that iterates over the arguments",
+    "body": [
+      "pub fn main() !void {",
+      "  var args = std.process.args();",
+      "  _ = args.next();",
+      "",
+      "  while (args.next()) |arg| {",
+      "    std.debug.print(\"arg: {s}\\\\n\", .{arg});",
+      "  }",
+      "}"
+    ]
+  },
+
+  "zig_function": {
+    "prefix": ["fn"],
+    "description": "Function with a doc comment and a return value",
+    "body": [
+      "/// Adds two numbers and returns the sum.",
+      "fn ${1:add}(a: i32, b: i32) i32 {",
+      "  return a + b;",
+      "}"
+    ]
+  },
+
+  "zig_struct": {
+    "prefix": ["struct"],
+    "description": "Struct with fields and a method",
+    "body": [
+      "const ${1:Point} = struct {",
+      "  x: f64,",
+      "  y: f64,",
+      "",
+      "  pub fn distance(self: Point, other: Point) f64 {",
+      "    const dx = self.x - other.x;",
+      "    const dy = self.y - other.y;",
+      "    return @sqrt(dx * dx + dy * dy);",
+      "  }",
+      "};"
+    ]
+  },
+
+  "zig_union": {
+    "prefix": ["union"],
+    "description": "Union holding one of several possible value types",
+    "body": [
+      "const ${1:Value} = union {",
+      "  int: i64,",
+      "  float: f64,",
+      "  text: []const u8,",
+      "};"
+    ]
+  },
+
+  "zig_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a method that switches over its cases",
+    "body": [
+      "const ${1:Color} = enum {",
+      "  red,",
+      "  green,",
+      "  blue,",
+      "",
+      "  pub fn label(self: Color) []const u8 {",
+      "    return switch (self) {",
+      "      .red => \"red\",",
+      "      .green => \"green\",",
+      "      .blue => \"blue\",",
+      "    };",
+      "  }",
+      "};"
+    ]
+  },
+
+  "zig_optional": {
+    "prefix": ["optional"],
+    "description": "Function returning an optional value or null",
+    "body": [
+      "const Account = struct {",
+      "  id: u32,",
+      "  name: []const u8,",
+      "};",
+      "",
+      "fn ${1:findUser}(accounts: []const Account, id: u32) ?Account {",
+      "  for (accounts) |account| {",
+      "    if (account.id == id) {",
+      "      return account;",
+      "    }",
+      "  }",
+      "  return null;",
+      "}"
+    ]
+  },
+
+  "zig_error_union": {
+    "prefix": ["errunion"],
+    "description": "Function returning an error union",
+    "body": [
+      "fn ${1:parseNumber}(text: []const u8) !i64 {",
+      "  return std.fmt.parseInt(i64, text, 10);",
+      "}"
+    ]
+  },
+
+  "zig_pointer": {
+    "prefix": ["ptr"],
+    "description": "Function mutating a value through a pointer",
+    "body": [
+      "fn ${1:increment}(counter: *u32) void {",
+      "  counter.* += 1;",
+      "}"
+    ]
+  },
+
+  "zig_slice": {
+    "prefix": ["slice"],
+    "description": "Function iterating over a slice of values",
+    "body": [
+      "fn ${1:sum}(values: []const i32) i32 {",
+      "  var total: i32 = 0;",
+      "  for (values) |value| {",
+      "    total += value;",
+      "  }",
+      "  return total;",
+      "}"
+    ]
+  },
+
+  "zig_array": {
+    "prefix": ["array"],
+    "description": "Anonymous array literal indexed by position",
+    "body": [
+      "const ${1:DefaultPorts} = [_]u16{ 8080, 8443, 3000 };",
+      "",
+      "fn ${2:portAt}(index: usize) u16 {",
+      "  return DefaultPorts[index];",
+      "}"
+    ]
+  },
+
+  "zig_comptime_block": {
+    "prefix": ["comptime"],
+    "description": "Comptime block computing a constant value",
+    "body": [
+      "const ${1:ByteSize} = comptime blk: {",
+      "  var size: usize = 0;",
+      "  for (\"hello\") |_| {",
+      "    size += 1;",
+      "  }",
+      "  break :blk size;",
+      "};"
+    ]
+  },
+
+  "zig_generic_function": {
+    "prefix": ["genericfn"],
+    "description": "Generic function taking a comptime type parameter",
+    "body": [
+      "fn ${1:max}(comptime T: type, a: T, b: T) T {",
+      "  return if (a > b) a else b;",
+      "}"
+    ]
+  },
+
+  "zig_comptime_parameter": {
+    "prefix": ["comptimeparam"],
+    "description": "Function whose array length is a comptime parameter",
+    "body": [
+      "fn ${1:createBuffer}(comptime size: usize) [size]u8 {",
+      "  return [_]u8{0} ** size;",
+      "}"
+    ]
+  },
+
+  "zig_defer": {
+    "prefix": ["defer"],
+    "description": "Defer blocks that always run when the scope exits",
+    "body": [
+      "fn ${1:process}(allocator: std.mem.Allocator) !void {",
+      "  var file = try std.fs.cwd().openFile(\"data.txt\", .{});",
+      "  defer file.close();",
+      "",
+      "  const contents = try file.readToEndAlloc(allocator, 1024 * 1024);",
+      "  defer allocator.free(contents);",
+      "",
+      "  std.debug.print(\"{d} bytes read\\\\n\", .{contents.len});",
+      "}"
+    ]
+  },
+
+  "zig_errdefer": {
+    "prefix": ["errdefer"],
+    "description": "Errdefer block that frees memory on the error path",
+    "body": [
+      "fn ${1:copyFile}(allocator: std.mem.Allocator) !void {",
+      "  const data = try allocator.alloc(u8, 1024);",
+      "  errdefer allocator.free(data);",
+      "",
+      "  var file = try std.fs.cwd().createFile(\"out.bin\", .{});",
+      "  defer file.close();",
+      "",
+      "  try file.writeAll(data);",
+      "}"
+    ]
+  },
+
+  "zig_catch": {
+    "prefix": ["catch"],
+    "description": "Catch block replacing the errors of a call",
+    "body": [
+      "fn ${1:parsePort}(text: []const u8) !u16 {",
+      "  return std.fmt.parseInt(u16, text, 10) catch {",
+      "    error.Overflow => 8080,",
+      "    error.InvalidCharacter => 8080,",
+      "  };",
+      "}"
+    ]
+  },
+
+  "zig_test_block": {
+    "prefix": ["test"],
+    "description": "Unit test blocks using the testing helpers",
+    "body": [
+      "test \"basic arithmetic\" {",
+      "  try std.testing.expectEqual(4, 2 + 2);",
+      "}",
+      "",
+      "test \"string comparison\" {",
+      "  try std.testing.expect(std.mem.eql(u8, \"abc\", \"abc\"));",
+      "}"
+    ]
+  },
+
+  "zig_allocator": {
+    "prefix": ["allocator"],
+    "description": "Function allocating a buffer from an allocator",
+    "body": [
+      "fn ${1:allocateBuffer}(allocator: std.mem.Allocator, size: usize) ![]u8 {",
+      "  const buffer = try allocator.alloc(u8, size);",
+      "  @memset(buffer, 0);",
+      "  return buffer;",
+      "}"
+    ]
+  },
+
+  "zig_linked_list": {
+    "prefix": ["linkedlist"],
+    "description": "Singly linked list built from a node with an optional pointer",
+    "body": [
+      "const ${1:Node} = struct {",
+      "  value: i32,",
+      "  next: ?*Node,",
+      "};",
+      "",
+      "fn ${2:push}(list: *?*Node, value: i32) !void {",
+      "  const node = try std.heap.page_allocator.create(Node);",
+      "  node.* = .{ .value = value, .next = list.* };",
+      "  list.* = node;",
+      "}"
+    ]
+  },
+
+  "zig_hash_map": {
+    "prefix": ["hashmap"],
+    "description": "Counting words with a string hash map",
+    "body": [
+      "fn ${1:countWords}(text: []const u8) !usize {",
+      "  var counts = std.StringHashMap(usize).init(std.heap.page_allocator);",
+      "  defer counts.deinit();",
+      "",
+      "  var it = std.mem.tokenizeAny(u8, text, \" \\\\t\\\\n\");",
+      "  while (it.next()) |word| {",
+      "    const entry = try counts.getOrPut(word);",
+      "    if (!entry.found_existing) {",
+      "      entry.value_ptr.* = 0;",
+      "    }",
+      "    entry.value_ptr.* += 1;",
+      "  }",
+      "  return counts.count();",
+      "}"
+    ]
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "pl_script_header": {
+    "prefix": ["script", "shebang"],
+    "description": "Perl script header with strict, warnings and say",
+    "body": [
+      "#!/usr/bin/env perl",
+      "use strict;",
+      "use warnings;",
+      "use feature 'say';",
+      "",
+      "say \"Hello, world!\";"
+    ]
+  },
+
+  "pl_subroutine": {
+    "prefix": ["sub", "subr"],
+    "description": "Subroutine that takes a list and an options hash",
+    "body": [
+      "sub total_price {",
+      "  my (\\$items, %options) = @_;",
+      "  my \\$discount = \\$options{discount} // 0;",
+      "  my \\$subtotal = 0;",
+      "",
+      "  for my \\$item (@\\$items) {",
+      "    \\$subtotal += \\$item->{price} * \\$item->{qty};",
+      "  }",
+      "",
+      "  return sprintf('%.2f', \\$subtotal * (1 - \\$discount));",
+      "}"
+    ]
+  },
+
+  "pl_hash": {
+    "prefix": ["hash", "hashref"],
+    "description": "Declare a hash with nested array values",
+    "body": [
+      "my %config = (",
+      "  host    => 'localhost',",
+      "  port    => 5432,",
+      "  timeout => 30,",
+      "  tags    => ['api', 'primary'],",
+      ");"
+    ]
+  },
+
+  "pl_array": {
+    "prefix": ["array", "arr"],
+    "description": "Array of file paths and a derived list of sizes",
+    "body": [
+      "my @files = glob('data/*.csv');",
+      "my @sizes = map { -s \\$_ } @files;",
+      "",
+      "my \\$total = 0;",
+      "\\$total += \\$_ for @sizes;"
+    ]
+  },
+
+  "pl_nested_hash": {
+    "prefix": ["nesthash", "hashofhashes"],
+    "description": "Hash of hashes and a loop over its keys",
+    "body": [
+      "my %users = (",
+      "  alice => { email => 'alice@example.com', role => 'admin' },",
+      "  bob   => { email => 'bob@example.com',   role => 'editor' },",
+      ");",
+      "",
+      "for my \\$name (sort keys %users) {",
+      "  printf(\"%s <%s> [%s]\\\\n\", \\$name, \\$users{\\$name}{email}, \\$users{\\$name}{role});",
+      "}"
+    ]
+  },
+
+  "pl_loop": {
+    "prefix": ["loop", "foreach"],
+    "description": "Loop over files and read them line by line",
+    "body": [
+      "for my \\$file (@files) {",
+      "  next unless -f \\$file;",
+      "",
+      "  open my \\$fh, '<', \\$file or die \"Cannot open \\$file: \\$!\";",
+      "  while (my \\$line = <\\$fh>) {",
+      "    chomp \\$line;",
+      "    next if \\$line =~ /^\\\\s*\\$/;",
+      "    print \"\\$line\\\\n\";",
+      "  }",
+      "  close \\$fh;",
+      "}"
+    ]
+  },
+
+  "pl_regex_substitution": {
+    "prefix": ["subst", "regex"],
+    "description": "Clean up a string with regular expression substitutions",
+    "body": [
+      "my \\$clean = \\$raw;",
+      "\\$clean =~ s/\\\\s+/ /g;",
+      "\\$clean =~ s/^\\\\s+|\\\\s+\\$//g;",
+      "\\$clean =~ s/[^a-z0-9]+/_/gi;"
+    ]
+  },
+
+  "pl_read_file": {
+    "prefix": ["readfile", "slurp"],
+    "description": "Read a whole file into a list of lines",
+    "body": [
+      "open my \\$fh, '<', \\$path or die \"Cannot read \\$path: \\$!\";",
+      "my @lines = <\\$fh>;",
+      "close \\$fh;",
+      "chomp @lines;"
+    ]
+  },
+
+  "pl_write_file": {
+    "prefix": ["writefile", "append"],
+    "description": "Append records to a file and close it safely",
+    "body": [
+      "open my \\$fh, '>>', \\$out_path or die \"Cannot write \\$out_path: \\$!\";",
+      "print {\\$fh} \"\\$_\\\\n\" for @records;",
+      "close \\$fh or die \"Failed to close \\$out_path: \\$!\";"
+    ]
+  },
+
+  "pl_command_line_options": {
+    "prefix": ["cliopts", "args"],
+    "description": "Parse command line options with Getopt::Long",
+    "body": [
+      "use Getopt::Long qw(GetOptions);",
+      "",
+      "my \\$input   = 'input.csv';",
+      "my \\$output  = 'output.csv';",
+      "my \\$verbose = 0;",
+      "",
+      "GetOptions(",
+      "  'input=s'  => \\\\\\$input,",
+      "  'output=s' => \\\\\\$output,",
+      "  'verbose'  => \\\\\\$verbose,",
+      ") or die \"Usage: \\$0 [--input FILE] [--output FILE] [--verbose]\\\\n\";"
+    ]
+  },
+
+  "pl_package": {
+    "prefix": ["package", "modulehdr"],
+    "description": "Perl package with a version and a simple constructor",
+    "body": [
+      "package My::Service::Report;",
+      "",
+      "use strict;",
+      "use warnings;",
+      "",
+      "our \\$VERSION = '0.01';",
+      "",
+      "sub new {",
+      "  my (\\$class, %args) = @_;",
+      "",
+      "  return bless { title => \\$args{title} // 'Untitled' }, \\$class;",
+      "}",
+      "",
+      "1;"
+    ]
+  },
+
+  "pl_class": {
+    "prefix": ["ooclass", "class"],
+    "description": "Object oriented class with accessors and a summary method",
+    "body": [
+      "package Report;",
+      "",
+      "use strict;",
+      "use warnings;",
+      "",
+      "sub new {",
+      "  my (\\$class, %args) = @_;",
+      "  my \\$self = bless { title => \\$args{title} // 'Untitled' }, \\$class;",
+      "",
+      "  return \\$self;",
+      "}",
+      "",
+      "sub title {",
+      "  my (\\$self) = @_;",
+      "",
+      "  return \\$self->{title};",
+      "}",
+      "",
+      "sub summary {",
+      "  my (\\$self) = @_;",
+      "",
+      "  return sprintf('%s (%s)', \\$self->{title}, \\$self->{status} // 'draft');",
+      "}",
+      "",
+      "1;"
+    ]
+  },
+
+  "pl_context_object": {
+    "prefix": ["context", "ctx"],
+    "description": "Context object that carries request metadata around",
+    "body": [
+      "package RequestContext;",
+      "",
+      "sub new {",
+      "  my (\\$class, %args) = @_;",
+      "",
+      "  return bless {",
+      "    request_id => \\$args{request_id} // 'unknown',",
+      "    user_id    => \\$args{user_id},",
+      "  }, \\$class;",
+      "}",
+      "",
+      "sub log {",
+      "  my (\\$self, \\$message) = @_;",
+      "",
+      "  printf(\"[%s] user=%s %s\\\\n\", \\$self->{request_id}, \\$self->{user_id} // '-', \\$message);",
+      "}",
+      "",
+      "1;"
+    ]
+  },
+
+  "pl_error_handling": {
+    "prefix": ["evalcatch", "trycatch"],
+    "description": "Wrap risky code in eval and report the error",
+    "body": [
+      "my \\$result = eval {",
+      "  open my \\$fh, '<', \\$path or die \"Cannot open \\$path: \\$!\";",
+      "  local \\$/ = undef;",
+      "  my \\$content = <\\$fh>;",
+      "  close \\$fh;",
+      "  \\$content;",
+      "};",
+      "",
+      "if (\\$@) {",
+      "  warn \"Read failed: \\$@\";",
+      "  \\$result = undef;",
+      "}"
+    ]
+  },
+
+  "pl_dbi_statement": {
+    "prefix": ["dbistmt", "sql"],
+    "description": "Prepare, execute and fetch rows with a DBI statement",
+    "body": [
+      "my \\$sth = \\$dbh->prepare('SELECT id, name FROM ${1:users} WHERE status = ?');",
+      "\\$sth->execute('active');",
+      "",
+      "while (my \\$row = \\$sth->fetchrow_hashref) {",
+      "  printf(\"%s\\\\t%s\\\\n\", \\$row->{id}, \\$row->{name});",
+      "}",
+      "",
+      "\\$sth->finish;"
+    ]
+  },
+
+  "pl_json": {
+    "prefix": ["jsoncode", "json"],
+    "description": "Encode and decode JSON with the JSON::PP module",
+    "body": [
+      "use JSON::PP;",
+      "",
+      "my \\$json = JSON::PP->new;",
+      "\\$json->canonical(1);",
+      "\\$json->pretty(1);",
+      "",
+      "my \\$encoded = \\$json->encode({ name => 'app', version => 3, tags => ['a', 'b'] });",
+      "my \\$decoded = \\$json->decode(\\$encoded);",
+      "",
+      "printf(\"%s v%s\\\\n\", \\$decoded->{name}, \\$decoded->{version});"
+    ]
+  },
+
+  "pl_heredoc": {
+    "prefix": ["heredoc", "template"],
+    "description": "Build a multi line template with a quoted heredoc",
+    "body": [
+      "my \\$email = <<'TEMPLATE';",
+      "Dear customer,",
+      "",
+      "your order has shipped.",
+      "",
+      "Regards,",
+      "The Team",
+      "TEMPLATE"
+    ]
+  },
+
+  "pl_test_more": {
+    "prefix": ["testmore", "unittest"],
+    "description": "Unit test with Test::More assertions",
+    "body": [
+      "use Test::More;",
+      "",
+      "my \\$sum = add_numbers(3, 4);",
+      "is(\\$sum, 7, 'add_numbers returns the total');",
+      "is_deeply([1, 2, 3], [1, 2, 3], 'lists match');",
+      "ok(defined \\$sum, 'sum is defined');",
+      "",
+      "done_testing();"
+    ]
+  },
+
+  "pl_map_grep_sort": {
+    "prefix": ["mapgrep", "lists"],
+    "description": "Filter, transform and sort collections of values",
+    "body": [
+      "my @squares = map { \\$_ * \\$_ } grep { \\$_ % 2 == 0 } @numbers;",
+      "my %by_length = map { length(\\$_) => \\$_ } @words;",
+      "my @sorted = sort { \\$b->{score} <=> \\$a->{score} } @records;"
+    ]
+  },
+
+  "pl_guard_clause": {
+    "prefix": ["guard", "guardclause"],
+    "description": "Validate arguments early and parse a config file",
+    "body": [
+      "sub load_config {",
+      "  my (\\$path) = @_;",
+      "",
+      "  die \"No config path given\\\\n\" unless defined \\$path && length \\$path;",
+      "  die \"Config not found: \\$path\\\\n\" unless -f \\$path;",
+      "",
+      "  open my \\$fh, '<', \\$path or die \"Cannot open \\$path: \\$!\";",
+      "  my %config;",
+      "  while (my \\$line = <\\$fh>) {",
+      "    chomp \\$line;",
+      "    next if \\$line =~ /^\\\\s*(#|\\$)/;",
+      "    my (\\$key, \\$value) = split /=/, \\$line, 2;",
+      "    \\$config{\\$key} = \\$value;",
+      "  }",
+      "  close \\$fh;",
+      "",
+      "  return \\\\%config;",
+      "}"
+    ]
+  }
+}

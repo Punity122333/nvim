@@ -1,0 +1,265 @@
+{
+  "docker_base_image": {
+    "prefix": ["dockbase"],
+    "description": "Base image of the build selected by a build argument",
+    "body": [
+      "ARG BASE_IMAGE=${1:python:3.12-slim}",
+      "",
+      "FROM \\${BASE_IMAGE} AS base"
+    ]
+  },
+
+  "docker_multi_stage_build": {
+    "prefix": ["dockmultistage"],
+    "description": "Multi stage build with a builder and a minimal runtime image",
+    "body": [
+      "FROM golang:1.23 AS builder",
+      "",
+      "WORKDIR /src",
+      "",
+      "COPY go.mod go.sum ./",
+      "RUN go mod download",
+      "",
+      "COPY . .",
+      "RUN CGO_ENABLED=0 go build -o /out/server ./cmd/server",
+      "",
+      "FROM gcr.io/distroless/static-debian12",
+      "",
+      "COPY --from=builder /out/server /usr/local/bin/server",
+      "",
+      "USER 65532:65532",
+      "",
+      "ENTRYPOINT [\"/usr/local/bin/server\"]"
+    ]
+  },
+
+  "docker_workdir": {
+    "prefix": ["dockworkdir"],
+    "description": "Set the working directory for the following instructions",
+    "body": [
+      "# Directory that holds the application inside the image",
+      "WORKDIR /srv/myapp",
+      "# Every later instruction runs relative to this directory"
+    ]
+  },
+
+  "docker_copy": {
+    "prefix": ["dockcopy"],
+    "description": "Copy files and folders into the image",
+    "body": [
+      "COPY src/ /app/src/",
+      "",
+      "COPY --chown=app:app configs/ /app/configs/"
+    ]
+  },
+
+  "docker_run": {
+    "prefix": ["dockrun"],
+    "description": "Run a command in exec form and in shell form",
+    "body": [
+      "RUN [\"cmake\", \"--build\", \"build\", \"--config\", \"Release\"]",
+      "",
+      "RUN apt-get update && apt-get install -y --no-install-recommends curl"
+    ]
+  },
+
+  "docker_env": {
+    "prefix": ["dockenv"],
+    "description": "Environment variables for the image and its runtime",
+    "body": [
+      "ENV NODE_ENV=production \\\\",
+      "    APP_PORT=8080 \\\\",
+      "    APP_LOG_LEVEL=info"
+    ]
+  },
+
+  "docker_expose": {
+    "prefix": ["dockexpose"],
+    "description": "Expose a port that the container listens on",
+    "body": [
+      "# Port the HTTP server listens on inside the container",
+      "EXPOSE 8080",
+      "# Publish it with docker run -p 8080:8080"
+    ]
+  },
+
+  "docker_volume": {
+    "prefix": ["dockvolume"],
+    "description": "Declare a volume that keeps the data of the container",
+    "body": [
+      "# Directory that keeps the data of the container",
+      "VOLUME [\"/var/lib/postgresql/data\"]",
+      "# Mount a host directory over it to keep the data"
+    ]
+  },
+
+  "docker_cmd": {
+    "prefix": ["dockcmd"],
+    "description": "Default command of the container in exec form",
+    "body": [
+      "# Default command, replaced by the arguments of docker run",
+      "CMD [\"python\", \"-m\", \"myapp\"]",
+      "# Use ENTRYPOINT instead when the command must not be replaced"
+    ]
+  },
+
+  "docker_entrypoint": {
+    "prefix": ["dockentry"],
+    "description": "Entry point of the image in exec form and in shell form",
+    "body": [
+      "ENTRYPOINT [\"/usr/local/bin/server\", \"--config\", \"/etc/app/config.yaml\"]",
+      "",
+      "ENTRYPOINT /usr/local/bin/server --config /etc/app/config.yaml"
+    ]
+  },
+
+  "docker_healthcheck": {
+    "prefix": ["dockhealth"],
+    "description": "Health check that calls the http health endpoint",
+    "body": [
+      "# Fails the container when the service stops answering",
+      "HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\\\",
+      "  CMD curl -fsS http://localhost:8080/healthz || exit 1"
+    ]
+  },
+
+  "docker_non_root_user": {
+    "prefix": ["dockuser"],
+    "description": "Create an unprivileged user and run the image as it",
+    "body": [
+      "RUN groupadd --gid 10001 app \\\\",
+      "    && useradd --uid 10001 --gid app --no-create-home --shell /usr/sbin/nologin app",
+      "",
+      "USER app:app"
+    ]
+  },
+
+  "docker_label": {
+    "prefix": ["docklabel"],
+    "description": "OCI labels describing the image and its origin",
+    "body": [
+      "LABEL org.opencontainers.image.title=\"myapp\" \\\\",
+      "      org.opencontainers.image.version=\"1.4.0\" \\\\",
+      "      org.opencontainers.image.source=\"https://github.com/example/myapp\""
+    ]
+  },
+
+  "docker_dependency_layer": {
+    "prefix": ["dockdeps"],
+    "description": "Install the system packages needed by the application",
+    "body": [
+      "RUN apt-get update \\\\",
+      "    && apt-get install -y --no-install-recommends \\\\",
+      "        build-essential \\\\",
+      "        libssl-dev \\\\",
+      "        pkg-config \\\\",
+      "    && rm -rf /var/lib/apt/lists/*"
+    ]
+  },
+
+  "docker_cache_mount": {
+    "prefix": ["dockcache"],
+    "description": "Build step that reuses a persistent package cache",
+    "body": [
+      "# The pip cache is kept between builds to speed up the install",
+      "RUN --mount=type=cache,target=/root/.cache/pip \\\\",
+      "    pip install -r requirements.txt"
+    ]
+  },
+
+  "docker_secret_mount": {
+    "prefix": ["docksecret"],
+    "description": "Build step that reads a secret from the build context",
+    "body": [
+      "# The token comes from a build secret and never lands in a layer",
+      "RUN --mount=type=secret,id=npm_token,target=/root/.npmrc \\\\",
+      "    npm ci --omit=dev"
+    ]
+  },
+
+  "docker_init_system": {
+    "prefix": ["dockinit"],
+    "description": "Run the container with tini as the init process",
+    "body": [
+      "RUN apt-get update \\\\",
+      "    && apt-get install -y --no-install-recommends tini \\\\",
+      "    && rm -rf /var/lib/apt/lists/*",
+      "",
+      "ENTRYPOINT [\"/usr/bin/tini\", \"--\"]",
+      "",
+      "CMD [\"python\", \"-m\", \"myapp\"]"
+    ]
+  },
+
+  "docker_static_binary_stage": {
+    "prefix": ["dockstatic"],
+    "description": "Compile a static binary and ship it in a scratch image",
+    "body": [
+      "FROM golang:1.23 AS build",
+      "",
+      "WORKDIR /src",
+      "",
+      "COPY . .",
+      "",
+      "RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags=\"-s -w\" -o /out/app ./cmd/app",
+      "",
+      "FROM scratch",
+      "",
+      "COPY --from=build /out/app /app",
+      "",
+      "ENTRYPOINT [\"/app\"]"
+    ]
+  },
+
+  "docker_dockerignore": {
+    "prefix": ["dockignore"],
+    "description": "Contents of a .dockerignore file for a project",
+    "body": [
+      ".git",
+      ".gitignore",
+      "node_modules",
+      "__pycache__",
+      "*.pyc",
+      ".venv",
+      "build",
+      "dist",
+      "target",
+      "*.log",
+      ".env",
+      "Dockerfile",
+      ".dockerignore"
+    ]
+  },
+
+  "docker_compose_file": {
+    "prefix": ["dockcompose"],
+    "description": "Docker Compose file with an api service and a database",
+    "body": [
+      "services:",
+      "  api:",
+      "    build:",
+      "      context: .",
+      "      dockerfile: Dockerfile",
+      "    image: myapp:latest",
+      "    ports:",
+      "      - \"8080:8080\"",
+      "    environment:",
+      "      DATABASE_URL: postgres://user:pass@db:5432/app",
+      "    depends_on:",
+      "      - db",
+      "    restart: unless-stopped",
+      "",
+      "  db:",
+      "    image: postgres:16-alpine",
+      "    environment:",
+      "      POSTGRES_USER: user",
+      "      POSTGRES_PASSWORD: pass",
+      "      POSTGRES_DB: app",
+      "    volumes:",
+      "      - db-data:/var/lib/postgresql/data",
+      "",
+      "volumes:",
+      "  db-data:"
+    ]
+  }
+}

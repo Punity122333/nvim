@@ -1,0 +1,304 @@
+{
+  "article_entry": {
+    "prefix": ["article"],
+    "description": "Journal article with volume, pages, doi and keywords",
+    "body": [
+      "@article{${1:smith2024attention},",
+      "  title    = {${2:Attention Is Still All You Need}},",
+      "  author   = {${3:Jane Smith and Alex Doe}},",
+      "  journal  = {Journal of Machine Learning Research},",
+      "  year     = {2024},",
+      "  volume   = {25},",
+      "  number   = {3},",
+      "  pages    = {1--18},",
+      "  doi      = {10.1000/jmlr.2024.003},",
+      "  keywords = {transformers, attention, deep learning}",
+      "}"
+    ]
+  },
+
+  "book_entry": {
+    "prefix": ["book"],
+    "description": "Book with publisher, edition and isbn",
+    "body": [
+      "@book{${1:knuth1984texbook},",
+      "  title     = {The {\\\\TeX}book},",
+      "  author    = {${2:Donald E. Knuth}},",
+      "  publisher = {Addison-Wesley},",
+      "  address   = {Reading, Massachusetts},",
+      "  edition   = {3},",
+      "  year      = {1984},",
+      "  isbn      = {0-201-13447-0}",
+      "}"
+    ]
+  },
+
+  "conference_paper": {
+    "prefix": ["inproceedings"],
+    "description": "Paper published in a conference proceedings",
+    "body": [
+      "@inproceedings{${1:doe2023scaling},",
+      "  title     = {${2:Scaling Sparse Attention to Long Documents}},",
+      "  author    = {${3:Alex Doe and Jane Smith}},",
+      "  booktitle = {Proceedings of the 40th International Conference on Machine Learning},",
+      "  publisher = {PMLR},",
+      "  series    = {Proceedings of Machine Learning Research},",
+      "  volume    = {202},",
+      "  pages     = {1042--1055},",
+      "  month     = {July},",
+      "  year      = {2023}",
+      "}"
+    ]
+  },
+
+  "proceedings_entry": {
+    "prefix": ["proceedings"],
+    "description": "Proceedings of a conference as a whole",
+    "body": [
+      "@proceedings{${1:devconf2024},",
+      "  title     = {${2:Proceedings of the 12th Developer Conference}},",
+      "  editor    = {${3:Alex Doe and Jane Smith}},",
+      "  publisher = {Conference Press},",
+      "  volume    = {4},",
+      "  address   = {Berlin, Germany},",
+      "  month     = {September},",
+      "  year      = {2024}",
+      "}"
+    ]
+  },
+
+  "thesis_entry": {
+    "prefix": ["thesis"],
+    "description": "Generic thesis entry with type and institution",
+    "body": [
+      "@thesis{${1:smith2024thesis},",
+      "  title       = {${2:Scaling Sparse Attention to Long Documents}},",
+      "  author      = {${3:Jane Smith}},",
+      "  type        = {PhD thesis},",
+      "  institution = {University of Cambridge},",
+      "  address     = {Cambridge, United Kingdom},",
+      "  year        = {2024}",
+      "}"
+    ]
+  },
+
+  "phdthesis_entry": {
+    "prefix": ["phdthesis"],
+    "description": "PhD thesis with school and keywords",
+    "body": [
+      "@phdthesis{${1:doe2023thesis},",
+      "  title    = {${2:Distributed Consensus in Wide Area Networks}},",
+      "  author   = {${3:Alex Doe}},",
+      "  school   = {ETH Zurich},",
+      "  address  = {Zurich, Switzerland},",
+      "  year     = {2023},",
+      "  keywords = {consensus, distributed systems}",
+      "}"
+    ]
+  },
+
+  "mastersthesis_entry": {
+    "prefix": ["mastersthesis"],
+    "description": "Master thesis with school and address",
+    "body": [
+      "@mastersthesis{${1:smith2022thesis},",
+      "  title   = {${2:Type Inference for Gradual Languages}},",
+      "  author  = {${3:Jane Smith}},",
+      "  school  = {University of Cambridge},",
+      "  address = {Cambridge, United Kingdom},",
+      "  year    = {2022}",
+      "}"
+    ]
+  },
+
+  "techreport_entry": {
+    "prefix": ["techreport"],
+    "description": "Technical report with institution and report number",
+    "body": [
+      "@techreport{${1:openai2023report},",
+      "  title       = {${2:Scaling Laws for Neural Language Models}},",
+      "  author      = {${3:Jane Smith and Alex Doe}},",
+      "  institution = {OpenAI},",
+      "  type        = {Technical Report},",
+      "  number      = {TR-2023-07},",
+      "  address     = {San Francisco, California},",
+      "  year        = {2023},",
+      "  url         = {https://example.com/reports/scaling-laws.pdf}",
+      "}"
+    ]
+  },
+
+  "book_chapter": {
+    "prefix": ["incollection"],
+    "description": "Chapter published inside an edited book",
+    "body": [
+      "@incollection{${1:smith2023chapter},",
+      "  title     = {${2:Attention Mechanisms for Long Documents}},",
+      "  author    = {${3:Jane Smith}},",
+      "  booktitle = {Advances in Machine Learning},",
+      "  editor    = {Alex Doe},",
+      "  publisher = {Springer},",
+      "  chapter   = {4},",
+      "  pages     = {88--112},",
+      "  address   = {Cham, Switzerland},",
+      "  year      = {2023}",
+      "}"
+    ]
+  },
+
+  "website_entry": {
+    "prefix": ["website"],
+    "description": "Website entry published with howpublished and a note",
+    "body": [
+      "% Requires \\\\usepackage{url} in the LaTeX document",
+      "@misc{${1:project-site},",
+      "  title        = {${2:Project Homepage}},",
+      "  author       = {${3:The Project Team}},",
+      "  howpublished = {\\\\url{https://example.com/project}},",
+      "  note         = {Accessed 14 May 2024},",
+      "  year         = {2024}",
+      "}"
+    ]
+  },
+
+  "manual_entry": {
+    "prefix": ["manual"],
+    "description": "Manual or reference documentation entry",
+    "body": [
+      "@manual{${1:gitmanual},",
+      "  title        = {${2:Git Reference Manual}},",
+      "  author       = {${3:Junio Hamano and the Git team}},",
+      "  organization = {Git Project},",
+      "  edition      = {2.43.0},",
+      "  year         = {2024},",
+      "  note         = {Available at https://git-scm.com/docs}",
+      "}"
+    ]
+  },
+
+  "misc_entry": {
+    "prefix": ["misc"],
+    "description": "Miscellaneous entry with a note field",
+    "body": [
+      "@misc{${1:release-notes-2024},",
+      "  title        = {${2:Release Notes for the 2.4 Series}},",
+      "  author       = {${3:The Kernel Team}},",
+      "  howpublished = {Internal design document},",
+      "  year         = {2024},",
+      "  note         = {Circulated to contributors before the public release}",
+      "}"
+    ]
+  },
+
+  "patent_entry": {
+    "prefix": ["patent"],
+    "description": "Patent entry with number, country and month",
+    "body": [
+      "@patent{${1:smith2024patent},",
+      "  author  = {${2:Jane Smith and Alex Doe}},",
+      "  title   = {${3:Adaptive Sparse Attention}},",
+      "  number  = {US 11,987,654 B2},",
+      "  country = {US},",
+      "  month   = {March},",
+      "  year    = {2024}",
+      "}"
+    ]
+  },
+
+  "online_entry": {
+    "prefix": ["online"],
+    "description": "Online resource with url, urldate and doi",
+    "body": [
+      "@online{${1:docs2024},",
+      "  author  = {${2:The Documentation Team}},",
+      "  title   = {${3:Service Configuration Reference}},",
+      "  url     = {https://docs.example.com/configuration},",
+      "  urldate = {2024-05-14},",
+      "  doi     = {10.1000/docs.2024}",
+      "}"
+    ]
+  },
+
+  "collection_entry": {
+    "prefix": ["collection"],
+    "description": "Edited collection with volume and publisher",
+    "body": [
+      "@collection{${1:mlsystems2020},",
+      "  editor    = {${2:Alex Doe and Jane Smith}},",
+      "  title     = {${3:Advances in Machine Learning Systems}},",
+      "  publisher = {Foundations and Trends},",
+      "  volume    = {3},",
+      "  address   = {Nowhere, NJ},",
+      "  year      = {2020}",
+      "}"
+    ]
+  },
+
+  "annotated_entry": {
+    "prefix": ["annbib"],
+    "description": "Entry with an annote field for an annotated bibliography",
+    "body": [
+      "@article{${1:smith2024attention},",
+      "  title   = {${2:Attention Is Still All You Need}},",
+      "  author  = {${3:Jane Smith}},",
+      "  journal = {Journal of Machine Learning Research},",
+      "  year    = {2024},",
+      "  annote  = {Short summary of the method, the datasets used and the results}",
+      "}"
+    ]
+  },
+
+  "crossref_entry": {
+    "prefix": ["crossref"],
+    "description": "Paper that cross references a proceedings entry",
+    "body": [
+      "@inproceedings{${1:doe2024streaming},",
+      "  crossref = {${2:devconf2024}},",
+      "  title    = {${3:Streaming Feature Extraction for Edge Devices}},",
+      "  author   = {Jane Smith},",
+      "  pages    = {201--212}",
+      "}"
+    ]
+  },
+
+  "month_macro": {
+    "prefix": ["monthmac"],
+    "description": "Month macros defined as strings and used in an entry",
+    "body": [
+      "@string{jan = \"January\"}",
+      "@string{feb = \"February\"}",
+      "@string{mar = \"March\"}",
+      "",
+      "@article{${1:smith2024},",
+      "  title  = {${2:Title of the article}},",
+      "  month  = jan,",
+      "  year   = {2024}",
+      "}"
+    ]
+  },
+
+  "string_macro": {
+    "prefix": ["stringmac"],
+    "description": "Reusable string macros for journal names and publishers",
+    "body": [
+      "@string{jfp = \"Journal of Functional Programming\"}",
+      "@string{tcs = \"Theoretical Computer Science\"}",
+      "",
+      "@article{${1:smith2024programs},",
+      "  title   = {${2:Bidirectional Type Checking}},",
+      "  author  = {${3:Jane Smith}},",
+      "  journal = jfp,",
+      "  year    = {2024}",
+      "}"
+    ]
+  },
+
+  "bibliography_block": {
+    "prefix": ["bibblock"],
+    "description": "Bibliography style and database block for the document",
+    "body": [
+      "\\\\bibliographystyle{${1:plain}}",
+      "\\\\bibliography{${2:references}}"
+    ]
+  }
+}

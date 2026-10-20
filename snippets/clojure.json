@@ -1,0 +1,223 @@
+{
+  "ns_decl": {
+    "prefix": ["ns"],
+    "description": "Namespace declaration with require and import clauses",
+    "body": [
+      "(ns ${1:my.app.core}",
+      "  (:require [clojure.string :as str]",
+      "            [clojure.set :refer [union]])",
+      "  (:import (java.time Instant)))"
+    ]
+  },
+
+  "defn": {
+    "prefix": ["defn"],
+    "description": "Define a function with a docstring and arguments",
+    "body": [
+      "(defn ${1:greet}",
+      "  \"${2:Say hello to someone}\"",
+      "  [${3:name}]",
+      "  (str \"Hello, \" name \"!\"))"
+    ]
+  },
+
+  "defn_doc": {
+    "prefix": ["defndoc"],
+    "description": "Define a private function with a docstring",
+    "body": [
+      "(defn- ${1:private-helper}",
+      "  \"${2:Describe what the helper does}\"",
+      "  [${3:coll}]",
+      "  (count coll))"
+    ]
+  },
+
+  "defrecord": {
+    "prefix": ["defrecord"],
+    "description": "Define a record type with typed fields",
+    "body": [
+      "(defrecord ${1:User}",
+      "  [id ^long",
+      "    name ^String",
+      "    email ^String])"
+    ]
+  },
+
+  "deftype": {
+    "prefix": ["deftype"],
+    "description": "Define a new type with custom protocol implementations",
+    "body": [
+      "(deftype ${1:Counter}",
+      "  [count]",
+      "  Object",
+      "  (toString [_]",
+      "    (str \"count: \" count)))"
+    ]
+  },
+
+  "defmulti": {
+    "prefix": ["defmulti"],
+    "description": "Define a multimethod dispatching on a value",
+    "body": [
+      "(defmulti ${1:area} :kind)",
+      "",
+      "(defmethod ${1:area} :circle",
+      "  [{:keys [radius]}]",
+      "  (* Math/PI radius radius))"
+    ]
+  },
+
+  "defmethod": {
+    "prefix": ["defmethod"],
+    "description": "Add a method implementation to a multimethod",
+    "body": [
+      "(defmethod ${1:area} :circle",
+      "  [{:keys [${2:radius}]}]",
+      "  (* Math/PI radius radius))"
+    ]
+  },
+
+  "let_binding": {
+    "prefix": ["let"],
+    "description": "Bind local names with a let expression",
+    "body": [
+      "(let [${1:x} 10",
+      "      ${2:y} 20]",
+      "  (+ x y))"
+    ]
+  },
+
+  "destructuring": {
+    "prefix": ["destr"],
+    "description": "Destructure map keys inside a let binding",
+    "body": [
+      "(let [{:keys [${1:name} ${2:age}]} ${3:person}]",
+      "  (println \"name:\" name)",
+      "  (println \"age:\" age))"
+    ]
+  },
+
+  "threading": {
+    "prefix": ["thr"],
+    "description": "Thread a value through a series of transformations",
+    "body": [
+      "(-> ${1:payload}",
+      "    (assoc :status \"ok\")",
+      "    (update :count inc)",
+      "    (dissoc :internal))"
+    ]
+  },
+
+  "for_comprehension": {
+    "prefix": ["for"],
+    "description": "Build a sequence with a for comprehension and filter",
+    "body": [
+      "(for [${1:item} ${2:coll}",
+      "      :when (pos? (:id item))]",
+      "  (:name item))"
+    ]
+  },
+
+  "reduce_into_map": {
+    "prefix": ["reduce"],
+    "description": "Reduce a collection of pairs into a map",
+    "body": [
+      "(reduce",
+      "  (fn [acc entry]",
+      "    (assoc acc (key entry) (val entry)))",
+      "  {}",
+      "  ${1:coll})"
+    ]
+  },
+
+  "atom_watch": {
+    "prefix": ["atom"],
+    "description": "Create an atom and register a watch on it",
+    "body": [
+      "(def ${1:state} (atom {}))",
+      "",
+      "(add-watch ${1:state}",
+      "  :${2:logger}",
+      "  (fn [key ref old-value new-value]",
+      "    (println \"state changed:\" old-value \"->\" new-value)))"
+    ]
+  },
+
+  "future_promise": {
+    "prefix": ["future"],
+    "description": "Run work in a future and wait on a promise",
+    "body": [
+      "(let [${1:result} (promise)]",
+      "  (future",
+      "    (deliver ${1:result} (compute-value)))",
+      "  @${1:result})"
+    ]
+  },
+
+  "try_catch": {
+    "prefix": ["trycatch"],
+    "description": "Catch an exception and fall back to a default value",
+    "body": [
+      "(try",
+      "  (${1:risky-call})",
+      "  (catch Exception e",
+      "    (println \"failed:\" (.getMessage e))",
+      "    nil))"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["deftest"],
+    "description": "Unit test with clojure.test assertions",
+    "body": [
+      "(deftest ${1:adds-two-numbers}",
+      "  (is (= ${2:3} (add 1 2)))",
+      "  (is (thrown? IllegalArgumentException",
+      "                (add 1 \"two\"))))"
+    ]
+  },
+
+  "spec_def": {
+    "prefix": ["spec"],
+    "description": "Define clojure.spec predicates for a map",
+    "body": [
+      "(s/def ::${1:user-name} string?)",
+      "",
+      "(s/def ::${2:user}",
+      "  (s/keys :req-un [::${1:user-name}]))"
+    ]
+  },
+
+  "protocol_def": {
+    "prefix": ["defproto"],
+    "description": "Define a protocol with its methods",
+    "body": [
+      "(defprotocol ${1:Shape}",
+      "  (${2:area} [this])",
+      "  (${3:perimeter} [this]))"
+    ]
+  },
+
+  "macro_def": {
+    "prefix": ["defmacro"],
+    "description": "Define a macro with an unhygienic argument",
+    "body": [
+      "(defmacro ${1:unless-zero}",
+      "  [${2:x}]",
+      "  `(let [value# ~${2:x}]",
+      "    (when (pos? value#)",
+      "      value#)))"
+    ]
+  },
+
+  "json_parse": {
+    "prefix": ["json"],
+    "description": "Parse a JSON file into a map with keyword keys",
+    "body": [
+      "(require '[clojure.data.json :as json])",
+      "",
+      "(let [${1:config} (json/read-str (slurp \"${2:config.json}\") :key-fn keyword)]",
+      "  ${1:config})"
+    ]
+  }
+}

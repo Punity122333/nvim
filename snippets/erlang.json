@@ -1,0 +1,275 @@
+{
+  "module_decl": {
+    "prefix": ["module"],
+    "description": "Erlang module with exports and a behaviour",
+    "body": [
+      "-module(${1:my_module}).",
+      "",
+      "-export([${2:start/0}, ${3:stop/0}]).",
+      "",
+      "-behaviour(gen_server).",
+      "",
+      "start() ->",
+      "  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).",
+      "",
+      "stop() ->",
+      "  gen_server:cast(?MODULE, stop)."
+    ]
+  },
+
+  "exported_func": {
+    "prefix": ["func"],
+    "description": "Exported function with a type specification",
+    "body": [
+      "-spec ${1:handle_request}(map()) -> {ok, map()} | {error, term()}.",
+      "handle_request(${2:Request}) ->",
+      "  {ok, Request}."
+    ]
+  },
+
+  "record_def": {
+    "prefix": ["record"],
+    "description": "Define a record with typed fields",
+    "body": [
+      "-record(${1:user},",
+      "  {id :: non_neg_integer(),",
+      "    name :: string(),",
+      "    email :: string() | undefined})."
+    ]
+  },
+
+  "macro_def": {
+    "prefix": ["define"],
+    "description": "Define a logging macro",
+    "body": [
+      "-define(${1:log_msg}(Format, Args),",
+      "        logger:info(Format, Args)).",
+      "",
+      "-define(${2:log_error}(Format, Args),",
+      "        logger:error(Format, Args))."
+    ]
+  },
+
+  "case_expr": {
+    "prefix": ["caseexpr"],
+    "description": "Case expression with several pattern clauses",
+    "body": [
+      "case ${1:\"value\"} of",
+      "  {ok, Result} -> {ok, Result};",
+      "  {error, reason} -> {error, reason};",
+      "  _Other -> {error, ${2:\"unhandled\"}}",
+      "end"
+    ]
+  },
+
+  "case_guards": {
+    "prefix": ["caseguard"],
+    "description": "Case expression using guards in its clauses",
+    "body": [
+      "Result = ${1:\"ok\"},",
+      "case Result of",
+      "  ${2:\"ok\"} when length(Result) > 0 -> ${3:\"handled\"};",
+      "  _Other -> ${4:\"fallback\"}",
+      "end"
+    ]
+  },
+
+  "list_comprehension": {
+    "prefix": ["listcomp"],
+    "description": "List comprehension with a filter",
+    "body": [
+      "Items = lists:seq(1, 10),",
+      "",
+      "[${1:X * 2} || ${2:X} <- Items, X > ${3:5}]."
+    ]
+  },
+
+  "fun_expr": {
+    "prefix": ["funexpr"],
+    "description": "Anonymous function bound to a variable",
+    "body": [
+      "Fun = fun(${1:X}) -> ${2:X * 2} end,",
+      "",
+      "Result = Fun(${3:21})."
+    ]
+  },
+
+  "gen_server": {
+    "prefix": ["genserver"],
+    "description": "gen_server behaviour with call, cast and info handlers",
+    "body": [
+      "-behaviour(gen_server).",
+      "",
+      "-export([init/1, handle_call/3, handle_cast/2, handle_info/2]).",
+      "",
+      "-record(state, {count = 0}).",
+      "",
+      "init([]) ->",
+      "  {ok, #state{}}.",
+      "",
+      "handle_call(get_count, _From, State) ->",
+      "  {reply, State#state.count, State}.",
+      "",
+      "handle_cast(increment, State) ->",
+      "  {noreply, State#state{count = State#state.count + 1}}.",
+      "",
+      "handle_info(_Info, State) ->",
+      "  {noreply, State}."
+    ]
+  },
+
+  "supervisor": {
+    "prefix": ["supervisor"],
+    "description": "Supervisor behaviour with a child specification",
+    "body": [
+      "-module(${1:my_supervisor}).",
+      "-behaviour(supervisor).",
+      "",
+      "-export([start_link/0, init/1]).",
+      "",
+      "start_link() ->",
+      "  supervisor:start_link({local, ?MODULE}, ?MODULE, []).",
+      "",
+      "init([]) ->",
+      "  SupFlags = #{strategy => one_for_one, intensity => 3, period => 5},",
+      "  Children = [",
+      "    {my_worker, {my_worker, start_link, []}, permanent, 5000, worker, [my_worker]}",
+      "  ],",
+      "  {ok, {SupFlags, Children}}."
+    ]
+  },
+
+  "ets_table": {
+    "prefix": ["ets"],
+    "description": "Create a named ETS table and read from it",
+    "body": [
+      "ets:new(${1:cache}, [named_table, set, {read_concurrency, true}]),",
+      "ets:insert(${1:cache}, {key, ${2:\"value\"}}),",
+      "ets:lookup(${1:cache}, key)."
+    ]
+  },
+
+  "receive_loop": {
+    "prefix": ["recloop"],
+    "description": "Receive loop that handles requests and a stop message",
+    "body": [
+      "loop() ->",
+      "  receive",
+      "    {request, From} ->",
+      "      From ! {response, ${1:\"handled\"}},",
+      "      loop();",
+      "    stop ->",
+      "      ok;",
+      "    _Other ->",
+      "      loop()",
+      "  end."
+    ]
+  },
+
+  "spawn_worker": {
+    "prefix": ["spawnw"],
+    "description": "Spawn a worker process and send it a message",
+    "body": [
+      "Worker = spawn(fun() ->",
+      "  receive",
+      "    {job, Payload} ->",
+      "      io:format(\"working on ~p~n\", [Payload])",
+      "  end",
+      "end),",
+      "Worker ! {${1:job}, ${2:payload}}."
+    ]
+  },
+
+  "try_catch": {
+    "prefix": ["trycatch"],
+    "description": "Try expression that catches errors and throws",
+    "body": [
+      "try",
+      "  ${1:risky_operation()}",
+      "catch",
+      "  error:Reason:Stacktrace ->",
+      "    {error, {Reason, Stacktrace}};",
+      "  throw:Thrown ->",
+      "    {error, Thrown}",
+      "end."
+    ]
+  },
+
+  "eunit_test": {
+    "prefix": ["eunit"],
+    "description": "EUnit test function with an assertion",
+    "body": [
+      "${1:my_function}_test() ->",
+      "  ?assertEqual(${2:42}, my_module:my_function(${3:1})).",
+      "",
+      "${1:my_function}_error_test() ->",
+      "  ?assertError(badarg, my_module:my_function(${4:\"bad\"}))."
+    ]
+  },
+
+  "parse_transform": {
+    "prefix": ["transform"],
+    "description": "Parse transform that rewrites module forms",
+    "body": [
+      "-module(${1:my_parse_transform}).",
+      "-export([parse_transform/2]).",
+      "",
+      "parse_transform(Forms, _Opts) ->",
+      "  %% Forms holds the abstract syntax of the module being compiled",
+      "  lists:flatmap(fun transform_form/1, Forms).",
+      "",
+      "transform_form(Form) ->",
+      "  [Form]."
+    ]
+  },
+
+  "map_literal": {
+    "prefix": ["maplit"],
+    "description": "Build a map and look a key up with a default",
+    "body": [
+      "Map = #{",
+      "  ${1:key} => ${2:value},",
+      "  ${3:other_key} => ${4:other_value}",
+      "},",
+      "maps:get(${1:key}, Map, ${5:default})."
+    ]
+  },
+
+  "binary_type": {
+    "prefix": ["binary"],
+    "description": "Encode a payload into a binary with a size header",
+    "body": [
+      "-spec ${1:encode}(binary()) -> binary().",
+      "encode(Payload) ->",
+      "  Size = byte_size(Payload),",
+      "  <<Size:32, Payload/binary>>."
+    ]
+  },
+
+  "lists_helpers": {
+    "prefix": ["lists"],
+    "description": "Map and fold over a list with the lists module",
+    "body": [
+      "Items = ${1:[1, 2, 3]},",
+      "Doubled = lists:map(fun(X) -> X * 2 end, Items),",
+      "lists:foldl(fun(Acc, Item) -> Acc + Item end, 0, Doubled)."
+    ]
+  },
+
+  "application_behaviour": {
+    "prefix": ["appmod"],
+    "description": "Application behaviour with start and stop callbacks",
+    "body": [
+      "-module(${1:my_app}).",
+      "-behaviour(application).",
+      "",
+      "-export([start/2, stop/1]).",
+      "",
+      "start(_Type, _Args) ->",
+      "  my_sup:start_link().",
+      "",
+      "stop(_State) ->",
+      "  ok."
+    ]
+  }
+}

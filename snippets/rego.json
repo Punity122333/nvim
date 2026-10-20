@@ -1,0 +1,130 @@
+{
+  "rego_package": {
+    "prefix": ["package"],
+    "description": "Policy package declaration",
+    "body": [
+      "package ${1:example.policy}",
+      "",
+      "import rego.v1",
+      "",
+      "default ${2:allow} := false"
+    ]
+  },
+
+  "rego_allow": {
+    "prefix": ["allow"],
+    "description": "Allow rule combining the conditions with every",
+    "body": [
+      "allow if {",
+      "    ${1:input.method == \"GET\"}",
+      "    ${2:input.user.role == \"admin\"}",
+      "}"
+    ]
+  },
+
+  "rego_deny": {
+    "prefix": ["deny"],
+    "description": "Deny rule returning the reason of the rejection",
+    "body": [
+      "deny contains ${1:reason} if {",
+      "    not allow",
+      "    ${1:reason} := \"the request is not allowed\"",
+      "}"
+    ]
+  },
+
+  "rego_default_allow": {
+    "prefix": ["defaultallow"],
+    "description": "Default value for the allow rule",
+    "body": [
+      "default allow := ${1:false}"
+    ]
+  },
+
+  "rego_rule": {
+    "prefix": ["rule"],
+    "description": "Named rule with a body",
+    "body": [
+      "${1:is_admin} if {",
+      "    input.user.role == \"admin\"",
+      "}"
+    ]
+  },
+
+  "rego_some": {
+    "prefix": ["some"],
+    "description": "Rule iterating over the values of an array",
+    "body": [
+      "some ${1:item} in ${2:input.items}",
+      "${1:item}.${3:enabled} == true"
+    ]
+  },
+
+  "rego_mock_input": {
+    "prefix": ["mockinput"],
+    "description": "Evaluate a rule with a mocked input document",
+    "body": [
+      "${1:allow} with input as {",
+      "    \"${2:method}\": \"GET\",",
+      "    \"${3:user}\": { \"role\": \"admin\" }",
+      "}"
+    ]
+  },
+
+  "rego_assignment": {
+    "prefix": ["assign"],
+    "description": "Assignment of a value used by the other rules",
+    "body": [
+      "${1:normalized} := ${2:value} if {",
+      "    ${2:value} != \"\"",
+      "}"
+    ]
+  },
+
+  "rego_helper": {
+    "prefix": ["helper"],
+    "description": "Helper function taking arguments and returning a value",
+    "body": [
+      "${1:is_valid}(${2:value}) if {",
+      "    ${2:value} != \"\"",
+      "}"
+    ]
+  },
+
+  "rego_test": {
+    "prefix": ["regotest"],
+    "description": "Unit test for a policy rule",
+    "body": [
+      "test_${1:allow}_if {",
+      "    allow with input as {",
+      "        \"${2:method}\": \"GET\",",
+      "        \"${3:user}\": { \"role\": \"admin\" }",
+      "    }",
+      "}"
+    ]
+  },
+
+  "rego_comprehension": {
+    "prefix": ["comprehension"],
+    "description": "Set comprehension collecting the matching values",
+    "body": [
+      "${1:allowed_roles} := { role | some role in input.roles; role == \"admin\" }"
+    ]
+  },
+
+  "rego_object": {
+    "prefix": ["regoobj"],
+    "description": "Object comprehension building a dictionary",
+    "body": [
+      "${1:by_id} := { item.id: item | some item in input.items }"
+    ]
+  },
+
+  "rego_print": {
+    "prefix": ["print"],
+    "description": "Print a value while debugging the policy",
+    "body": [
+      "print(${1:input})"
+    ]
+  }
+}

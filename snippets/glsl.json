@@ -1,0 +1,146 @@
+{
+  "glsl_vertex_shader": {
+    "prefix": ["vert", "vertexshader"],
+    "description": "Vertex shader with the position attribute and a matrix uniform",
+    "body": [
+      "#version ${1:330} core",
+      "",
+      "layout(location = 0) in vec3 ${2:aPosition};",
+      "",
+      "uniform mat4 ${3:uModel};",
+      "uniform mat4 ${4:uView};",
+      "uniform mat4 ${5:uProjection};",
+      "",
+      "void main()",
+      "{",
+      "    gl_Position = ${5:uProjection} * ${4:uView} * ${3:uModel} * vec4(${2:aPosition}, 1.0);",
+      "}"
+    ]
+  },
+
+  "glsl_fragment_shader": {
+    "prefix": ["frag", "fragmentshader"],
+    "description": "Fragment shader sampling a texture",
+    "body": [
+      "#version ${1:330} core",
+      "",
+      "in vec2 ${2:vTexCoord};",
+      "out vec4 ${3:FragColor};",
+      "",
+      "uniform sampler2D ${4:uTexture};",
+      "",
+      "void main()",
+      "{",
+      "    ${3:FragColor} = texture(${4:uTexture}, ${2:vTexCoord});",
+      "}"
+    ]
+  },
+
+  "glsl_main": {
+    "prefix": ["glmain"],
+    "description": "Main entry point of a shader",
+    "body": [
+      "void main()",
+      "{",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "glsl_function": {
+    "prefix": ["glslfn"],
+    "description": "Function returning a value",
+    "body": [
+      "${1:float} ${2:compute}(${3:float value})",
+      "{",
+      "    return ${3:value};",
+      "}"
+    ]
+  },
+
+  "glsl_struct": {
+    "prefix": ["glslstruct"],
+    "description": "Struct with a few fields",
+    "body": [
+      "struct ${1:Material}",
+      "{",
+      "    vec3 ${2:albedo};",
+      "    float ${3:roughness};",
+      "};"
+    ]
+  },
+
+  "glsl_uniform": {
+    "prefix": ["uniform"],
+    "description": "Uniform declaration",
+    "body": [
+      "uniform ${1:float} ${2:uTime};"
+    ]
+  },
+
+  "glsl_define": {
+    "prefix": ["define"],
+    "description": "Preprocessor define",
+    "body": [
+      "#define ${1:MAX_LIGHTS} ${2:8}"
+    ]
+  },
+
+  "glsl_if": {
+    "prefix": ["glslif"],
+    "description": "If statement",
+    "body": [
+      "if (${1:condition})",
+      "{",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "glsl_for": {
+    "prefix": ["glslfor"],
+    "description": "For loop over a range",
+    "body": [
+      "for (int ${1:i} = 0; ${1:i} < ${2:count}; ${1:i}++)",
+      "{",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "glsl_compute_shader": {
+    "prefix": ["compute"],
+    "description": "Compute shader with a storage buffer",
+    "body": [
+      "#version ${1:450} core",
+      "",
+      "layout(local_size_x = ${2:64}) in;",
+      "",
+      "layout(std430, binding = 0) buffer ${3:Particles}",
+      "{",
+      "    vec4 positions[];",
+      "};",
+      "",
+      "void main()",
+      "{",
+      "    ${3:Particles}.positions[gl_GlobalInvocationID.x].w = 1.0;",
+      "}"
+    ]
+  },
+
+  "glsl_sampler": {
+    "prefix": ["sampler"],
+    "description": "Texture sampler uniform",
+    "body": [
+      "uniform sampler2D ${1:uTexture};"
+    ]
+  },
+
+  "glsl_varying": {
+    "prefix": ["varying"],
+    "description": "Varying value shared between the shaders",
+    "body": [
+      "out vec2 ${1:vTexCoord};"
+    ]
+  }
+}

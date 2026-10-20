@@ -1,0 +1,291 @@
+{
+  "fish_function": {
+    "prefix": ["func", "fn"],
+    "description": "Fish function that reads its first argument",
+    "body": [
+      "function greet",
+      "  set -l name \\$argv[1]",
+      "",
+      "  if test -z \"\\$name\"",
+      "    echo \"usage: greet <name>\"",
+      "    return 1",
+      "  end",
+      "",
+      "  echo \"Hello, \\$name!\"",
+      "end"
+    ]
+  },
+
+  "fish_function_argument": {
+    "prefix": ["funcarg", "fnarg"],
+    "description": "Fish function that handles several named style arguments",
+    "body": [
+      "function deploy",
+      "  set -l environment \\$argv[1]",
+      "  set -l tag \\$argv[2]",
+      "",
+      "  if test -z \"\\$environment\"",
+      "    echo \"usage: deploy <environment> [tag]\" >&2",
+      "    return 1",
+      "  end",
+      "",
+      "  echo \"Deploying to \\$environment (tag: \\$tag)\"",
+      "end"
+    ]
+  },
+
+  "fish_function_description": {
+    "prefix": ["funcdesc", "fndesc"],
+    "description": "Fish function declared with a description and a help flag",
+    "body": [
+      "function ll --description \"List the given directory in long format\"",
+      "  if test (count \\$argv) -gt 0",
+      "    ls -lah --color=auto \\$argv[1]",
+      "  else",
+      "    ls -lah --color=auto",
+      "  end",
+      "end"
+    ]
+  },
+
+  "fish_function_guard": {
+    "prefix": ["funcguard", "guard"],
+    "description": "Only run a block when a fish function is defined",
+    "body": [
+      "if functions -q my_helper",
+      "  my_helper \\$argv",
+      "else",
+      "  echo \"my_helper is not defined\" >&2",
+      "  return 1",
+      "end"
+    ]
+  },
+
+  "fish_set_variable": {
+    "prefix": ["setvar", "set"],
+    "description": "Set a fish variable, locally or as an exported global",
+    "body": [
+      "set app_name \"myapp\"",
+      "set -gx app_version \"1.4.0\"",
+      "set -x app_env \"production\"",
+      "",
+      "echo \"\\$app_name \\$app_version\""
+    ]
+  },
+
+  "fish_local_variable": {
+    "prefix": ["setlocal", "setloc"],
+    "description": "Declare local variables inside a fish function",
+    "body": [
+      "function process_config",
+      "  set -l config_file \\$HOME/.config/app.conf",
+      "  set -l max_retries 3",
+      "  set -l timeout 30",
+      "",
+      "  echo \"reading \\$config_file (retries: \\$max_retries, timeout: \\$timeout)\"",
+      "end"
+    ]
+  },
+
+  "fish_path_variable": {
+    "prefix": ["pathvar", "addpath"],
+    "description": "Add directories to the fish PATH and export them",
+    "body": [
+      "# prepend the user directories, keep the system ones",
+      "set -gx PATH \\$HOME/.local/bin \\$HOME/bin \\$PATH",
+      "set -gx GOPATH \\$HOME/go",
+      "",
+      "echo \\$PATH | string split ':' | head -n 5"
+    ]
+  },
+
+  "fish_for_loop": {
+    "prefix": ["forloop", "for"],
+    "description": "Iterate over a list of items in fish",
+    "body": [
+      "for item in alpha beta gamma",
+      "  echo \"item: \\$item\"",
+      "end",
+      "",
+      "for index in (seq 1 3)",
+      "  echo \"round \\$index\"",
+      "end"
+    ]
+  },
+
+  "fish_glob_loop": {
+    "prefix": ["forglob", "globloop"],
+    "description": "Iterate over the files matching a glob in fish",
+    "body": [
+      "for file in **/*.log",
+      "  echo \"found \\$file\"",
+      "end",
+      "",
+      "for image in *.png *.jpg",
+      "  echo \"image: \\$image\"",
+      "end"
+    ]
+  },
+
+  "fish_while_loop": {
+    "prefix": ["whileloop", "while"],
+    "description": "Repeat a block until the counter reaches the limit",
+    "body": [
+      "set -l counter 0",
+      "",
+      "while true",
+      "  echo \"tick \\$counter\"",
+      "  set counter (math \\$counter + 1)",
+      "",
+      "  if test \\$counter -ge 10",
+      "    break",
+      "  end",
+      "end"
+    ]
+  },
+
+  "fish_switch": {
+    "prefix": ["switch", "sw"],
+    "description": "Branch on a value with a fish switch statement",
+    "body": [
+      "switch (string lower \"\\$argv[1]\")",
+      "  case start",
+      "    echo \"starting the service\"",
+      "  case stop",
+      "    echo \"stopping the service\"",
+      "  case '*'",
+      "    echo \"unknown command\" >&2",
+      "    return 1",
+      "end"
+    ]
+  },
+
+  "fish_if_chain": {
+    "prefix": ["ifelse", "ifchain"],
+    "description": "Fish if / else if / else chain based on file tests",
+    "body": [
+      "if test -f \"\\$config_file\"",
+      "  echo \"config file found\"",
+      "else if test -d \"\\$config_dir\"",
+      "  echo \"config directory found\"",
+      "else",
+      "  echo \"no config at all\"",
+      "end"
+    ]
+  },
+
+  "fish_contains_check": {
+    "prefix": ["contains", "hasitem"],
+    "description": "Check whether a value is part of a fish list",
+    "body": [
+      "if contains -- \"\\$needle\" \\$list",
+      "  echo \"found \\$needle\"",
+      "else",
+      "  echo \"\\$needle is missing\"",
+      "end"
+    ]
+  },
+
+  "fish_string_manipulation": {
+    "prefix": ["stringop", "strings"],
+    "description": "Trim, upper case and split a string with the string builtin",
+    "body": [
+      "set -l message \"  Hello, World  \"",
+      "",
+      "set -l trimmed (string trim \\$message)",
+      "set -l upper (string upper \\$trimmed)",
+      "set -l parts (string split \",\" \"alpha,beta,gamma\")",
+      "",
+      "echo \\$upper",
+      "echo \\$parts[2]",
+      "echo (string length \\$trimmed)"
+    ]
+  },
+
+  "fish_pipeline": {
+    "prefix": ["pipeps", "pipeline"],
+    "description": "Pipe process output through ps and pick the interesting fields",
+    "body": [
+      "ps aux | grep nginx | grep -v grep | awk '{print \\$2, \\$11, \\$12}'",
+      "",
+      "echo (ps -o pid,comm -C nginx | tail -n +2 | wc -l)"
+    ]
+  },
+
+  "fish_begin_end": {
+    "prefix": ["beginend", "begin"],
+    "description": "Run a block of fish code in its own scope",
+    "body": [
+      "begin",
+      "  set -l tmp (mktemp)",
+      "  echo \"working in \\$tmp\"",
+      "",
+      "  echo \"hello\" > \\$tmp",
+      "  cat \\$tmp",
+      "",
+      "  command rm -f \\$tmp",
+      "end"
+    ]
+  },
+
+  "fish_source": {
+    "prefix": ["source", "src"],
+    "description": "Source another fish file when it exists",
+    "body": [
+      "set -l conf_dir \\$HOME/.config/fish/conf.d",
+      "",
+      "if test -d \"\\$conf_dir\"",
+      "  for file in \\$conf_dir/*.fish",
+      "    source \\$file",
+      "  end",
+      "end"
+    ]
+  },
+
+  "fish_completion": {
+    "prefix": ["complete", "comp"],
+    "description": "Define completions for a custom fish command",
+    "body": [
+      "complete -c mycli -s h -l help -d \"Show help\"",
+      "complete -c mycli -f -a \"start\" -d \"Start the service\"",
+      "complete -c mycli -f -a \"stop\" -d \"Stop the service\"",
+      "complete -c mycli -f -a \"status\" -d \"Show the service status\""
+    ]
+  },
+
+  "fish_alias": {
+    "prefix": ["alias", "ali"],
+    "description": "Define a few everyday fish aliases",
+    "body": [
+      "alias l='ls -lah'",
+      "alias ll='ls -lah'",
+      "alias ..='cd ..'",
+      "alias g='git'",
+      "alias gs='git status --short --branch'"
+    ]
+  },
+
+  "fish_prompt": {
+    "prefix": ["prompt", "fishprompt"],
+    "description": "Fish prompt function that shows the user and the directory",
+    "body": [
+      "function fish_prompt",
+      "  set -l last_status \\$status",
+      "",
+      "  set_color cyan",
+      "  echo -n (whoami)",
+      "  set_color normal",
+      "  echo -n \" \"",
+      "  set_color green",
+      "  echo -n (prompt_pwd)",
+      "  set_color normal",
+      "",
+      "  if test \\$last_status -ne 0",
+      "    echo -n \" [\"\\$last_status\"]\"",
+      "  end",
+      "",
+      "  echo -n \" \"",
+      "end"
+    ]
+  }
+}

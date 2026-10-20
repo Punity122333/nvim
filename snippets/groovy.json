@@ -1,0 +1,357 @@
+{
+  "class_definition": {
+    "prefix": ["clss"],
+    "description": "Class with properties, a constructor and a helper method",
+    "body": [
+      "class Order {",
+      "  String id",
+      "  String customer",
+      "  List<String> items = []",
+      "",
+      "  Order(String id, String customer) {",
+      "    this.id = id",
+      "    this.customer = customer",
+      "  }",
+      "",
+      "  int getItemCount() {",
+      "    items.size()",
+      "  }",
+      "",
+      "  @Override",
+      "  String toString() {",
+      "    \"Order(\\${id}, \\${customer}, \\${items.size()} items)\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "script_header": {
+    "prefix": ["script"],
+    "description": "Groovy script header that loops over the command line args",
+    "body": [
+      "#!/usr/bin/env groovy",
+      "",
+      "import java.time.Instant",
+      "",
+      "args.each { arg ->",
+      "  println \"processing \\${arg} at \\${Instant.now()}\"",
+      "}"
+    ]
+  },
+
+  "closure": {
+    "prefix": ["closure"],
+    "description": "Closures passed around as values and applied to a list",
+    "body": [
+      "def normalize = { String value -> value.trim().toLowerCase() }",
+      "",
+      "def applyToAll = { List<String> values, Closure transform ->",
+      "  values.collect(transform)",
+      "}",
+      "",
+      "def names = ['  Ada ', 'GRACE']",
+      "",
+      "println applyToAll(names, normalize)"
+    ]
+  },
+
+  "list_manipulation": {
+    "prefix": ["listops"],
+    "description": "Common list operations with collect, sort, findAll and join",
+    "body": [
+      "List<String> names = ['ada', 'grace', 'alan']",
+      "",
+      "def upper = names.collect { it.toUpperCase() }",
+      "def sorted = names.sort { a, b -> a <=> b }",
+      "def joined = names.join(', ')",
+      "def longNames = names.findAll { it.length() > 3 }",
+      "def first = names.first()"
+    ]
+  },
+
+  "map_manipulation": {
+    "prefix": ["mapops"],
+    "description": "Iterating, transforming and filtering a map of stock levels",
+    "body": [
+      "Map<String, Integer> stock = [notebook: 12, pen: 40]",
+      "",
+      "stock.each { name, count -> println \"\\${name}: \\${count}\" }",
+      "",
+      "def doubled = stock.collectEntries { name, count -> [(name.toUpperCase()): count * 2] }",
+      "",
+      "def outOfStock = stock.findAll { name, count -> count == 0 }"
+    ]
+  },
+
+  "gstring": {
+    "prefix": ["gstring"],
+    "description": "GString interpolation of values and expressions",
+    "body": [
+      "def name = 'Ada'",
+      "def age = 36",
+      "def items = ['book', 'pen']",
+      "",
+      "def greeting = \"Hello \\${name}, you are \\${age} years old\"",
+      "def summary = \"Items: \\${items.size()} (\\${items.join(', ')})\"",
+      "",
+      "println greeting",
+      "println summary"
+    ]
+  },
+
+  "builder": {
+    "prefix": ["builder"],
+    "description": "Fluent builder that returns itself for chaining",
+    "body": [
+      "class HttpRequestBuilder {",
+      "  String method = 'GET'",
+      "  String url",
+      "  Map<String, String> headers = [:]",
+      "  String body",
+      "",
+      "  HttpRequestBuilder url(String url) {",
+      "    this.url = url",
+      "    this",
+      "  }",
+      "",
+      "  HttpRequestBuilder header(String name, String value) {",
+      "    headers[name] = value",
+      "    this",
+      "  }",
+      "",
+      "  Map build() {",
+      "    [method: method, url: url, headers: headers, body: body]",
+      "  }",
+      "}",
+      "",
+      "def request = new HttpRequestBuilder()",
+      "  .url('https://example.com/orders')",
+      "  .header('Accept', 'application/json')",
+      "  .build()"
+    ]
+  },
+
+  "dsl_method": {
+    "prefix": ["dsl"],
+    "description": "Small DSL class with named methods for the common calls",
+    "body": [
+      "class HttpDsl {",
+      "  def get(String path) {",
+      "    \"GET \\${path}\"",
+      "  }",
+      "",
+      "  def post(String path, Map payload = [:]) {",
+      "    \"POST \\${path} \\${payload}\"",
+      "  }",
+      "}",
+      "",
+      "def dsl = new HttpDsl()",
+      "",
+      "println dsl.get('/users')",
+      "println dsl.post('/users', [name: 'ada'])"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["test"],
+    "description": "Spock specification with a given and an expect block",
+    "body": [
+      "import spock.lang.Specification",
+      "",
+      "class PaymentSpec extends Specification {",
+      "  def '${1:formats the amount with its currency}'() {",
+      "    given:",
+      "      def payment = new Payment(amountCents: 1999, currency: 'EUR')",
+      "",
+      "    expect:",
+      "      payment.formatted() == 'EUR 19.99'",
+      "  }",
+      "}",
+      "",
+      "class Payment {",
+      "  int amountCents",
+      "  String currency",
+      "",
+      "  String formatted() {",
+      "    \"\\${currency} \\${amountCents.intdiv(100)}.\\${String.format('%02d', amountCents % 100)}\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_handling": {
+    "prefix": ["json"],
+    "description": "Parsing and rendering JSON with JsonSlurper and JsonOutput",
+    "body": [
+      "import groovy.json.JsonOutput",
+      "import groovy.json.JsonSlurper",
+      "",
+      "def payload = JsonOutput.toJson([name: 'ada', roles: ['admin', 'dev']])",
+      "def parsed = new JsonSlurper().parseText(payload)",
+      "",
+      "println parsed.name",
+      "println parsed.roles"
+    ]
+  },
+
+  "file_read": {
+    "prefix": ["fileread"],
+    "description": "Reading a properties file line by line and skipping comments",
+    "body": [
+      "def file = new File('${1:config/settings.properties}')",
+      "",
+      "if (!file.exists()) {",
+      "  throw new IllegalStateException(\"missing file: \\${file.path}\")",
+      "}",
+      "",
+      "file.eachLine { line ->",
+      "  if (line && !line.startsWith('#')) {",
+      "    println line",
+      "  }",
+      "}"
+    ]
+  },
+
+  "regex_match": {
+    "prefix": ["regex"],
+    "description": "Matching a pattern and reading a capture group",
+    "body": [
+      "def text = 'order-123 shipped 2024-05-06'",
+      "def matcher = (text =~ /order-(\\\\d+)/)",
+      "",
+      "if (matcher.find()) {",
+      "  println \"order id: \\${matcher.group(1)}\"",
+      "}",
+      "",
+      "def date = (text =~ /\\\\d{4}-\\\\d{2}-\\\\d{2}/)[0]",
+      "println \"date: \\${date}\""
+    ]
+  },
+
+  "switch_statement": {
+    "prefix": ["switch"],
+    "description": "Switch statement that evaluates to the value of a case",
+    "body": [
+      "def status = 'paid'",
+      "def label",
+      "",
+      "switch (status) {",
+      "  case 'new':",
+      "    label = 'Created'",
+      "    break",
+      "  case 'paid':",
+      "    label = 'Payment received'",
+      "    break",
+      "  case 'shipped':",
+      "    label = 'On the way'",
+      "    break",
+      "  default:",
+      "    label = 'Unknown'",
+      "}",
+      "",
+      "println label"
+    ]
+  },
+
+  "range": {
+    "prefix": ["range"],
+    "description": "Ranges over numbers and characters",
+    "body": [
+      "def days = (1..7).collect { day -> \"day-\\${day}\" }",
+      "def letters = ('a'..'e').toList()",
+      "def countdown = (1..10).reverse()",
+      "def total = (1..100).sum()"
+    ]
+  },
+
+  "trait_definition": {
+    "prefix": ["trait"],
+    "description": "Trait with a field and a method implemented by a class",
+    "body": [
+      "trait Timestamped {",
+      "  Date createdAt = new Date()",
+      "",
+      "  String timestamp() {",
+      "    createdAt.toInstant().toString()",
+      "  }",
+      "}",
+      "",
+      "class Post implements Timestamped {",
+      "  String title",
+      "}"
+    ]
+  },
+
+  "expando": {
+    "prefix": ["expando"],
+    "description": "Expando object that carries dynamic properties around",
+    "body": [
+      "def config = new Expando()",
+      "config.host = 'localhost'",
+      "config.port = 8080",
+      "config.url = \"http://\\${config.host}:\\${config.port}\"",
+      "",
+      "println config.url"
+    ]
+  },
+
+  "category": {
+    "prefix": ["category"],
+    "description": "Category class that adds a method to every String",
+    "body": [
+      "class StringCategory {",
+      "  static String shout(String value) {",
+      "    \"\\${value}!\".toUpperCase()",
+      "  }",
+      "}",
+      "",
+      "String.metaClass.shout = { -> StringCategory.shout(delegate) }",
+      "",
+      "println 'hello'.shout()"
+    ]
+  },
+
+  "command_runner": {
+    "prefix": ["cmd"],
+    "description": "Running an external command and reading its output",
+    "body": [
+      "def process = ['ls', '-la'].execute()",
+      "process.waitFor()",
+      "",
+      "println \"exit code: \\${process.exitValue()}\"",
+      "println process.text"
+    ]
+  },
+
+  "stream_usage": {
+    "prefix": ["stream"],
+    "description": "Using the java stream API on a Groovy list",
+    "body": [
+      "import java.util.stream.Collectors",
+      "",
+      "def names = ['ada', 'grace', 'alan']",
+      "",
+      "def upperNames = names.stream()",
+      "    .map { it.toUpperCase() }",
+      "    .filter { it.length() > 3 }",
+      "    .collect(Collectors.toList())",
+      "",
+      "println upperNames"
+    ]
+  },
+
+  "template": {
+    "prefix": ["template"],
+    "description": "Rendering a template with SimpleTemplateEngine",
+    "body": [
+      "import groovy.text.SimpleTemplateEngine",
+      "",
+      "def engine = new SimpleTemplateEngine()",
+      "def template = engine.createTemplate('Hello <%= name %>, you have <%= count %> new messages.')",
+      "",
+      "def output = template.make([name: 'Ada', count: 3])",
+      "",
+      "println output"
+    ]
+  }
+}

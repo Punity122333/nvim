@@ -1,0 +1,348 @@
+{
+  "vue_sfc": {
+    "prefix": ["sfc"],
+    "description": "Single file component with template, script setup and style",
+    "body": [
+      "<template>",
+      "  <article class=\"user-card\">",
+      "    <h2 class=\"user-card__name\">{{ user.name }}</h2>",
+      "    <button type=\"button\" @click=\"emit('select', user.id)\">Select</button>",
+      "  </article>",
+      "</template>",
+      "",
+      "<script setup lang=\"ts\">",
+      "import { computed, ref } from 'vue'",
+      "",
+      "const props = defineProps<{ userId: number }>()",
+      "const emit = defineEmits<{ (event: 'select', id: number): void }>()",
+      "const user = ref({ id: props.userId, name: 'Ada Lovelace' })",
+      "",
+      "const initials = computed(() =>",
+      "  user.value.name.split(' ').map((part) => part.charAt(0)).join(''),",
+      ")",
+      "</script>",
+      "",
+      "<style scoped>",
+      ".user-card {",
+      "  padding: 1rem;",
+      "  border-radius: 8px;",
+      "}",
+      "</style>"
+    ]
+  },
+
+  "vue_script_setup": {
+    "prefix": ["scriptsetup"],
+    "description": "Script setup block with refs, computed state and a fetch",
+    "body": [
+      "<script setup lang=\"ts\">",
+      "import { computed, onMounted, ref } from 'vue'",
+      "",
+      "interface SearchResult {",
+      "  id: number",
+      "  title: string",
+      "}",
+      "",
+      "const query = ref('')",
+      "const results = ref<SearchResult[]>([])",
+      "const isEmpty = computed(() => results.value.length === 0)",
+      "",
+      "onMounted(async () => {",
+      "  const response = await fetch('/api/search')",
+      "  results.value = await response.json()",
+      "})",
+      "</script>"
+    ]
+  },
+
+  "vue_template": {
+    "prefix": ["template"],
+    "description": "Template block with a heading and a conditional status message",
+    "body": [
+      "<template>",
+      "  <section class=\"panel\">",
+      "    <header class=\"panel__header\">",
+      "      <h2 class=\"panel__title\">${1:Recent activity}</h2>",
+      "    </header>",
+      "    <p v-if=\"loading\" class=\"panel__status\">Loading...</p>",
+      "    <p v-else class=\"panel__status\">Nothing to show yet</p>",
+      "  </section>",
+      "</template>"
+    ]
+  },
+
+  "vue_style_scoped": {
+    "prefix": ["stylescoped"],
+    "description": "Scoped style block with a base class and a child element",
+    "body": [
+      "<style scoped>",
+      ".${1:card} {",
+      "  display: flex;",
+      "  gap: 0.75rem;",
+      "  padding: 1rem;",
+      "  border-radius: 8px;",
+      "  background: var(--surface, #ffffff);",
+      "}",
+      "",
+      ".${1:card}__title {",
+      "  margin: 0;",
+      "  font-size: 1.125rem;",
+      "  font-weight: 600;",
+      "}",
+      "</style>"
+    ]
+  },
+
+  "vue_props": {
+    "prefix": ["props"],
+    "description": "Typed props with default values using withDefaults",
+    "body": [
+      "const props = withDefaults(",
+      "  defineProps<{",
+      "    ${1:title}: string",
+      "    maxItems?: number",
+      "    loading?: boolean",
+      "  }>(),",
+      "  {",
+      "    maxItems: 20,",
+      "    loading: false,",
+      "  },",
+      ")"
+    ]
+  },
+
+  "vue_emit": {
+    "prefix": ["emit"],
+    "description": "Typed emits declaration with payload arguments",
+    "body": [
+      "const emit = defineEmits<{",
+      "  (event: 'close'): void",
+      "  (event: 'select', id: number): void",
+      "  (event: 'update:modelValue', value: string): void",
+      "}>()"
+    ]
+  },
+
+  "vue_computed": {
+    "prefix": ["computed"],
+    "description": "Computed refs deriving a filtered list and a total",
+    "body": [
+      "const activeItems = computed(() => items.value.filter((item) => item.active))",
+      "",
+      "const totalPrice = computed(() =>",
+      "  activeItems.value.reduce((sum, item) => sum + item.price, 0),",
+      ")"
+    ]
+  },
+
+  "vue_watch": {
+    "prefix": ["watch"],
+    "description": "Watch a ref and refetch whenever the search query changes",
+    "body": [
+      "watch(searchQuery, async (query) => {",
+      "  if (!query) {",
+      "    results.value = []",
+      "    return",
+      "  }",
+      "",
+      "  const response = await fetch(`/api/search?q=\\${query}`)",
+      "  results.value = await response.json()",
+      "})"
+    ]
+  },
+
+  "vue_ref": {
+    "prefix": ["ref"],
+    "description": "Primitive ref state with an update function",
+    "body": [
+      "const count = ref(0)",
+      "",
+      "function increment() {",
+      "  count.value += 1",
+      "}"
+    ]
+  },
+
+  "vue_reactive": {
+    "prefix": ["reactive"],
+    "description": "Reactive object used as the model of a form",
+    "body": [
+      "const form = reactive({",
+      "  email: '',",
+      "  password: '',",
+      "  rememberMe: true,",
+      "})",
+      "",
+      "function submit() {",
+      "  console.log(form.email)",
+      "}"
+    ]
+  },
+
+  "vue_lifecycle": {
+    "prefix": ["onmounted"],
+    "description": "Mount and unmount hooks adding and removing a listener",
+    "body": [
+      "onMounted(() => {",
+      "  window.addEventListener('resize', handleResize)",
+      "})",
+      "",
+      "onUnmounted(() => {",
+      "  window.removeEventListener('resize', handleResize)",
+      "})"
+    ]
+  },
+
+  "vue_slot": {
+    "prefix": ["slot"],
+    "description": "Component template exposing named slots and default content",
+    "body": [
+      "<template>",
+      "  <div class=\"card\">",
+      "    <header class=\"card__header\">",
+      "      <slot name=\"header\" />",
+      "    </header>",
+      "    <div class=\"card__body\">",
+      "      <slot>",
+      "        <p class=\"card__empty\">No content</p>",
+      "      </slot>",
+      "    </div>",
+      "  </div>",
+      "</template>"
+    ]
+  },
+
+  "vue_v_for": {
+    "prefix": ["vfor"],
+    "description": "List rendering with v-for and a keyed item",
+    "body": [
+      "<ul class=\"todo-list\">",
+      "  <li v-for=\"todo in todos\" :key=\"todo.id\" class=\"todo-list__item\">",
+      "    <span class=\"todo-list__label\">{{ todo.title }}</span>",
+      "    <button type=\"button\" @click=\"removeTodo(todo.id)\">Remove</button>",
+      "  </li>",
+      "</ul>"
+    ]
+  },
+
+  "vue_v_if": {
+    "prefix": ["vif"],
+    "description": "Conditional rendering with v-if, v-else-if and v-else",
+    "body": [
+      "<div class=\"status\">",
+      "  <p v-if=\"loading\" class=\"status__text\">Loading...</p>",
+      "  <p v-else-if=\"error\" class=\"status__text\">{{ error }}</p>",
+      "  <p v-else class=\"status__text\">Everything is up to date</p>",
+      "</div>"
+    ]
+  },
+
+  "vue_v_model": {
+    "prefix": ["vmodel"],
+    "description": "Form with a v-model bound input and submit handling",
+    "body": [
+      "<form class=\"form\" @submit.prevent=\"submit\">",
+      "  <label class=\"form__label\" for=\"email\">Email</label>",
+      "  <input",
+      "    id=\"email\"",
+      "    v-model=\"form.${1:email}\"",
+      "    class=\"form__input\"",
+      "    type=\"email\"",
+      "    placeholder=\"you@example.com\"",
+      "  />",
+      "  <button class=\"form__submit\" type=\"submit\">Sign in</button>",
+      "</form>"
+    ]
+  },
+
+  "vue_dynamic_component": {
+    "prefix": ["dyncomp"],
+    "description": "Render a component chosen at runtime through the is prop",
+    "body": [
+      "<component",
+      "  :is=\"currentIcon\"",
+      "  class=\"icon\"",
+      "  :size=\"size\"",
+      "  @click=\"onSelect\"",
+      "/>"
+    ]
+  },
+
+  "vue_provide_inject": {
+    "prefix": ["provideinject"],
+    "description": "Share reactive state from parent to child with provide/inject",
+    "body": [
+      "// parent component",
+      "const theme = ref('dark')",
+      "provide('theme', theme)",
+      "",
+      "// child component",
+      "const injectedTheme = inject('theme', ref('light'))"
+    ]
+  },
+
+  "vue_composable": {
+    "prefix": ["composable"],
+    "description": "Composable hook exposing the reactive window size",
+    "body": [
+      "import { onMounted, onUnmounted, ref } from 'vue'",
+      "",
+      "export function useWindowSize() {",
+      "  const width = ref(window.innerWidth)",
+      "  const height = ref(window.innerHeight)",
+      "",
+      "  function update() {",
+      "    width.value = window.innerWidth",
+      "    height.value = window.innerHeight",
+      "  }",
+      "",
+      "  onMounted(() => window.addEventListener('resize', update))",
+      "  onUnmounted(() => window.removeEventListener('resize', update))",
+      "",
+      "  return { width, height }",
+      "}"
+    ]
+  },
+
+  "vue_pinia_store": {
+    "prefix": ["pinia"],
+    "description": "Pinia store with state, a getter and an action",
+    "body": [
+      "import { defineStore } from 'pinia'",
+      "",
+      "export const useCartStore = defineStore('cart', {",
+      "  state: () => ({",
+      "    items: [] as CartItem[],",
+      "  }),",
+      "  getters: {",
+      "    total: (state) => state.items.reduce((sum, item) => sum + item.price, 0),",
+      "  },",
+      "  actions: {",
+      "    addItem(item: CartItem) {",
+      "      this.items.push(item)",
+      "    },",
+      "  },",
+      "})"
+    ]
+  },
+
+  "vue_test": {
+    "prefix": ["vtest"],
+    "description": "Vitest component test mounting a component and checking output",
+    "body": [
+      "import { mount } from '@vue/test-utils'",
+      "import { describe, expect, it } from 'vitest'",
+      "import UserCard from './UserCard.vue'",
+      "",
+      "describe('UserCard', () => {",
+      "  it('renders the user name', () => {",
+      "    const wrapper = mount(UserCard, {",
+      "      props: { userId: 1 },",
+      "    })",
+      "",
+      "    expect(wrapper.text()).toContain('Ada Lovelace')",
+      "  })",
+      "})"
+    ]
+  }
+}

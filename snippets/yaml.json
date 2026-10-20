@@ -1,0 +1,330 @@
+{
+  "key_value": {
+    "prefix": ["keyval", "kv"],
+    "description": "Simple YAML key and value pairs",
+    "body": [
+      "name: acme-service",
+      "timeout: 30",
+      "enabled: true"
+    ]
+  },
+
+  "nested_map": {
+    "prefix": ["nestedmap", "nestmap"],
+    "description": "Nested YAML mapping with sub mappings",
+    "body": [
+      "server:",
+      "    host: localhost",
+      "    port: 8080",
+      "    tls:",
+      "        enabled: true",
+      "        cert: /etc/ssl/server.crt"
+    ]
+  },
+
+  "list": {
+    "prefix": ["list", "ylist"],
+    "description": "YAML list of scalar items",
+    "body": [
+      "features:",
+      "    - metrics",
+      "    - tracing",
+      "    - rate-limiting"
+    ]
+  },
+
+  "long_list": {
+    "prefix": ["longlist", "globs"],
+    "description": "Long YAML list of glob patterns",
+    "body": [
+      "include:",
+      "    - src/**/*.ts",
+      "    - src/**/*.tsx",
+      "    - test/**/*.spec.ts",
+      "    - docs/**/*.md",
+      "    - scripts/**/*.sh",
+      "    - config/*.yaml"
+    ]
+  },
+
+  "list_of_maps": {
+    "prefix": ["listofmaps", "lomap"],
+    "description": "YAML list where every item is a mapping",
+    "body": [
+      "users:",
+      "    -",
+      "        name: alice",
+      "        role: admin",
+      "    -",
+      "        name: bob",
+      "        role: editor"
+    ]
+  },
+
+  "block_scalars": {
+    "prefix": ["blockscalar", "blockstr"],
+    "description": "YAML literal, folded and chomped block scalars",
+    "body": [
+      "description: |",
+      "    First line of the description.",
+      "    Second line of the description.",
+      "",
+      "summary: >",
+      "    This folded scalar joins",
+      "    lines into a single paragraph.",
+      "",
+      "notes: |-",
+      "    The trailing newline is stripped",
+      "    from this block scalar."
+    ]
+  },
+
+  "anchor_and_alias": {
+    "prefix": ["anchor", "alias"],
+    "description": "YAML anchor on a value and an alias referencing it",
+    "body": [
+      "host: &host localhost",
+      "port: &port 5432",
+      "",
+      "production:",
+      "    server: *host",
+      "    db_port: *port"
+    ]
+  },
+
+  "merge_key": {
+    "prefix": ["mergekey", "merge"],
+    "description": "YAML merge key that folds a mapping into another one",
+    "body": [
+      ".base: &base",
+      "    retries: 3",
+      "    timeout: 30",
+      "",
+      "service:",
+      "    <<: *base",
+      "    timeout: 60"
+    ]
+  },
+
+  "comment_block": {
+    "prefix": ["comments", "comment"],
+    "description": "YAML comment block describing a file",
+    "body": [
+      "# Deployment notes",
+      "# ----------------",
+      "# The api service listens on port 8080 and expects",
+      "# the DATABASE_URL environment variable to be set.",
+      "",
+      "# Start the stack locally with `docker compose up`."
+    ]
+  },
+
+  "multi_document": {
+    "prefix": ["multidoc", "docs"],
+    "description": "YAML stream with several documents separated by ---",
+    "body": [
+      "---",
+      "apiVersion: v1",
+      "kind: Service",
+      "metadata:",
+      "    name: api",
+      "---",
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata:",
+      "    name: api"
+    ]
+  },
+
+  "scalar_values": {
+    "prefix": ["scalars", "quoted"],
+    "description": "YAML quoted strings and null values",
+    "body": [
+      "name: \"release-service\"",
+      "title: 'Orders API'",
+      "empty: \"\"",
+      "optional: null",
+      "missing: ~"
+    ]
+  },
+
+  "flow_collections": {
+    "prefix": ["flow", "flowseq"],
+    "description": "YAML flow sequence and flow mapping syntax",
+    "body": [
+      "tags: [api, backend, v2]",
+      "limits: {cpu: 500m, memory: 256Mi, timeout: 30}",
+      "matrix: []"
+    ]
+  },
+
+  "complex_key": {
+    "prefix": ["complexkey", "ckey"],
+    "description": "YAML mapping that uses an explicit complex key",
+    "body": [
+      "? \"api:v1\"",
+      ": health check endpoint",
+      "",
+      "? \"api:v2\"",
+      ": legacy endpoint"
+    ]
+  },
+
+  "tagged_value": {
+    "prefix": ["tagged", "tag"],
+    "description": "YAML values with an explicit tag",
+    "body": [
+      "explicit_string: !!str 123",
+      "release_date: !!timestamp 2024-01-15T09:30:00Z"
+    ]
+  },
+
+  "gitlab_ci_pipeline": {
+    "prefix": ["gitlabci", "gitlab"],
+    "description": "GitLab CI pipeline with stages, jobs and artifacts",
+    "body": [
+      "stages:",
+      "    - build",
+      "    - test",
+      "    - deploy",
+      "",
+      "build:",
+      "    stage: build",
+      "    script:",
+      "        - npm ci",
+      "        - npm run build",
+      "    artifacts:",
+      "        paths:",
+      "            - dist/"
+    ]
+  },
+
+  "compose_service": {
+    "prefix": ["compose", "dockercompose"],
+    "description": "Docker Compose file with an api service and a database",
+    "body": [
+      "services:",
+      "    api:",
+      "        image: ghcr.io/acme/api:latest",
+      "        build:",
+      "            context: .",
+      "            dockerfile: Dockerfile",
+      "        ports:",
+      "            - \"8080:8080\"",
+      "        environment:",
+      "            - DATABASE_URL=postgres://db:5432/app",
+      "            - LOG_LEVEL=info",
+      "        depends_on:",
+      "            - db",
+      "        restart: unless-stopped",
+      "",
+      "    db:",
+      "        image: postgres:16-alpine",
+      "        environment:",
+      "            POSTGRES_USER: app",
+      "            POSTGRES_DB: app",
+      "        volumes:",
+      "            - db-data:/var/lib/postgresql/data",
+      "",
+      "volumes:",
+      "    db-data:"
+    ]
+  },
+
+  "github_actions_workflow": {
+    "prefix": ["ghaction", "gha"],
+    "description": "GitHub Actions workflow with a build job",
+    "body": [
+      "name: CI",
+      "",
+      "on:",
+      "    push:",
+      "        branches: [main]",
+      "    pull_request:",
+      "        branches: [main]",
+      "",
+      "jobs:",
+      "    build:",
+      "        runs-on: ubuntu-latest",
+      "        env:",
+      "            NODE_VERSION: 20",
+      "        steps:",
+      "            - uses: actions/checkout@v4",
+      "            - uses: actions/setup-node@v4",
+      "            - run: npm ci",
+      "            - run: npm test"
+    ]
+  },
+
+  "kubernetes_manifest": {
+    "prefix": ["k8s", "kube"],
+    "description": "Kubernetes Deployment manifest with container resources",
+    "body": [
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata:",
+      "    name: api",
+      "    labels:",
+      "        app: api",
+      "spec:",
+      "    replicas: 3",
+      "    selector:",
+      "        matchLabels:",
+      "            app: api",
+      "    template:",
+      "        metadata:",
+      "            labels:",
+      "                app: api",
+      "        spec:",
+      "            containers:",
+      "                -",
+      "                    name: api",
+      "                    image: ghcr.io/acme/api:1.4.0",
+      "                    ports:",
+      "                        - containerPort: 8080",
+      "                    resources:",
+      "                        limits:",
+      "                            cpu: 500m",
+      "                            memory: 256Mi"
+    ]
+  },
+
+  "openapi_document": {
+    "prefix": ["openapi", "oas"],
+    "description": "OpenAPI 3 document describing a path and its response",
+    "body": [
+      "openapi: 3.0.3",
+      "info:",
+      "    title: Orders API",
+      "    version: 1.0.0",
+      "paths:",
+      "    /orders:",
+      "        get:",
+      "            summary: List orders",
+      "            operationId: listOrders",
+      "            responses:",
+      "                \"200\":",
+      "                    description: A list of orders",
+      "                    content:",
+      "                        application/json:",
+      "                            schema:",
+      "                                type: array",
+      "                                items:",
+      "                                    \\$ref: \"#/components/schemas/Order\""
+    ]
+  },
+
+  "environment_file": {
+    "prefix": ["dotenv", "env"],
+    "description": "Multi line environment file with the usual variables",
+    "body": [
+      "# Local development environment",
+      "NODE_ENV=development",
+      "DATABASE_URL=postgres://localhost:5432/acme",
+      "REDIS_URL=redis://localhost:6379/0",
+      "SECRET_KEY=change-me",
+      "API_TIMEOUT=30",
+      "FEATURE_FLAGS=search,billing"
+    ]
+  }
+}

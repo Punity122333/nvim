@@ -1,0 +1,297 @@
+{
+  "vim_function": {
+    "prefix": ["func"],
+    "description": "Script local function with the abort attribute",
+    "body": [
+      "function! s:FormatTimestamp(timestamp) abort",
+      "  \"Format a unix timestamp as YYYY-MM-DD HH:MM.",
+      "  return strftime('%Y-%m-%d %H:%M', a:timestamp)",
+      "endfunction",
+      "",
+      "let s:label = s:FormatTimestamp(1700000000)"
+    ]
+  },
+
+  "vim_function_range": {
+    "prefix": ["funcrange"],
+    "description": "Function operating on the selected range plus a mapping",
+    "body": [
+      "function! s:UpperCaseRange() range",
+      "  \"Turn every selected line into upper case.",
+      "  for lnum in range(a:firstline, a:lastline)",
+      "    call setline(lnum, toupper(getline(lnum)))",
+      "  endfor",
+      "endfunction",
+      "",
+      "nnoremap <silent> <leader>U :call <SID>UpperCaseRange()<CR>"
+    ]
+  },
+
+  "vim_autoload_function": {
+    "prefix": ["autofunc"],
+    "description": "Autoload style function in autoload/project.vim",
+    "body": [
+      "\" ~/.vim/autoload/project.vim",
+      "function! project#RenameBuffer() abort",
+      "  let l:directory = expand('%:p:h')",
+      "  let l:name = expand('%:t:r')",
+      "  execute 'file ' . fnameescape(l:directory . '/' . l:name . '.new')",
+      "endfunction"
+    ]
+  },
+
+  "vim_autocmd_group": {
+    "prefix": ["augroup"],
+    "description": "Autocommand group that clears itself before redefining",
+    "body": [
+      "augroup project_autocmds",
+      "  autocmd!",
+      "  autocmd BufWritePre *.go lua vim.lsp.buf.format({ async = false })",
+      "  autocmd BufWritePost *.md silent! write",
+      "  autocmd FileType qf setlocal nonumber",
+      "  autocmd TextYankPost * let @/ = \\\\vsubstitute(escape(@/, '\\\\/'), '\\\\_\\$', '', '')",
+      "augroup END"
+    ]
+  },
+
+  "vim_variable_scopes": {
+    "prefix": ["varscope"],
+    "description": "Buffer, window and global variables with a safe getter",
+    "body": [
+      "let b:my_plugin_enabled = 1",
+      "let b:my_plugin_state = {}",
+      "",
+      "let w:quickfix_width = 40",
+      "let w:preview_height = 12",
+      "",
+      "let g:my_plugin_verbose = 0",
+      "let g:my_plugin_root = expand('~/.config/my-plugin')",
+      "",
+      "function! s:IsPluginEnabled() abort",
+      "  return get(b:, 'my_plugin_enabled', 0)",
+      "endfunction"
+    ]
+  },
+
+  "vim_command": {
+    "prefix": ["command"],
+    "description": "User command with argument completion and bang modifier",
+    "body": [
+      "command! -nargs=* -complete=file ProjectOpen :call project#Open(<f-args>)",
+      "command! -bang -nargs=0 ProjectReload! :call project#Reload()",
+      "command! -nargs=1 -range ProjectLine :call project#GoToLine(<line1>)"
+    ]
+  },
+
+  "vim_completion_function": {
+    "prefix": ["complete"],
+    "description": "Custom completion function filtered with a regexp",
+    "body": [
+      "function! s:CompleteBranch(arglead, cmdline, cursorpos) abort",
+      "  let l:branches = systemlist('git branch --format=\"%(refname:short)\"')",
+      "  return filter(l:branches, 'v:val =~# a:arglead')",
+      "endfunction",
+      "",
+      "command! -nargs=1 -complete=custom,s:CompleteBranch GitCheckout :call s:Checkout(<f-args>)"
+    ]
+  },
+
+  "vim_feature_guard": {
+    "prefix": ["has"],
+    "description": "Feature guard with has() that stops on unsupported versions",
+    "body": [
+      "if !has('nvim-0.9')",
+      "  echohl WarningMsg",
+      "  echomsg 'This plugin requires Neovim 0.9 or newer'",
+      "  echohl None",
+      "  finish",
+      "endif",
+      "",
+      "if has('nvim')",
+      "  set termguicolors",
+      "endif"
+    ]
+  },
+
+  "vim_statusline": {
+    "prefix": ["statusline"],
+    "description": "Statusline built from parts with a modified indicator",
+    "body": [
+      "let s:status = '%f %{winnr}.%{winid()} %l:%c'",
+      "let s:status ..= ' %M%R'",
+      "let s:status ..= ' %{get(g:, \"my_plugin_status\", \"\")}'",
+      "",
+      "let &statusline = s:status"
+    ]
+  },
+
+  "vim_fold": {
+    "prefix": ["fold"],
+    "description": "Fold settings plus the usual fold navigation mappings",
+    "body": [
+      "setlocal foldmethod=indent",
+      "setlocal foldlevel=0",
+      "setlocal foldminlines=3",
+      "setlocal foldcolumn=4",
+      "",
+      "nnoremap <silent> <space> za",
+      "nnoremap <silent> <leader>zo zo",
+      "nnoremap <silent> <leader>zc zc",
+      "nnoremap <silent> <leader>zR zR"
+    ]
+  },
+
+  "vim_syntax_match": {
+    "prefix": ["syntaxmatch"],
+    "description": "Syntax match group and a linked highlight group",
+    "body": [
+      "syntax match MyPluginTodo /\\\\bTODO\\\\b/",
+      "syntax match MyPluginError /\\\\berror\\\\b/",
+      "syntax match MyPluginComment /^\\\\s*\".*\\$/",
+      "",
+      "highlight default link MyPluginTodo Todo",
+      "highlight default link MyPluginError ErrorMsg"
+    ]
+  },
+
+  "vim_expr_mapping": {
+    "prefix": ["exprmap"],
+    "description": "Insert mode mapping using an expr mapping and a function",
+    "body": [
+      "inoremap <silent> <expr> <C-t> ToggleComment()",
+      "",
+      "function! ToggleComment() abort",
+      "  let l:line = getline('.')",
+      "  if l:line =~# '^\\\\s*\"'",
+      "    return substitute(l:line, '^(\\\\s*)\" ', '\\\\1', '')",
+      "  endif",
+      "  return substitute(l:line, '^(\\\\s*)(.*)\\$', '\\\\1\" \\\\2', '')",
+      "endfunction"
+    ]
+  },
+
+  "vim_dict_function": {
+    "prefix": ["dictfunc"],
+    "description": "Function using a local dictionary with dict scoped methods",
+    "body": [
+      "function! s:build_counter() abort",
+      "  let counter = {'count': 0}",
+      "",
+      "  function! counter.increment() abort dict",
+      "    let self.count += 1",
+      "    return self.count",
+      "  endfunction",
+      "",
+      "  return counter",
+      "endfunction",
+      "",
+      "let s:counter = s:build_counter()",
+      "echo s:counter.increment()"
+    ]
+  },
+
+  "vim_try_catch": {
+    "prefix": ["trycatch"],
+    "description": "try, catch and finally block with error reporting",
+    "body": [
+      "try",
+      "  call s:WriteReport()",
+      "catch /^Vim\\\\%((\\\\a\\\\+)\\\\)\\\\=:E/",
+      "  echohl ErrorMsg",
+      "  echomsg 'Could not write the report: ' . v:exception",
+      "  echohl None",
+      "catch",
+      "  echomsg 'Unexpected error: ' . v:exception",
+      "finally",
+      "  call s:RestoreCursor()",
+      "endtry"
+    ]
+  },
+
+  "vim_timer": {
+    "prefix": ["timer"],
+    "description": "Repeating timer started with timer_start and stopped again",
+    "body": [
+      "let s:timer = timer_start(1000, {-> execute('echo \"tick\"')}, {'repeat': 5})",
+      "",
+      "call timer_stop(s:timer)",
+      "call timer_stopall()"
+    ]
+  },
+
+  "vim_popup": {
+    "prefix": ["popup"],
+    "description": "Popup notification created with popup_create",
+    "body": [
+      "let l:popup = popup_create('Saved the file', {",
+      "      \\\\ 'line': 'top',",
+      "      \\\\ 'col': 'center',",
+      "      \\\\ 'minwidth': 30,",
+      "      \\\\ 'border': [],",
+      "      \\\\ 'highlight': ['WarningMsg'],",
+      "      \\\\ })",
+      "",
+      "call timer_start(2000, {-> popup_close(l:popup)})"
+    ]
+  },
+
+  "vim_list_helpers": {
+    "prefix": ["listmap"],
+    "description": "List helpers using map, filter and a lambda expression",
+    "body": [
+      "let s:names = ['ada', 'grace', 'alan']",
+      "",
+      "let s:upper = map(copy(s:names), {_, v -> toupper(v)})",
+      "let s:long = filter(copy(s:names), {_, v -> strlen(v) > 3})",
+      "",
+      "call map(s:upper, {i, v -> printf('%d: %s', i + 1, v)})",
+      "",
+      "echo s:upper",
+      "echo s:long"
+    ]
+  },
+
+  "vim_job_start": {
+    "prefix": ["jobstart"],
+    "description": "Asynchronous job started with job_start and its callbacks",
+    "body": [
+      "let s:opts = {",
+      "      \\\\ 'on_stdout': {channel, msg -> channel_send(channel, msg)},",
+      "      \\\\ 'on_stderr': {channel, msg -> ch_logfile('job.log', msg)},",
+      "      \\\\ 'on_exit': {job, code -> echomsg 'git finished with code ' . code},",
+      "      \\\\ }",
+      "",
+      "let s:job = job_start(['git', 'status', '--porcelain'], s:opts)",
+      "",
+      "call job_stop(s:job)"
+    ]
+  },
+
+  "vim_quickfix": {
+    "prefix": ["qflist"],
+    "description": "Fill the quickfix list and open it in a window",
+    "body": [
+      "call setqflist([",
+      "      \\\\ {'filename': 'src/main.c', 'lnum': 42, 'text': 'possible null dereference'},",
+      "      \\\\ {'filename': 'src/util.c', 'lnum': 17, 'text': 'unused variable'},",
+      "      \\\\ ])",
+      "",
+      "cwindow"
+    ]
+  },
+
+  "vim_lua_bridge": {
+    "prefix": ["nvimlua"],
+    "description": "Call the Neovim Lua API from Vim script with a heredoc",
+    "body": [
+      "lua << EOF",
+      "vim.api.nvim_create_autocmd('TextYankPost', {",
+      "  group = vim.api.nvim_create_augroup('YankHighlight', { clear = true }),",
+      "  callback = function()",
+      "    vim.highlight.on_yank()",
+      "  end,",
+      "})",
+      "EOF"
+    ]
+  }
+}

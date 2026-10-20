@@ -1,0 +1,417 @@
+{
+  "scss_variables": {
+    "prefix": ["scssvar"],
+    "description": "Sass variables, including one with a default value",
+    "body": [
+      "\\$primary: ${1:#3b82f6};",
+      "\\$secondary: #64748b;",
+      "\\$radius: ${2:8px};",
+      "\\$font-stack: system-ui, -apple-system, 'Segoe UI', sans-serif !default;",
+      "\\$primary-color: #2563eb !default;"
+    ]
+  },
+
+  "scss_nesting": {
+    "prefix": ["scssnest"],
+    "description": "Nested selectors using a parent selector reference",
+    "body": [
+      ".${1:card} {",
+      "  padding: 1rem;",
+      "  border-radius: 8px;",
+      "",
+      "  .${1:card}__title {",
+      "    margin: 0;",
+      "    font-size: 1.125rem;",
+      "  }",
+      "",
+      "  &:hover {",
+      "    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);",
+      "  }",
+      "",
+      "  &--elevated {",
+      "    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_mixin": {
+    "prefix": ["scssmixin"],
+    "description": "Mixin that applies a reusable set of declarations",
+    "body": [
+      "@mixin button-reset {",
+      "  appearance: none;",
+      "  border: 0;",
+      "  background: none;",
+      "  padding: 0;",
+      "  cursor: pointer;",
+      "}"
+    ]
+  },
+
+  "scss_mixin_args": {
+    "prefix": ["scssmixinargs"],
+    "description": "Mixin taking arguments and wrapping a content block",
+    "body": [
+      "@mixin respond(\\$breakpoint) {",
+      "  @if \\$breakpoint == tablet {",
+      "    @media (max-width: 768px) {",
+      "      @content;",
+      "    }",
+      "  } @else {",
+      "    @content;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_include": {
+    "prefix": ["scssinclude"],
+    "description": "Include a mixin with arguments and a content block",
+    "body": [
+      "@mixin focus-ring(\\$color: #3b82f6) {",
+      "  outline: 2px solid \\$color;",
+      "  outline-offset: 2px;",
+      "}",
+      "",
+      ".input:focus {",
+      "  @include focus-ring;",
+      "}"
+    ]
+  },
+
+  "scss_placeholder_extend": {
+    "prefix": ["scssplaceholder"],
+    "description": "Placeholder selector extended by a concrete class",
+    "body": [
+      "%button-base {",
+      "  display: inline-flex;",
+      "  align-items: center;",
+      "  gap: 0.5rem;",
+      "  border-radius: 6px;",
+      "}",
+      "",
+      ".button {",
+      "  @extend %button-base;",
+      "  background: #3b82f6;",
+      "  color: #ffffff;",
+      "}"
+    ]
+  },
+
+  "scss_function": {
+    "prefix": ["scssfunc"],
+    "description": "Custom function converting pixels into rem units",
+    "body": [
+      "@use 'sass:math';",
+      "",
+      "@function rem(\\$px, \\$base: 16px) {",
+      "  @return math.div(\\$px, \\$base) * 1rem;",
+      "}",
+      "",
+      ".heading {",
+      "  font-size: rem(24px);",
+      "}"
+    ]
+  },
+
+  "scss_map": {
+    "prefix": ["scssmap"],
+    "description": "Map of breakpoints read with the map module",
+    "body": [
+      "@use 'sass:map';",
+      "",
+      "\\$breakpoints: (",
+      "  small: 576px,",
+      "  medium: 768px,",
+      "  large: 992px,",
+      ");",
+      "",
+      "@function bp(\\$name) {",
+      "  @return map.get(\\$breakpoints, \\$name);",
+      "}",
+      "",
+      "@media (min-width: bp(medium)) {",
+      "  .container {",
+      "    max-width: 720px;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_each": {
+    "prefix": ["scsseach"],
+    "description": "Loop over a map of spacing values with the each rule",
+    "body": [
+      "\\$spacing: (",
+      "  sm: 4px,",
+      "  md: 8px,",
+      "  lg: 16px,",
+      ");",
+      "",
+      "@each \\$name, \\$size in \\$spacing {",
+      "  .p-#{\\$name} {",
+      "    padding: \\$size;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_conditional": {
+    "prefix": ["scssif"],
+    "description": "Branch on a variable with if, else if and else",
+    "body": [
+      "\\$theme: dark;",
+      "",
+      ".card {",
+      "  @if \\$theme == light {",
+      "    background: #ffffff;",
+      "    color: #111827;",
+      "  } @else if \\$theme == dark {",
+      "    background: #111827;",
+      "    color: #f9fafb;",
+      "  } @else {",
+      "    background: #f3f4f6;",
+      "    color: #374151;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_media_mixin": {
+    "prefix": ["scssmedia"],
+    "description": "Breakpoint mixin wrapping content in a media query",
+    "body": [
+      "@use 'sass:map';",
+      "",
+      "\\$breakpoints: (",
+      "  medium: 768px,",
+      "  large: 1024px,",
+      ");",
+      "",
+      "@mixin up(\\$name) {",
+      "  @media (min-width: map.get(\\$breakpoints, \\$name)) {",
+      "    @content;",
+      "  }",
+      "}",
+      "",
+      ".container {",
+      "  padding: 1rem;",
+      "",
+      "  @include up(medium) {",
+      "    padding: 2rem;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_color": {
+    "prefix": ["scsscolor"],
+    "description": "Adjust and scale colors with the sass color module",
+    "body": [
+      "@use 'sass:color';",
+      "",
+      "\\$primary: ${1:#3b82f6};",
+      "",
+      ".button {",
+      "  background: \\$primary;",
+      "  border-color: color.adjust(\\$primary, \\$lightness: -8%);",
+      "  box-shadow: 0 4px 12px color.scale(\\$primary, \\$alpha: -70%);",
+      "}"
+    ]
+  },
+
+  "scss_dark_mode": {
+    "prefix": ["scssdark"],
+    "description": "Function building darker surface shades for dark mode",
+    "body": [
+      "@use 'sass:color';",
+      "",
+      "@function surface(\\$level: 1) {",
+      "  @return color.adjust(#111827, \\$lightness: \\$level * 3%);",
+      "}",
+      "",
+      ".theme-dark {",
+      "  background: surface(1);",
+      "  color: #f9fafb;",
+      "",
+      "  .theme-dark__card {",
+      "    background: surface(2);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_bem": {
+    "prefix": ["scssbem"],
+    "description": "BEM block with element and modifier selectors",
+    "body": [
+      ".${1:card} {",
+      "  padding: 1rem;",
+      "  border-radius: 8px;",
+      "  background: #ffffff;",
+      "",
+      "  &__title {",
+      "    margin: 0;",
+      "    font-size: 1.125rem;",
+      "  }",
+      "",
+      "  &__body {",
+      "    color: #4b5563;",
+      "  }",
+      "",
+      "  &--elevated {",
+      "    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "scss_theme": {
+    "prefix": ["scsstheme"],
+    "description": "Theme map with a helper function reading theme values",
+    "body": [
+      "@use 'sass:map';",
+      "",
+      "\\$themes: (",
+      "  light: (",
+      "    bg: #ffffff,",
+      "    text: #111827,",
+      "    border: #e5e7eb,",
+      "  ),",
+      "  dark: (",
+      "    bg: #111827,",
+      "    text: #f9fafb,",
+      "    border: #374151,",
+      "  ),",
+      ");",
+      "",
+      "@function theme(\\$name, \\$key) {",
+      "  \\$palette: map.get(\\$themes, \\$name);",
+      "  @return map.get(\\$palette, \\$key);",
+      "}",
+      "",
+      "body {",
+      "  background: theme(light, bg);",
+      "  color: theme(light, text);",
+      "}"
+    ]
+  },
+
+  "scss_fluid": {
+    "prefix": ["scssfluid"],
+    "description": "Fluid type scale function and a fluid spacing mixin",
+    "body": [
+      "@use 'sass:math';",
+      "",
+      "@function fluid-type(\\$min, \\$max, \\$min-vw: 20, \\$max-vw: 90) {",
+      "  \\$slope: math.div(\\$max - \\$min, \\$max-vw - \\$min-vw);",
+      "  \\$intercept: \\$min - \\$slope * \\$min-vw;",
+      "",
+      "  @return clamp(#{\\$min}rem, calc(#{\\$intercept}rem + #{\\$slope * 100}vw), #{\\$max}rem);",
+      "}",
+      "",
+      "@mixin fluid-space(\\$min, \\$max) {",
+      "  padding: clamp(#{\\$min}rem, 2vw, #{\\$max}rem);",
+      "}",
+      "",
+      "h1 {",
+      "  font-size: fluid-type(1.75, 3);",
+      "}",
+      "",
+      ".card {",
+      "  @include fluid-space(1, 2);",
+      "}"
+    ]
+  },
+
+  "scss_reset": {
+    "prefix": ["scssreset"],
+    "description": "Minimal modern CSS reset for a project base",
+    "body": [
+      "*,",
+      "*::before,",
+      "*::after {",
+      "  box-sizing: border-box;",
+      "}",
+      "",
+      "html {",
+      "  -webkit-text-size-adjust: 100%;",
+      "}",
+      "",
+      "body {",
+      "  margin: 0;",
+      "  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;",
+      "  line-height: 1.5;",
+      "  -webkit-font-smoothing: antialiased;",
+      "}",
+      "",
+      "img,",
+      "svg {",
+      "  display: block;",
+      "  max-width: 100%;",
+      "}"
+    ]
+  },
+
+  "scss_module": {
+    "prefix": ["scssmodule"],
+    "description": "Load a partial as a module and forward its members",
+    "body": [
+      "// _tokens.scss",
+      "\\$primary: #3b82f6;",
+      "\\$radius: 8px;",
+      "",
+      "// _index.scss",
+      "@forward 'tokens';",
+      "",
+      "// main.scss",
+      "@use 'index' as tokens;",
+      "",
+      ".button {",
+      "  background: tokens.\\$primary;",
+      "  border-radius: tokens.\\$radius;",
+      "}"
+    ]
+  },
+
+  "scss_animation": {
+    "prefix": ["scssanim"],
+    "description": "Keyframes plus a shorthand animation declaration",
+    "body": [
+      "@keyframes fade-in-up {",
+      "  from {",
+      "    opacity: 0;",
+      "    transform: translateY(12px);",
+      "  }",
+      "",
+      "  to {",
+      "    opacity: 1;",
+      "    transform: translateY(0);",
+      "  }",
+      "}",
+      "",
+      ".card {",
+      "  animation: fade-in-up 300ms ease-out both;",
+      "}"
+    ]
+  },
+
+  "scss_custom_property": {
+    "prefix": ["scsscvar"],
+    "description": "Define CSS custom properties and consume them in rules",
+    "body": [
+      ":root {",
+      "  --color-brand: ${1:#3b82f6};",
+      "  --space-gutter: 1rem;",
+      "  --radius-card: 8px;",
+      "}",
+      "",
+      ".card {",
+      "  padding: var(--space-gutter);",
+      "  border-radius: var(--radius-card);",
+      "  background: var(--color-brand);",
+      "}"
+    ]
+  }
+}

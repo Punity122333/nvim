@@ -1,0 +1,107 @@
+{
+  "racket_define": {
+    "prefix": ["define"],
+    "description": "Function definition",
+    "body": [
+      "(define (${1:name} ${2:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "racket_define_value": {
+    "prefix": ["definevalue"],
+    "description": "Definition of a value",
+    "body": [
+      "(define ${1:name} ${2:value})"
+    ]
+  },
+
+  "racket_lambda": {
+    "prefix": ["lambda"],
+    "description": "Anonymous function",
+    "body": [
+      "(lambda (${1:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "racket_let": {
+    "prefix": ["let"],
+    "description": "Let binding with a body",
+    "body": [
+      "(let ([${1:name} ${2:value}])",
+      "  $0)"
+    ]
+  },
+
+  "racket_cond": {
+    "prefix": ["cond"],
+    "description": "Cond expression with the else branch",
+    "body": [
+      "(cond [(${1:condition}) ${2:result}]",
+      "      [else ${3:fallback}])"
+    ]
+  },
+
+  "racket_match": {
+    "prefix": ["match"],
+    "description": "Match expression on the shape of a value",
+    "body": [
+      "(match ${1:value}",
+      "  [(list ${2:head} ...)",
+      "   ${3:result}]",
+      "  [_",
+      "   ${4:fallback}])"
+    ]
+  },
+
+  "racket_struct": {
+    "prefix": ["struct"],
+    "description": "Structure definition with its constructor and accessors",
+    "body": [
+      "(struct ${1:point} (x y)",
+      "  #:transparent)",
+      "",
+      "(define (${2:point}-sum p)",
+      "  (+ (${1:point}-x p) (${1:point}-y p)))"
+    ]
+  },
+
+  "racket_module": {
+    "prefix": ["module"],
+    "description": "Module with the require and provide forms",
+    "body": [
+      "#lang racket",
+      "",
+      "(require ${1:racket/list})",
+      "",
+      "(provide ${2:main})",
+      "",
+      "$0"
+    ]
+  },
+
+  "racket_require": {
+    "prefix": ["require"],
+    "description": "Require a module",
+    "body": [
+      "(require ${1:racket/list})"
+    ]
+  },
+
+  "racket_provide": {
+    "prefix": ["provide"],
+    "description": "Provide the exported definitions",
+    "body": [
+      "(provide ${1:main})"
+    ]
+  },
+
+  "racket_comment": {
+    "prefix": ["rcomment"],
+    "description": "Racket comment",
+    "body": [
+      "; ${1:TODO}"
+    ]
+  }
+}

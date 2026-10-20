@@ -1,0 +1,152 @@
+{
+  "fortran_program": {
+    "prefix": ["program"],
+    "description": "Fortran program unit",
+    "body": [
+      "program ${1:main}",
+      "    implicit none",
+      "",
+      "    integer :: ${2:i}",
+      "",
+      "    do ${2:i} = 1, ${3:10}",
+      "        print *, ${2:i}",
+      "    end do",
+      "end program ${1:main}"
+    ]
+  },
+
+  "fortran_subroutine": {
+    "prefix": ["subroutine"],
+    "description": "Subroutine with the dummy arguments",
+    "body": [
+      "subroutine ${1:name}(${2:argument})",
+      "    implicit none",
+      "    integer, intent(in) :: ${2:argument}",
+      "",
+      "    $0",
+      "end subroutine ${1:name}"
+    ]
+  },
+
+  "fortran_function": {
+    "prefix": ["fortranfn", "function"],
+    "description": "Function returning a value",
+    "body": [
+      "function ${1:name}(${2:input}) result(${3:output})",
+      "    implicit none",
+      "    real, intent(in) :: ${2:input}",
+      "    real :: ${3:output}",
+      "",
+      "    ${3:output} = ${2:input} * ${4:2.0}",
+      "end function ${1:name}"
+    ]
+  },
+
+  "fortran_module": {
+    "prefix": ["module"],
+    "description": "Module holding the public routines",
+    "body": [
+      "module ${1:name}",
+      "    implicit none",
+      "    private",
+      "    public :: ${2:routine}",
+      "",
+      "contains",
+      "",
+      "    $0",
+      "",
+      "end module ${1:name}"
+    ]
+  },
+
+  "fortran_use": {
+    "prefix": ["use"],
+    "description": "Use a module with the only clause",
+    "body": [
+      "use ${1:module}, only: ${2:routine}"
+    ]
+  },
+
+  "fortran_implicit_none": {
+    "prefix": ["implicitnone"],
+    "description": "Disable the implicit typing of the variables",
+    "body": [
+      "implicit none"
+    ]
+  },
+
+  "fortran_do_loop": {
+    "prefix": ["do"],
+    "description": "Do loop over a range",
+    "body": [
+      "do ${1:i} = ${2:1}, ${3:10}, ${4:1}",
+      "    $0",
+      "end do"
+    ]
+  },
+
+  "fortran_if": {
+    "prefix": ["fortranif"],
+    "description": "If statement with an else branch",
+    "body": [
+      "if (${1:condition}) then",
+      "    $0",
+      "else",
+      "    ${2:statements}",
+      "end if"
+    ]
+  },
+
+  "fortran_select": {
+    "prefix": ["select"],
+    "description": "Select case statement",
+    "body": [
+      "select case (${1:value})",
+      "case (${2:first})",
+      "    $0",
+      "case default",
+      "    ${3:statements}",
+      "end select"
+    ]
+  },
+
+  "fortran_allocatable": {
+    "prefix": ["allocatable"],
+    "description": "Allocatable array with its allocation",
+    "body": [
+      "real, allocatable :: ${1:values}(:)",
+      "allocate(${1:values}(${2:size}))",
+      "deallocate(${1:values})"
+    ]
+  },
+
+  "fortran_interface": {
+    "prefix": ["interface"],
+    "description": "Explicit interface for an external procedure",
+    "body": [
+      "interface ${1:routine}",
+      "    subroutine ${1:routine}(${2:argument})",
+      "        integer, intent(in) :: ${2:argument}",
+      "    end subroutine ${1:routine}",
+      "end interface ${1:routine}"
+    ]
+  },
+
+  "fortran_contains": {
+    "prefix": ["contains"],
+    "description": "Contains section holding the internal procedures",
+    "body": [
+      "contains",
+      "",
+      "    $0"
+    ]
+  },
+
+  "fortran_comment": {
+    "prefix": ["fcomment"],
+    "description": "Fortran comment",
+    "body": [
+      "! ${1:TODO}"
+    ]
+  }
+}

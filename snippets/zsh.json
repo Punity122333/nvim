@@ -1,0 +1,304 @@
+{
+  "zsh_shebang": {
+    "prefix": ["shebang", "zshb"],
+    "description": "Zsh script header with shebang and a short description",
+    "body": [
+      "#!/usr/bin/env zsh",
+      "#",
+      "# ${1:Describe what this script does}",
+      "#",
+      "# Author: ${2:your name}"
+    ]
+  },
+
+  "completion_function": {
+    "prefix": ["compfn", "compfunc"],
+    "description": "Zsh completion function that describes the available commands",
+    "body": [
+      "_my_command() {",
+      "  local -a commands",
+      "  commands=(",
+      "    'start:Start the service'",
+      "    'stop:Stop the service'",
+      "    'status:Show the current status'",
+      "  )",
+      "",
+      "  _describe -t commands 'my command' commands",
+      "}"
+    ]
+  },
+
+  "compdef_block": {
+    "prefix": ["compdef"],
+    "description": "Initialise the completion system and register compdefs",
+    "body": [
+      "autoload -Uz compinit",
+      "compinit -u",
+      "",
+      "compdef _my_command my_command",
+      "compdef _git git",
+      "compdef _docker docker"
+    ]
+  },
+
+  "alias_block": {
+    "prefix": ["aliasdef", "aliases"],
+    "description": "Define a few everyday zsh aliases",
+    "body": [
+      "alias ll='ls -lah'",
+      "alias la='ls -A'",
+      "alias ..='cd ..'",
+      "alias grep='grep --color=auto'",
+      "alias gs='git status --short --branch'",
+      "alias gco='git checkout'"
+    ]
+  },
+
+  "named_parameters_function": {
+    "prefix": ["func", "fn"],
+    "description": "Zsh function that reads its arguments into named locals",
+    "body": [
+      "${1:deploy}() {",
+      "  local environment=\"\\$1\"",
+      "  local -a extra_args=(\"\\$@\")",
+      "",
+      "  if (( ! \\$# )); then",
+      "    print -u2 \"usage: \\${0:t} <environment>\"",
+      "    return 1",
+      "  fi",
+      "",
+      "  print -r -- \"deploying to \\${environment} with \\${#extra_args[@]} extra args\"",
+      "}"
+    ]
+  },
+
+  "glob_expansion": {
+    "prefix": ["glob", "globs"],
+    "description": "Expand a glob into a list of files and print them",
+    "body": [
+      "setopt EXTENDED_GLOB",
+      "",
+      "files=(src/**/*.ts)",
+      "",
+      "for file in \"\\${files[@]}\"; do",
+      "  print -r -- \"\\$file\"",
+      "done",
+      "",
+      "print -r -- \"\\${#files[@]} files matched\""
+    ]
+  },
+
+  "history_usage": {
+    "prefix": ["history", "hist"],
+    "description": "Work with the zsh history list and rerun a command",
+    "body": [
+      "# list the last 20 commands",
+      "fc -l -20",
+      "",
+      "# rerun the last command with a different editor",
+      "fc -s 'vim'='nvim'",
+      "",
+      "# search the history for a pattern",
+      "fc -l 'docker compose'"
+    ]
+  },
+
+  "prompt_block": {
+    "prefix": ["prompt", "zshprompt"],
+    "description": "A colourful zsh prompt with user, path and git branch",
+    "body": [
+      "PROMPT='%F{cyan}%n@%m%f %F{green}%~%f %# '",
+      "PROMPT+='%F{red}(%git_branch)%f'",
+      "PROMPT+='%(?:%F{blue}[%?]%f:%)'",
+      "",
+      "RPROMPT='%F{240}%T%f'"
+    ]
+  },
+
+  "zsh_options": {
+    "prefix": ["setopt", "options"],
+    "description": "Turn on and off the zsh options you actually need",
+    "body": [
+      "# navigation and globbing",
+      "setopt AUTO_CD",
+      "setopt EXTENDED_GLOB",
+      "setopt NO_BEEP",
+      "",
+      "# history handling",
+      "setopt HIST_IGNORE_ALL_DUPS",
+      "setopt SHARE_HISTORY",
+      "",
+      "unsetopt CORRECT"
+    ]
+  },
+
+  "zsh_trap": {
+    "prefix": ["trap", "cleanup"],
+    "description": "Trap signals in zsh to clean up and report interrupts",
+    "body": [
+      "trap 'print -u2 \"interrupted\"; exit 130' INT TERM",
+      "trap 'rm -f \"\\${tmp_file:-}\"' EXIT"
+    ]
+  },
+
+  "directory_listing": {
+    "prefix": ["lsdir", "lsd"],
+    "description": "Helper that lists a directory with a header",
+    "body": [
+      "lsdir() {",
+      "  local dir=\"\\${1:-.}\"",
+      "",
+      "  print -r -- \"listing \\${dir}\"",
+      "  ls -lah --color=auto \"\\$dir\"",
+      "}"
+    ]
+  },
+
+  "recursive_glob": {
+    "prefix": ["regglob", "rglob"],
+    "description": "Recursively match files below the current directory in zsh",
+    "body": [
+      "# ** matches directories recursively in zsh",
+      "for file in **/*.conf; do",
+      "  print -r -- \"\\$file\"",
+      "done",
+      "",
+      "# a single level only",
+      "for file in */*.conf; do",
+      "  print -r -- \"\\$file\"",
+      "done"
+    ]
+  },
+
+  "parameter_expansion": {
+    "prefix": ["param", "paramexp"],
+    "description": "Zsh parameter expansion modifiers for paths and lists",
+    "body": [
+      "path=\"/srv/app/logs/app.log\"",
+      "",
+      "print -r -- \"\\${path:t}\"        # file name only",
+      "print -r -- \"\\${path:h}\"        # directory part",
+      "print -r -- \"\\${path:r}\"        # path without the extension",
+      "print -r -- \"\\${path:e}\"        # extension only",
+      "print -r -- \"\\${(f)\"\\$(cat file)\"}\"  # split the file content on newlines"
+    ]
+  },
+
+  "here_string": {
+    "prefix": ["herestring", "herestr"],
+    "description": "Feed a string into a command with a zsh here string",
+    "body": [
+      "grep --color=auto 'error' <<< \"\\$log_output\"",
+      "",
+      "while IFS= read -r entry; do",
+      "  print -r -- \"\\$entry\"",
+      "done <<< \"\\$(ls -1)\""
+    ]
+  },
+
+  "zsh_array": {
+    "prefix": ["array", "arr"],
+    "description": "Declare a zsh array and iterate over its elements",
+    "body": [
+      "typeset -a files",
+      "files=(",
+      "  \"src/main.ts\"",
+      "  \"src/utils.ts\"",
+      "  \"src/index.ts\"",
+      ")",
+      "",
+      "for file in \"\\${files[@]}\"; do",
+      "  print -r -- \"\\$file\"",
+      "done",
+      "",
+      "print -l \"\\${files[@]}\""
+    ]
+  },
+
+  "zsh_case": {
+    "prefix": ["caseof", "caseblock"],
+    "description": "Case statement that dispatches on the first argument",
+    "body": [
+      "case \"\\${1:-}\" in",
+      "  start)",
+      "    print -r -- \"starting the service\"",
+      "    ;;",
+      "  stop)",
+      "    print -r -- \"stopping the service\"",
+      "    ;;",
+      "  *)",
+      "    print -u2 \"usage: \\${0:t} {start|stop}\"",
+      "    return 1",
+      "    ;;",
+      "esac"
+    ]
+  },
+
+  "ohmyzsh_block": {
+    "prefix": ["omz", "ohmyzsh"],
+    "description": "Load oh-my-zsh with a theme and a list of plugins",
+    "body": [
+      "ZSH_THEME=\"robbyrussell\"",
+      "plugins=(",
+      "  git",
+      "  z",
+      "  sudo",
+      "  web-search",
+      ")",
+      "",
+      "source \\${ZSH_CUSTOM:-\\$HOME/.oh-my-zsh/custom}/plugins/*/*.plugin.zsh",
+      "source \\$ZSH_OH_MY_ZSH/templates/zshrc.zsh-template"
+    ]
+  },
+
+  "key_binding": {
+    "prefix": ["bindkey", "keybind"],
+    "description": "Bind the usual readline keys to zsh line editing commands",
+    "body": [
+      "bindkey '^R' history-incremental-search-backward",
+      "bindkey '^A' beginning-of-line",
+      "bindkey '^E' end-of-line",
+      "bindkey '^[[1;5C' forward-word",
+      "bindkey '^[[1;5D' backward-word"
+    ]
+  },
+
+  "fpath_setup": {
+    "prefix": ["fpath", "fpathset"],
+    "description": "Extend fpath with custom function directories and init compinit",
+    "body": [
+      "fpath=(",
+      "  \"\\$HOME/.zsh/functions\"",
+      "  \"/usr/share/zsh/site-functions\"",
+      "  \\$fpath",
+      ")",
+      "",
+      "autoload -Uz compinit",
+      "compinit"
+    ]
+  },
+
+  "git_prompt_helper": {
+    "prefix": ["gitprompt", "gitinfo"],
+    "description": "Function that renders the current git branch for the prompt",
+    "body": [
+      "git_prompt_info() {",
+      "  if ! command -v git >/dev/null 2>&1; then",
+      "    return",
+      "  fi",
+      "",
+      "  local branch",
+      "  branch=\\$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return",
+      "",
+      "  local changes",
+      "  changes=\\$(git status --porcelain 2>/dev/null)",
+      "",
+      "  if [ -n \"\\$changes\" ]; then",
+      "    print -r -- \"%F{yellow}git:(%f%F{green}\\${branch}%F{yellow})%f%F{red}*%f\"",
+      "  else",
+      "    print -r -- \"%F{yellow}git:(%f%F{green}\\${branch}%F{yellow})%f\"",
+      "  fi",
+      "}"
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "scheme_define": {
+    "prefix": ["define"],
+    "description": "Procedure definition",
+    "body": [
+      "(define (${1:name} ${2:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "scheme_define_value": {
+    "prefix": ["definevalue"],
+    "description": "Definition of a value",
+    "body": [
+      "(define ${1:name} ${2:value})"
+    ]
+  },
+
+  "scheme_lambda": {
+    "prefix": ["lambda"],
+    "description": "Anonymous procedure",
+    "body": [
+      "(lambda (${1:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "scheme_let": {
+    "prefix": ["let"],
+    "description": "Let binding with a body",
+    "body": [
+      "(let ((${1:name} ${2:value}))",
+      "  $0)"
+    ]
+  },
+
+  "scheme_let_star": {
+    "prefix": ["let*"],
+    "description": "Let binding where the values can refer to each other",
+    "body": [
+      "(let* ((${1:name} ${2:value})",
+      "       (${3:other} ${1:name}))",
+      "  $0)"
+    ]
+  },
+
+  "scheme_cond": {
+    "prefix": ["cond"],
+    "description": "Cond expression with the else branch",
+    "body": [
+      "(cond ((${1:condition}) ${2:result})",
+      "      (else ${3:fallback}))"
+    ]
+  },
+
+  "scheme_if": {
+    "prefix": ["schemeif"],
+    "description": "Conditional expression",
+    "body": [
+      "(if ${1:condition}",
+      "    ${2:then}",
+      "    ${3:else})"
+    ]
+  },
+
+  "scheme_record": {
+    "prefix": ["record"],
+    "description": "Record type definition with its constructor and predicate",
+    "body": [
+      "(define-record-type ${1:point}",
+      "  (make-${1:point} x y)",
+      "  ${1:point}?",
+      "  (x ${1:point}-x)",
+      "  (y ${1:point}-y))"
+    ]
+  },
+
+  "scheme_map": {
+    "prefix": ["scheme_map"],
+    "description": "Apply a procedure to every element of a list",
+    "body": [
+      "(map (lambda (${1:item}) ${2:item}) ${3:list})"
+    ]
+  },
+
+  "scheme_load": {
+    "prefix": ["load"],
+    "description": "Load another scheme file",
+    "body": [
+      "(load \"${1:./other.scm}\")"
+    ]
+  },
+
+  "scheme_comment": {
+    "prefix": ["scomment"],
+    "description": "Scheme comment",
+    "body": [
+      "; ${1:TODO}"
+    ]
+  }
+}

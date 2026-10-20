@@ -1,0 +1,273 @@
+{
+  "module_implementation": {
+    "prefix": ["modimpl"],
+    "description": "Module implementation with a couple of helper functions",
+    "body": [
+      "module ${1:StringUtils} = struct",
+      "  let trim = String.trim",
+      "",
+      "  let split_words text =",
+      "    List.filter (fun word -> word <> \"\") (String.split_on_char ' ' text)",
+      "end"
+    ]
+  },
+
+  "module_signature": {
+    "prefix": ["modsig"],
+    "description": "Module signature listing the exported values",
+    "body": [
+      "module type ${1:StringUtils} = sig",
+      "  val trim : string -> string",
+      "",
+      "  val split_words : string -> string list",
+      "end"
+    ]
+  },
+
+  "type_definition": {
+    "prefix": ["typedef"],
+    "description": "Record type with a constructor that takes optional fields",
+    "body": [
+      "type ${1:user} = {",
+      "  id : int;",
+      "  name : string;",
+      "  email : string option;",
+      "}",
+      "",
+      "let ${2:make_user} ?email id name =",
+      "  { id; name; email }"
+    ]
+  },
+
+  "variant_type": {
+    "prefix": ["variant"],
+    "description": "Variant type and a function matching on its constructors",
+    "body": [
+      "type ${1:shape} =",
+      "  | Circle of float",
+      "  | Rectangle of float * float",
+      "  | Point of float * float",
+      "",
+      "let ${2:area} shape =",
+      "  match shape with",
+      "  | Circle r -> Float.pi *. r *. r",
+      "  | Rectangle (w, h) -> w *. h",
+      "  | Point _ -> 0.0"
+    ]
+  },
+
+  "function_with_labels": {
+    "prefix": ["func"],
+    "description": "Function taking labelled arguments and an optional one",
+    "body": [
+      "let ${1:connect} ?timeout ~host ~port () =",
+      "  let timeout = Option.value ~default:30.0 timeout in",
+      "  Printf.sprintf \"connecting to %s:%d (timeout %.1fs)\" host port timeout"
+    ]
+  },
+
+  "match_expression": {
+    "prefix": ["matchexpr"],
+    "description": "Match expression over the cases of a list",
+    "body": [
+      "let ${1:describe} items =",
+      "  match items with",
+      "  | [] -> \"empty\"",
+      "  | [single] -> Printf.sprintf \"one item: %s\" single",
+      "  | first :: _ -> Printf.sprintf \"several items, first is %s\" first"
+    ]
+  },
+
+  "match_with_guards": {
+    "prefix": ["matchwhen"],
+    "description": "Match expression using guards to select a branch",
+    "body": [
+      "let ${1:classify} score =",
+      "  match score with",
+      "  | s when s >= 90 -> \"excellent\"",
+      "  | s when s >= 70 -> \"good\"",
+      "  | _ -> \"needs improvement\""
+    ]
+  },
+
+  "list_transformation": {
+    "prefix": ["listmap"],
+    "description": "Build a list with filter_map and a for loop",
+    "body": [
+      "let ${1:active_names} users =",
+      "  users",
+      "  |> List.filter_map (fun user -> if user.active then Some user.name else None)",
+      "",
+      "let ${2:squares} limit =",
+      "  let result = ref [] in",
+      "  for i = 1 to limit do",
+      "    result := i * i :: !result",
+      "  done;",
+      "  List.rev !result"
+    ]
+  },
+
+  "recursive_function": {
+    "prefix": ["recfunc"],
+    "description": "Recursive function with a guard in one of its cases",
+    "body": [
+      "let rec ${1:factorial} n =",
+      "  if n <= 0 then 1 else n * factorial (n - 1)",
+      "",
+      "let rec ${2:sum_even} numbers =",
+      "  match numbers with",
+      "  | [] -> 0",
+      "  | head :: tail when head mod 2 = 0 -> head + sum_even tail",
+      "  | _ :: tail -> sum_even tail"
+    ]
+  },
+
+  "higher_order_function": {
+    "prefix": ["hofunc"],
+    "description": "Functions that take other functions as arguments",
+    "body": [
+      "let ${1:apply_to_all} items fn =",
+      "  List.map fn items",
+      "",
+      "let ${2:compose} f g x = f (g x)"
+    ]
+  },
+
+  "functor": {
+    "prefix": ["fctdef"],
+    "description": "Functor that builds a set module from a set signature",
+    "body": [
+      "module ${1:MakeSet} (S : Set.S) = struct",
+      "  type t = S.t",
+      "",
+      "  let empty = S.empty",
+      "",
+      "  let add item = S.add item",
+      "",
+      "  let mem item = S.mem item",
+      "end"
+    ]
+  },
+
+  "class_definition": {
+    "prefix": ["classdef"],
+    "description": "Class with a mutable field and a few methods",
+    "body": [
+      "class ${1:counter} initial =",
+      "  object",
+      "    val mutable count = initial",
+      "",
+      "    method incr = count <- count + 1",
+      "",
+      "    method get = count",
+      "",
+      "    method reset () = count <- initial",
+      "  end"
+    ]
+  },
+
+  "mutable_reference": {
+    "prefix": ["refcell"],
+    "description": "Mutable reference updated by a function",
+    "body": [
+      "let ${1:request_count} = ref 0",
+      "",
+      "let ${2:record_request} path =",
+      "  incr request_count;",
+      "  Printf.printf \"request to %s (%d in total)\\\\n%!\" path !request_count"
+    ]
+  },
+
+  "option_handling": {
+    "prefix": ["option"],
+    "description": "Handle an option with a match and with a default value",
+    "body": [
+      "let ${1:display_name} user =",
+      "  match user.email with",
+      "  | Some address -> address",
+      "  | None -> user.name",
+      "",
+      "let ${2:display_name_or} ~default user =",
+      "  Option.value ~default user.email"
+    ]
+  },
+
+  "result_handling": {
+    "prefix": ["result"],
+    "description": "Turn a parsed integer into a result value",
+    "body": [
+      "let ${1:parse_port} text =",
+      "  match int_of_string_opt text with",
+      "  | Some port when port > 0 -> Ok port",
+      "  | Some _ -> Error \"port is out of range\"",
+      "  | None -> Error \"port is not a number\""
+    ]
+  },
+
+  "hashtable_usage": {
+    "prefix": ["hashtbl"],
+    "description": "Count the words of a text in a hashtable",
+    "body": [
+      "let ${1:count_words} text =",
+      "  let counts = Hashtbl.create 16 in",
+      "  let add_word word =",
+      "    let previous = Option.value ~default:0 (Hashtbl.find_opt counts word) in",
+      "    Hashtbl.replace counts word (previous + 1)",
+      "  in",
+      "  List.iter add_word (String.split_on_char ' ' text);",
+      "  counts"
+    ]
+  },
+
+  "custom_exception": {
+    "prefix": ["exndef"],
+    "description": "Custom exception raised when a lookup fails",
+    "body": [
+      "exception ${1:Not_found_in_table} of string",
+      "",
+      "let ${2:find} table key =",
+      "  match Hashtbl.find_opt table key with",
+      "  | Some value -> value",
+      "  | None -> raise (Not_found_in_table key)"
+    ]
+  },
+
+  "printf_formatting": {
+    "prefix": ["printf"],
+    "description": "Printf with column alignment and error output",
+    "body": [
+      "let ${1:report} name total =",
+      "  Printf.printf \"%-20s %8.2f\\\\n%!\" name total",
+      "",
+      "let ${2:log_line} level message =",
+      "  Printf.eprintf \"[%s] %s\\\\n%!\" level message"
+    ]
+  },
+
+  "sequence": {
+    "prefix": ["seq"],
+    "description": "Build a lazy sequence with the Seq module",
+    "body": [
+      "let ${1:cumulative} numbers =",
+      "  let rec loop acc = function",
+      "    | [] -> Seq.empty",
+      "    | x :: rest -> Seq.cons (acc + x) (loop (acc + x) rest)",
+      "  in",
+      "  loop 0 numbers"
+    ]
+  },
+
+  "ounit_test": {
+    "prefix": ["ocamltest"],
+    "description": "OUnit test suite with two test cases",
+    "body": [
+      "let suite =",
+      "  \"StringUtils\" >::: [",
+      "    \"trim\" >:: (fun _ -> assert_equal \"abc\" (String.trim \"  abc \"));",
+      "    \"split\" >:: (fun _ -> assert_equal [\"a\"; \"b\"] (String.split_on_char ' ' \"a b\"));",
+      "  ]",
+      "",
+      "let () = OUnit.run_test_tt_main suite"
+    ]
+  }
+}

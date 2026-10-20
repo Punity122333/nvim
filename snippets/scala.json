@@ -1,0 +1,327 @@
+{
+  "case_class": {
+    "prefix": ["caseclass"],
+    "description": "Case class with a copy based helper method",
+    "body": [
+      "case class ${1:Order}(id: Long, customer: String, items: List[String], totalCents: Long) {",
+      "  def withItem(item: String): Order = copy(items = items :+ item)",
+      "",
+      "  def isLarge: Boolean = totalCents >= 10_000L",
+      "}"
+    ]
+  },
+
+  "object_singleton": {
+    "prefix": ["object"],
+    "description": "Object singleton reading configuration from the environment",
+    "body": [
+      "object ${1:AppConfig} {",
+      "  val port: Int = sys.env.get(\"APP_PORT\").flatMap(_.toIntOption).getOrElse(8080)",
+      "",
+      "  val baseUrl: String = s\"http://localhost:\\$port\"",
+      "",
+      "  def describe: String = s\"listening on \\$baseUrl\"",
+      "}"
+    ]
+  },
+
+  "trait": {
+    "prefix": ["trait"],
+    "description": "Generic trait with an abstract and a concrete method",
+    "body": [
+      "trait ${1:Repository}[A] {",
+      "  def findById(id: Long): Option[A]",
+      "",
+      "  def all(): List[A]",
+      "",
+      "  def findAllBy(predicate: A => Boolean): List[A] = all().filter(predicate)",
+      "}"
+    ]
+  },
+
+  "main_method": {
+    "prefix": ["main"],
+    "description": "Entry point of a Scala application",
+    "body": [
+      "object App {",
+      "  def main(args: Array[String]): Unit = {",
+      "    val names = List(\"ada\", \"grace\")",
+      "    println(s\"hello, \\${names.mkString(\", \")}\")",
+      "  }",
+      "}"
+    ]
+  },
+
+  "for_comprehension": {
+    "prefix": ["forcomp"],
+    "description": "For comprehension over orders with a filter and a yield",
+    "body": [
+      "object OrderSummary {",
+      "  val orders = List(",
+      "    (\"ada\", List(\"book\", \"pen\"), 2500L),",
+      "    (\"grace\", List(\"laptop\"), 120_000L),",
+      "  )",
+      "",
+      "  val itemLengths: List[Int] = for {",
+      "    (_, items, totalCents) <- orders",
+      "    if totalCents > 1_000L",
+      "    item <- items",
+      "  } yield item.length",
+      "}"
+    ]
+  },
+
+  "pattern_match": {
+    "prefix": ["match"],
+    "description": "Pattern match with guards and typed cases",
+    "body": [
+      "object ValueDescription {",
+      "  def ${1:describe}(value: Any): String = value match {",
+      "    case i: Int if i > 0         => s\"positive int: \\$i\"",
+      "    case i: Int                  => s\"non positive int: \\$i\"",
+      "    case s: String if s.nonEmpty => s\"text with \\${s.length} characters\"",
+      "    case s: String               => \"empty text\"",
+      "    case Nil                     => \"empty list\"",
+      "    case items: List[_]          => s\"list with \\${items.size} items\"",
+      "    case other                   => other.toString",
+      "  }",
+      "}"
+    ]
+  },
+
+  "list_pipeline": {
+    "prefix": ["pipeline"],
+    "description": "List pipeline that filters, maps and sorts values",
+    "body": [
+      "object TotalsReport {",
+      "  val totals = List(1200, 450, 9800)",
+      "",
+      "  val report = totals",
+      "    .filter(_ > 500)",
+      "    .map(_ * 2)",
+      "    .sorted",
+      "    .reverse",
+      "",
+      "  def render: String = report.mkString(\", \")",
+      "}"
+    ]
+  },
+
+  "option_chain": {
+    "prefix": ["option"],
+    "description": "Option chain that falls back to a default value",
+    "body": [
+      "final case class Account(id: Long, email: Option[String])",
+      "",
+      "object AccountDirectory {",
+      "  val accounts: Map[Long, Account] = Map(42L -> Account(42L, Some(\"ada@example.com\")))",
+      "",
+      "  def ${1:emailOf}(userId: Long): Option[String] =",
+      "    accounts.get(userId).flatMap(_.email)",
+      "",
+      "  val label: String = emailOf(42L).getOrElse(\"unknown@example.com\")",
+      "}"
+    ]
+  },
+
+  "future": {
+    "prefix": ["future"],
+    "description": "Future that is composed with map",
+    "body": [
+      "import scala.concurrent.ExecutionContext.Implicits.global",
+      "import scala.concurrent.Future",
+      "",
+      "object UserFetcher {",
+      "  def ${1:fetchUser}(id: Long): Future[String] = Future {",
+      "    s\"user-\\$id\"",
+      "  }",
+      "",
+      "  val greeting: Future[String] = fetchUser(7L).map(name => s\"hello, \\$name\")",
+      "}"
+    ]
+  },
+
+  "implicit_class": {
+    "prefix": ["implicitclass"],
+    "description": "Implicit class adding string helpers to any value",
+    "body": [
+      "object StringExtensions {",
+      "  implicit class EnrichedString(val value: String) extends AnyVal {",
+      "    def shout: String = value.toUpperCase",
+      "",
+      "    def slug: String = value.trim.toLowerCase.replaceAll(\"[^a-z0-9]+\", \"-\")",
+      "  }",
+      "}"
+    ]
+  },
+
+  "higher_order_function": {
+    "prefix": ["hof"],
+    "description": "Higher order function that applies a function n times",
+    "body": [
+      "object ListOps {",
+      "  def ${1:repeatEach}[A](items: List[A], times: Int)(fn: A => A): List[A] =",
+      "    items.flatMap { item =>",
+      "      List.fill(times)(fn(item))",
+      "    }",
+      "}"
+    ]
+  },
+
+  "type_parameter": {
+    "prefix": ["typeparam"],
+    "description": "Generic methods with an implicit ordering parameter",
+    "body": [
+      "object Collections {",
+      "  def firstOf[A](items: List[A]): Option[A] = items.headOption",
+      "",
+      "  def largestOf[A](items: List[A])(implicit ordering: Ordering[A]): Option[A] =",
+      "    if (items.isEmpty) None else Some(items.max)",
+      "}"
+    ]
+  },
+
+  "collection": {
+    "prefix": ["collection"],
+    "description": "Map of lists with a per key total and a sorted result",
+    "body": [
+      "object CustomerOrders {",
+      "  val ordersByCustomer: Map[String, List[Long]] = Map(",
+      "    \"ada\" -> List(1200L, 450L),",
+      "    \"grace\" -> List(98_000L),",
+      "  )",
+      "",
+      "  val totalByCustomer: Map[String, Long] = ordersByCustomer.map {",
+      "    case (customer, totals) => customer -> totals.sum",
+      "  }",
+      "",
+      "  val biggestFirst: List[(String, Long)] = totalByCustomer.toList.sortBy {",
+      "    case (_, total) => -total",
+      "  }",
+      "}"
+    ]
+  },
+
+  "sealed_trait": {
+    "prefix": ["sealedtrait"],
+    "description": "Sealed trait with three cases and an exhaustive match",
+    "body": [
+      "sealed trait PaymentResult",
+      "",
+      "object PaymentResult {",
+      "  case class Paid(reference: String) extends PaymentResult",
+      "  case class Failed(reason: String) extends PaymentResult",
+      "  case object Pending extends PaymentResult",
+      "",
+      "  def ${1:render}(result: PaymentResult): String = result match {",
+      "    case Paid(reference) => s\"paid with reference \\$reference\"",
+      "    case Failed(reason)  => s\"payment failed: \\$reason\"",
+      "    case Pending         => \"payment is pending\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "companion_object": {
+    "prefix": ["companion"],
+    "description": "Companion object with a constant, a factory and an ordering",
+    "body": [
+      "case class Money(amountCents: Long, currency: String)",
+      "",
+      "object Money {",
+      "  val Zero: Money = Money(0L, \"EUR\")",
+      "",
+      "  def fromDecimal(amount: BigDecimal, currency: String): Money =",
+      "    Money((amount * 100).toLong, currency)",
+      "",
+      "  implicit val ordering: Ordering[Money] = Ordering.by(_.amountCents)",
+      "}"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["test"],
+    "description": "ScalaTest suite with a single test case",
+    "body": [
+      "import org.scalatest.funsuite.AnyFunSuite",
+      "",
+      "case class LineItem(title: String, quantity: Int, unitPriceCents: Long) {",
+      "  def totalCents: Long = quantity * unitPriceCents",
+      "}",
+      "",
+      "class ${1:OrderTotalSpec} extends AnyFunSuite {",
+      "  test(\"sums the line items of an order\") {",
+      "    val items = List(LineItem(\"book\", 2, 1250L), LineItem(\"pen\", 1, 250L))",
+      "",
+      "    assert(items.map(_.totalCents).sum == 2750L)",
+      "  }",
+      "}"
+    ]
+  },
+
+  "curried_function": {
+    "prefix": ["curried"],
+    "description": "Curried function partially applied to a new function",
+    "body": [
+      "object MathOps {",
+      "  def multiply(left: Int)(right: Int): Int = left * right",
+      "",
+      "  val double: Int => Int = multiply(2)",
+      "",
+      "  val result: Int = double(21)",
+      "}"
+    ]
+  },
+
+  "lazy_val": {
+    "prefix": ["lazyval"],
+    "description": "Lazy val that is only computed on first access",
+    "body": [
+      "object RowCache {",
+      "  lazy val rows: List[String] = {",
+      "    println(\"loading rows from the database\")",
+      "    List(\"row-1\", \"row-2\", \"row-3\")",
+      "  }",
+      "}"
+    ]
+  },
+
+  "fold": {
+    "prefix": ["fold"],
+    "description": "Fold left to a total and to a map of buckets",
+    "body": [
+      "object TotalsFold {",
+      "  val amounts = List(1200L, 450L, 9800L)",
+      "",
+      "  val total: Long = amounts.foldLeft(0L)(_ + _)",
+      "",
+      "  val byBucket: Map[String, Long] = amounts.foldLeft(Map.empty[String, Long]) {",
+      "    (acc, amount) =>",
+      "      val bucket = if (amount > 5000L) \"large\" else \"small\"",
+      "      acc.updated(bucket, acc.getOrElse(bucket, 0L) + amount)",
+      "  }",
+      "}"
+    ]
+  },
+
+  "map_flatmap": {
+    "prefix": ["mapflatmap"],
+    "description": "Map and flatMap over a list of orders and their totals",
+    "body": [
+      "object OrderTotals {",
+      "  val orderTotals = List(",
+      "    (\"ada\", List(1200L, 450L)),",
+      "    (\"grace\", List(98_000L)),",
+      "  )",
+      "",
+      "  val perCustomer: Map[String, Long] = orderTotals.map {",
+      "    case (customer, totals) => customer -> totals.sum",
+      "  }.toMap",
+      "",
+      "  val allAmounts: List[Long] = orderTotals.flatMap {",
+      "    case (_, totals) => totals",
+      "  }",
+      "}"
+    ]
+  }
+}

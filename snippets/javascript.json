@@ -6,27 +6,49 @@
 
   "main": {
     "prefix": "main",
-    "body": ["function main() {", "  $1", "}", "", "main();"]
+    "body": [
+      "function main() {",
+      "  $1",
+      "}",
+      "",
+      "main();"
+    ]
   },
 
   "arrow_func": {
     "prefix": "afn",
-    "body": ["const ${1:func} = (${2:args}) => {", "  $3", "}"]
+    "body": [
+      "const ${1:func} = (${2:args}) => {",
+      "  $3",
+      "}"
+    ]
   },
 
   "timeout": {
     "prefix": "to",
-    "body": ["setTimeout(() => {", "  $1", "}, ${2:1000});"]
+    "body": [
+      "setTimeout(() => {",
+      "  $1",
+      "}, ${2:1000});"
+    ]
   },
 
   "interval": {
     "prefix": "int",
-    "body": ["setInterval(() => {", "  $1", "}, ${2:1000});"]
+    "body": [
+      "setInterval(() => {",
+      "  $1",
+      "}, ${2:1000});"
+    ]
   },
 
   "promise": {
     "prefix": "pms",
-    "body": ["return new Promise((resolve, reject) => {", "  $1", "});"]
+    "body": [
+      "return new Promise((resolve, reject) => {",
+      "  $1",
+      "});"
+    ]
   },
 
   "async_func": {
@@ -115,11 +137,427 @@
 
   "trycatch": {
     "prefix": "try",
-    "body": ["try {", "  $1", "} catch (err) {", "  console.error(err);", "}"]
+    "body": [
+      "try {",
+      "  $1",
+      "} catch (err) {",
+      "  console.error(err);",
+      "}"
+    ]
   },
 
   "json_parse": {
     "prefix": "json",
     "body": ["JSON.parse(${1:data})"]
+  },
+
+  "js_fetch_wrapper": {
+    "prefix": ["fetchwrap"],
+    "description": "Fetch wrapper that checks the status and parses JSON",
+    "body": [
+      "async function request(url, options = {}) {",
+      "  const response = await fetch(url, {",
+      "    headers: { 'Content-Type': 'application/json' },",
+      "    ...options,",
+      "  });",
+      "",
+      "  if (!response.ok) {",
+      "    throw new Error(`Request failed: \\${response.status} \\${response.statusText}`);",
+      "  }",
+      "",
+      "  return response.status === 204 ? null : response.json();",
+      "}"
+    ]
+  },
+
+  "js_class_private_field": {
+    "prefix": ["clspriv"],
+    "description": "Class with private fields and a timeout aware get method",
+    "body": [
+      "class ApiClient {",
+      "  #baseUrl;",
+      "  #timeout;",
+      "",
+      "  constructor(baseUrl, { timeout = 5000 } = {}) {",
+      "    this.#baseUrl = baseUrl;",
+      "    this.#timeout = timeout;",
+      "  }",
+      "",
+      "  async get(path) {",
+      "    const response = await fetch(`\\${this.#baseUrl}\\${path}`, {",
+      "      signal: AbortSignal.timeout(this.#timeout),",
+      "    });",
+      "",
+      "    if (!response.ok) {",
+      "      throw new Error(`GET \\${path} failed with \\${response.status}`);",
+      "    }",
+      "",
+      "    return response.json();",
+      "  }",
+      "}"
+    ]
+  },
+
+  "js_async_function": {
+    "prefix": ["asyncfn"],
+    "description": "Async function that logs and rethrows on failure",
+    "body": [
+      "async function loadUser(userId) {",
+      "  try {",
+      "    const user = await api.get(`/users/\\${userId}`);",
+      "    return user;",
+      "  } catch (error) {",
+      "    console.error(`failed to load user \\${userId}`, error);",
+      "    throw error;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "js_debounce": {
+    "prefix": ["debounce"],
+    "description": "Debounce a function so it only runs after the delay",
+    "body": [
+      "function debounce(fn, delay = 200) {",
+      "  let timer = null;",
+      "",
+      "  return (...args) => {",
+      "    clearTimeout(timer);",
+      "    timer = setTimeout(() => fn(...args), delay);",
+      "  };",
+      "}",
+      "",
+      "const onSearch = debounce((term) => fetchResults(term), 300);"
+    ]
+  },
+
+  "js_throttle": {
+    "prefix": ["throttle"],
+    "description": "Throttle a function to at most one call per interval",
+    "body": [
+      "function throttle(fn, interval = 1000) {",
+      "  let lastCall = 0;",
+      "",
+      "  return (...args) => {",
+      "    const now = Date.now();",
+      "    if (now - lastCall < interval) {",
+      "      return;",
+      "    }",
+      "    lastCall = now;",
+      "    fn(...args);",
+      "  };",
+      "}",
+      "",
+      "const onScroll = throttle(() => loadMore(), 500);"
+    ]
+  },
+
+  "js_deep_clone": {
+    "prefix": ["deepclone"],
+    "description": "Deep clone an object with a JSON fallback",
+    "body": [
+      "function deepClone(value) {",
+      "  if (typeof structuredClone === 'function') {",
+      "    return structuredClone(value);",
+      "  }",
+      "  return JSON.parse(JSON.stringify(value));",
+      "}",
+      "",
+      "const copy = deepClone({ id: 7, tags: ['admin', 'beta'] });"
+    ]
+  },
+
+  "js_dom_query": {
+    "prefix": ["domquery"],
+    "description": "Small DOM query helpers and a delegated click handler",
+    "body": [
+      "const \\$ = (selector, scope = document) => scope.querySelector(selector);",
+      "const \\$\\$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];",
+      "",
+      "const saveButton = \\$('[data-action=\"save\"]');",
+      "",
+      "saveButton?.addEventListener('click', (event) => {",
+      "  event.preventDefault();",
+      "  const form = saveButton.closest('form');",
+      "  form?.classList.add('is-saving');",
+      "});"
+    ]
+  },
+
+  "js_event_emitter": {
+    "prefix": ["emitter"],
+    "description": "Event emitter class with on, off and emit methods",
+    "body": [
+      "class EventEmitter {",
+      "  #listeners = new Map();",
+      "",
+      "  on(event, handler) {",
+      "    if (!this.#listeners.has(event)) {",
+      "      this.#listeners.set(event, new Set());",
+      "    }",
+      "    this.#listeners.get(event).add(handler);",
+      "    return () => this.off(event, handler);",
+      "  }",
+      "",
+      "  off(event, handler) {",
+      "    this.#listeners.get(event)?.delete(handler);",
+      "  }",
+      "",
+      "  emit(event, ...args) {",
+      "    for (const handler of this.#listeners.get(event) ?? []) {",
+      "      handler(...args);",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "js_promise_timeout": {
+    "prefix": ["promisewrap"],
+    "description": "Race a promise against a timeout and clear the timer",
+    "body": [
+      "function withTimeout(promise, ms = 5000, message = 'Operation timed out') {",
+      "  let timer;",
+      "  const timeout = new Promise((_, reject) => {",
+      "    timer = setTimeout(() => reject(new Error(message)), ms);",
+      "  });",
+      "",
+      "  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));",
+      "}"
+    ]
+  },
+
+  "js_module_exports": {
+    "prefix": ["exports"],
+    "description": "Module with named exports, a helper and a default export",
+    "body": [
+      "export const API_URL = 'https://api.example.com';",
+      "",
+      "export function formatPrice(cents) {",
+      "  return (cents / 100).toFixed(2);",
+      "}",
+      "",
+      "export function buildUrl(path, params = {}) {",
+      "  const url = new URL(path, API_URL);",
+      "  for (const [key, value] of Object.entries(params)) {",
+      "    url.searchParams.set(key, value);",
+      "  }",
+      "  return url.toString();",
+      "}",
+      "",
+      "export default { formatPrice, buildUrl };"
+    ]
+  },
+
+  "js_json_parse_fallback": {
+    "prefix": ["jsonparse"],
+    "description": "Parse JSON and fall back to a default value on failure",
+    "body": [
+      "function parseJson(raw, fallback = null) {",
+      "  try {",
+      "    return JSON.parse(raw);",
+      "  } catch (error) {",
+      "    console.warn('could not parse json payload', error);",
+      "    return fallback;",
+      "  }",
+      "}",
+      "",
+      "const config = parseJson(localStorage.getItem('config'), { theme: 'light' });"
+    ]
+  },
+
+  "js_storage_helper": {
+    "prefix": ["storage"],
+    "description": "Typed localStorage helper that stores JSON values",
+    "body": [
+      "const storage = {",
+      "  get(key, fallback = null) {",
+      "    const raw = window.localStorage.getItem(key);",
+      "    if (raw === null) {",
+      "      return fallback;",
+      "    }",
+      "    try {",
+      "      return JSON.parse(raw);",
+      "    } catch {",
+      "      return fallback;",
+      "    }",
+      "  },",
+      "",
+      "  set(key, value) {",
+      "    window.localStorage.setItem(key, JSON.stringify(value));",
+      "  },",
+      "",
+      "  remove(key) {",
+      "    window.localStorage.removeItem(key);",
+      "  },",
+      "};"
+    ]
+  },
+
+  "js_copy_to_clipboard": {
+    "prefix": ["clipboard"],
+    "description": "Copy text to the clipboard and report the outcome",
+    "body": [
+      "async function copyToClipboard(text) {",
+      "  try {",
+      "    await navigator.clipboard.writeText(text);",
+      "    return true;",
+      "  } catch (error) {",
+      "    console.error('clipboard write failed', error);",
+      "    return false;",
+      "  }",
+      "}",
+      "",
+      "document.querySelector('#copy')?.addEventListener('click', async () => {",
+      "  const copied = await copyToClipboard(window.location.href);",
+      "  console.log(copied ? 'copied' : 'copy failed');",
+      "});"
+    ]
+  },
+
+  "js_date_format": {
+    "prefix": ["datefmt"],
+    "description": "Format a date with Intl and extra options",
+    "body": [
+      "function formatDate(date, options = {}) {",
+      "  const value = date instanceof Date ? date : new Date(date);",
+      "  return new Intl.DateTimeFormat('en-US', {",
+      "    year: 'numeric',",
+      "    month: 'short',",
+      "    day: '2-digit',",
+      "    ...options,",
+      "  }).format(value);",
+      "}",
+      "",
+      "const label = formatDate(order.createdAt, { hour: '2-digit', minute: '2-digit' });"
+    ]
+  },
+
+  "js_url_builder": {
+    "prefix": ["urlbuild"],
+    "description": "Build a URL with query parameters from a plain object",
+    "body": [
+      "function buildUrl(base, path, params = {}) {",
+      "  const url = new URL(path, base);",
+      "",
+      "  for (const [key, value] of Object.entries(params)) {",
+      "    if (value !== undefined && value !== null && value !== '') {",
+      "      url.searchParams.set(key, value);",
+      "    }",
+      "  }",
+      "",
+      "  return url.toString();",
+      "}",
+      "",
+      "const endpoint = buildUrl('https://api.example.com', '/search', { q: 'vim', page: 2 });"
+    ]
+  },
+
+  "js_sleep_retry": {
+    "prefix": ["sleep"],
+    "description": "Sleep helper plus a retry helper that waits between tries",
+    "body": [
+      "const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));",
+      "",
+      "async function retry(fn, attempts = 3, delay = 500) {",
+      "  let lastError;",
+      "",
+      "  for (let attempt = 1; attempt <= attempts; attempt += 1) {",
+      "    try {",
+      "      return await fn();",
+      "    } catch (error) {",
+      "      lastError = error;",
+      "      await sleep(delay * attempt);",
+      "    }",
+      "  }",
+      "",
+      "  throw lastError;",
+      "}"
+    ]
+  },
+
+  "js_group_by": {
+    "prefix": ["groupby"],
+    "description": "Group a list of items into a map keyed by a callback",
+    "body": [
+      "function groupBy(items, keyOf) {",
+      "  return items.reduce((groups, item) => {",
+      "    const key = keyOf(item);",
+      "    if (!groups[key]) {",
+      "      groups[key] = [];",
+      "    }",
+      "    groups[key].push(item);",
+      "    return groups;",
+      "  }, {});",
+      "}",
+      "",
+      "const byTeam = groupBy(players, (player) => player.team);",
+      "const totals = Object.fromEntries(",
+      "  Object.entries(byTeam).map(([team, members]) => [team, members.length]),",
+      ");"
+    ]
+  },
+
+  "js_dynamic_import": {
+    "prefix": ["dynimport"],
+    "description": "Load a module lazily with a dynamic import",
+    "body": [
+      "async function loadEditor() {",
+      "  const { Editor } = await import('./editor.js');",
+      "  return new Editor({ mode: 'rich-text' });",
+      "}",
+      "",
+      "button.addEventListener('click', async () => {",
+      "  const editor = await loadEditor();",
+      "  editor.mount(document.querySelector('#editor'));",
+      "});"
+    ]
+  },
+
+  "js_unit_test": {
+    "prefix": ["unittest"],
+    "description": "Unit test with a stub client and node test runner",
+    "body": [
+      "import { test } from 'node:test';",
+      "import assert from 'node:assert/strict';",
+      "",
+      "function createStubClient(response) {",
+      "  return {",
+      "    get: async () => response,",
+      "  };",
+      "}",
+      "",
+      "test('fetch wrapper returns the parsed body', async () => {",
+      "  const client = createStubClient({ id: 7, name: 'Ada' });",
+      "  const user = await client.get('/users/7');",
+      "",
+      "  assert.equal(user.id, 7);",
+      "  assert.equal(user.name, 'Ada');",
+      "});"
+    ]
+  },
+
+  "js_jsdoc_header": {
+    "prefix": ["jsdoc"],
+    "description": "JSDoc block describing parameters, returns and errors",
+    "body": [
+      "/**",
+      "  * Fetch a user by id.",
+      "  *",
+      "  * @param {string} userId - Identifier of the user to load.",
+      "  * @param {object} [options] - Optional fetch options.",
+      "  * @returns {Promise<object>} The matching user record.",
+      "  * @throws {Error} When the request fails or the user does not exist.",
+      "  */",
+      "export async function fetchUser(userId, options = {}) {",
+      "  const response = await fetch(`/api/users/\\${userId}`, options);",
+      "",
+      "  if (!response.ok) {",
+      "    throw new Error(`user \\${userId} not found`);",
+      "  }",
+      "",
+      "  return response.json();",
+      "}"
+    ]
   }
 }

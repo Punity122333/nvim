@@ -1,0 +1,363 @@
+{
+  "module": {
+    "prefix": ["module"],
+    "description": "WebAssembly module with a memory, a global and a function",
+    "body": [
+      "(module",
+      "  (memory \\$mem (export \"memory\") 1)",
+      "  (global \\$counter (mut i32) (i32.const 0))",
+      "",
+      "  (func \\$add (export \"add\") (param \\$a i32) (param \\$b i32) (result i32)",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    i32.add)",
+      ")"
+    ]
+  },
+
+  "global": {
+    "prefix": ["global"],
+    "description": "Mutable global variable read and written with global.get/set",
+    "body": [
+      "(module",
+      "  (global \\$counter (mut i32) (i32.const 0))",
+      "  (global \\$limit i32 (i32.const 100))",
+      "",
+      "  (func \\$increment (param \\$by i32)",
+      "    global.get \\$counter",
+      "    local.get \\$by",
+      "    i32.add",
+      "    global.set \\$counter)",
+      ")"
+    ]
+  },
+
+  "table": {
+    "prefix": ["table"],
+    "description": "Table of function references filled by an element segment",
+    "body": [
+      "(module",
+      "  (type \\$handler (func (param i32) (result i32)))",
+      "  (table \\$handlers 4 funcref)",
+      "",
+      "  (func \\$handle_one (type \\$handler) (param \\$value i32) (result i32)",
+      "    local.get \\$value",
+      "    i32.const 1",
+      "    i32.add)",
+      "",
+      "  (elem (i32.const 0) \\$handle_one)",
+      ")"
+    ]
+  },
+
+  "type": {
+    "prefix": ["type"],
+    "description": "Function type definitions used by calls and tables",
+    "body": [
+      "(module",
+      "  (type \\$binop (func (param i32 i32) (result i32)))",
+      "  (type \\$handler (func (param i32)))",
+      "  (type \\$unit (func))",
+      ")"
+    ]
+  },
+
+  "functions": {
+    "prefix": ["func"],
+    "description": "Plain function and a function with parameters and a result",
+    "body": [
+      "(module",
+      "  (func \\$noop)",
+      "",
+      "  (func \\$multiply (param \\$x i32) (param \\$y i32) (result i32)",
+      "    local.get \\$x",
+      "    local.get \\$y",
+      "    i32.mul)",
+      ")"
+    ]
+  },
+
+  "exported_function": {
+    "prefix": ["funcexport"],
+    "description": "Function exported from the module under a public name",
+    "body": [
+      "(module",
+      "  (memory \\$mem 1)",
+      "",
+      "  (func \\$store_value (export \"store_value\") (param \\$value i32)",
+      "    i32.const 0",
+      "    local.get \\$value",
+      "    i32.store)",
+      ")"
+    ]
+  },
+
+  "imports": {
+    "prefix": ["import"],
+    "description": "Imported function and imported memory from the host module",
+    "body": [
+      "(module",
+      "  (import \"env\" \"log\" (func \\$log (param i32)))",
+      "  (import \"env\" \"memory\" (memory \\$mem 1))",
+      "  (import \"wasi_snapshot_preview1\" \"fd_write\"",
+      "    (func \\$fd_write (param i32 i32 i32 i32) (result i32)))",
+      ")"
+    ]
+  },
+
+  "start_function": {
+    "prefix": ["startfn"],
+    "description": "Start function that runs before the exported entry points",
+    "body": [
+      "(module",
+      "  (global \\$initialized (mut i32) (i32.const 0))",
+      "",
+      "  (func \\$init",
+      "    i32.const 1",
+      "    global.set \\$initialized)",
+      "",
+      "  (start \\$init)",
+      ")"
+    ]
+  },
+
+  "data_segments": {
+    "prefix": ["dataseg"],
+    "description": "Active and passive data segments placed in linear memory",
+    "body": [
+      "(module",
+      "  (memory \\$mem 1)",
+      "",
+      "  (data (i32.const 0) \"hello, world\")",
+      "  (data (i32.const 16) \"\\\\0a\\\\00\")",
+      "  (data \"passive payload\")",
+      ")"
+    ]
+  },
+
+  "local_variables": {
+    "prefix": ["localvar"],
+    "description": "Function locals declared with the local instruction",
+    "body": [
+      "(module",
+      "  (func \\$compute (param \\$limit i32) (result i32)",
+      "    (local \\$acc i32)",
+      "    (local \\$tmp i64)",
+      "",
+      "    local.set \\$acc (i32.const 0)",
+      "    local.set \\$tmp (i64.const 0)",
+      "",
+      "    local.get \\$acc)",
+      ")"
+    ]
+  },
+
+  "block_and_loop": {
+    "prefix": ["blockloop"],
+    "description": "Structured block and loop with labels and branches",
+    "body": [
+      "(module",
+      "  (func \\$sum (param \\$count i32) (result i32)",
+      "    (local \\$acc i32)",
+      "    (local \\$i i32)",
+      "",
+      "    block \\$exit",
+      "      loop \\$again",
+      "        local.get \\$i",
+      "        local.get \\$count",
+      "        i32.ge_s",
+      "        br_if \\$exit",
+      "        local.get \\$acc",
+      "        local.get \\$i",
+      "        i32.add",
+      "        local.set \\$acc",
+      "        local.get \\$i",
+      "        i32.const 1",
+      "        i32.add",
+      "        local.set \\$i",
+      "        br \\$again",
+      "      end",
+      "    end",
+      "    local.get \\$acc)",
+      ")"
+    ]
+  },
+
+  "if_else": {
+    "prefix": ["ifelse"],
+    "description": "Conditional with an else branch producing a result",
+    "body": [
+      "(module",
+      "  (func \\$sign (param \\$x i32) (result i32)",
+      "    local.get \\$x",
+      "    i32.const 0",
+      "    i32.lt_s",
+      "    if (result i32)",
+      "      i32.const -1",
+      "    else",
+      "      i32.const 0",
+      "    end)",
+      ")"
+    ]
+  },
+
+  "call": {
+    "prefix": ["callfn"],
+    "description": "Direct call and indirect call through a function table",
+    "body": [
+      "(module",
+      "  (type \\$binop (func (param i32 i32) (result i32)))",
+      "  (table \\$ops 2 funcref)",
+      "  (func \\$add (type \\$binop) (param i32 i32) (result i32)",
+      "    local.get 0",
+      "    local.get 1",
+      "    i32.add)",
+      "  (func \\$mul (type \\$binop) (param i32 i32) (result i32)",
+      "    local.get 0",
+      "    local.get 1",
+      "    i32.mul)",
+      "  (elem (i32.const 0) \\$add \\$mul)",
+      "  (func \\$run (param \\$which i32) (param \\$a i32) (param \\$b i32) (result i32)",
+      "    (local \\$sum i32)",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    call \\$add",
+      "    local.set \\$sum",
+      "    local.get \\$sum",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    local.get \\$which",
+      "    call_indirect (type \\$binop))",
+      ")"
+    ]
+  },
+
+  "branch": {
+    "prefix": ["branch"],
+    "description": "Unconditional br and conditional br_if around a block",
+    "body": [
+      "(module",
+      "  (func \\$classify (param \\$value i32) (result i32)",
+      "    block \\$out",
+      "      local.get \\$value",
+      "      i32.const 0",
+      "      i32.gt_s",
+      "      br_if \\$out",
+      "      i32.const -1",
+      "      br \\$out",
+      "    end",
+      "    i32.const 1)",
+      ")"
+    ]
+  },
+
+  "select": {
+    "prefix": ["selectop"],
+    "description": "select picks one of two values using a boolean condition",
+    "body": [
+      "(module",
+      "  (func \\$max (param \\$a i32) (param \\$b i32) (result i32)",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    i32.gt_s",
+      "    select)",
+      ")"
+    ]
+  },
+
+  "memory_access": {
+    "prefix": ["memaccess"],
+    "description": "Linear memory with a load and a store instruction",
+    "body": [
+      "(module",
+      "  (memory \\$mem 1)",
+      "",
+      "  (func \\$store (param \\$value i32)",
+      "    i32.const 16",
+      "    local.get \\$value",
+      "    i32.store)",
+      "",
+      "  (func \\$load (result i32)",
+      "    i32.const 16",
+      "    i32.load)",
+      ")"
+    ]
+  },
+
+  "float_ops": {
+    "prefix": ["floatop"],
+    "description": "f32 and f64 arithmetic instructions",
+    "body": [
+      "(module",
+      "  (func \\$mean (param \\$a f64) (param \\$b f64) (result f64)",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    f64.add",
+      "    f64.const 2",
+      "    f64.div)",
+      "",
+      "  (func \\$half (param \\$x f32) (result f32)",
+      "    local.get \\$x",
+      "    f32.const 0.5",
+      "    f32.mul)",
+      ")"
+    ]
+  },
+
+  "bulk_memory": {
+    "prefix": ["bulkmem"],
+    "description": "Bulk memory operations copying and clearing a region",
+    "body": [
+      "(module",
+      "  (memory \\$mem 1)",
+      "  (data \"hello, world\")",
+      "",
+      "  (func \\$copy (param \\$dest i32) (param \\$src i32) (param \\$len i32)",
+      "    local.get \\$dest",
+      "    local.get \\$src",
+      "    local.get \\$len",
+      "    memory.copy)",
+      "",
+      "  (func \\$clear (param \\$dest i32) (param \\$len i32)",
+      "    local.get \\$dest",
+      "    local.get \\$len",
+      "    i32.const 0",
+      "    memory.fill)",
+      ")"
+    ]
+  },
+
+  "custom_section": {
+    "prefix": ["customsec"],
+    "description": "Custom section carrying metadata and a comment header",
+    "body": [
+      ";; ---------------------------------------------------------------------------",
+      ";; custom section: extra metadata that the runtime ignores",
+      ";; ---------------------------------------------------------------------------",
+      "(module",
+      "  (func \\$noop))",
+      "",
+      "(custom \"producers\" \"toolchain: wasm-ld 18\")"
+    ]
+  },
+
+  "test_module": {
+    "prefix": ["wastest"],
+    "description": "Small test module whose exports the harness can call",
+    "body": [
+      ";; a tiny test module: the harness calls the exported functions",
+      "(module",
+      "  (func (export \"add\") (param \\$a i32) (param \\$b i32) (result i32)",
+      "    local.get \\$a",
+      "    local.get \\$b",
+      "    i32.add)",
+      "",
+      "  (func (export \"negate\") (param \\$x i32) (result i32)",
+      "    local.get \\$x",
+      "    i32.const -1",
+      "    i32.mul))"
+    ]
+  }
+}

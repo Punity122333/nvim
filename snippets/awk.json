@@ -1,0 +1,157 @@
+{
+  "awk_program": {
+    "prefix": ["awkprog"],
+    "description": "Awk program with a shebang and the main blocks",
+    "body": [
+      "#!/usr/bin/awk -f",
+      "",
+      "BEGIN {",
+      "  ${1:FS = \" \"}",
+      "}",
+      "",
+      "{",
+      "  \\$0",
+      "}",
+      "",
+      "END {",
+      "  \\$0",
+      "}"
+    ]
+  },
+
+  "awk_begin_end": {
+    "prefix": ["beginend"],
+    "description": "Awk program made of a BEGIN and an END block",
+    "body": [
+      "BEGIN {",
+      "  ${1:print \"starting\"}",
+      "}",
+      "",
+      "END {",
+      "  ${2:print \"finished\"}",
+      "}"
+    ]
+  },
+
+  "awk_pattern_action": {
+    "prefix": ["awkpattern"],
+    "description": "Pattern with an action block",
+    "body": [
+      "${1:/regex/} {",
+      "  ${2:print \\$0}",
+      "}"
+    ]
+  },
+
+  "awk_field": {
+    "prefix": ["awkfield"],
+    "description": "Access a field of the current record",
+    "body": [
+      "\\$1"
+    ]
+  },
+
+  "awk_variable": {
+    "prefix": ["awkvar"],
+    "description": "Global awk variable assignment",
+    "body": [
+      "\\$${1:count} = ${2:0}"
+    ]
+  },
+
+  "awk_array": {
+    "prefix": ["awkarray"],
+    "description": "Array declaration with an assignment",
+    "body": [
+      "\\$${1:counts}[\\$2]++"
+    ]
+  },
+
+  "awk_function": {
+    "prefix": ["awkfn"],
+    "description": "User defined awk function",
+    "body": [
+      "function ${1:name}(${2:value}) {",
+      "  return ${3:value}",
+      "}"
+    ]
+  },
+
+  "awk_if": {
+    "prefix": ["awkif"],
+    "description": "Conditional statement inside an awk block",
+    "body": [
+      "if (${1:condition}) {",
+      "  ${2:print \"yes\"}",
+      "} else {",
+      "  ${3:print \"no\"}",
+      "}"
+    ]
+  },
+
+  "awk_for": {
+    "prefix": ["awkfor"],
+    "description": "C style for loop",
+    "body": [
+      "for (i = 0; i < ${1:count}; i++) {",
+      "  ${2:print i}",
+      "}"
+    ]
+  },
+
+  "awk_while": {
+    "prefix": ["awkwhile"],
+    "description": "While loop",
+    "body": [
+      "while (${1:i} < ${2:10}) {",
+      "  ${3:print i}",
+      "  ${1:i}++",
+      "}"
+    ]
+  },
+
+  "awk_printf": {
+    "prefix": ["awkprintf"],
+    "description": "Formatted print to the standard output",
+    "body": [
+      "printf \"%s\\\\n\", ${1:value}"
+    ]
+  },
+
+  "awk_getline": {
+    "prefix": ["awkgetline"],
+    "description": "Read a line from a file into a variable",
+    "body": [
+      "while ((getline line < \"${1:file.txt}\") > 0) {",
+      "  ${2:print line}",
+      "}",
+      "close(\"${1:file.txt}\")"
+    ]
+  },
+
+  "awk_match": {
+    "prefix": ["awkmatch"],
+    "description": "Match a regular expression and store the captures",
+    "body": [
+      "if (match(\\$0, /${1:pattern}/)) {",
+      "  ${2:print substr(\\$0, RSTART, RLENGTH)}",
+      "}"
+    ]
+  },
+
+  "awk_split": {
+    "prefix": ["awksplit"],
+    "description": "Split a line into an array of fields",
+    "body": [
+      "n = split(\\$0, ${1:parts}, ${2:\",\"})"
+    ]
+  },
+
+  "awk_comment": {
+    "prefix": ["awkcomment"],
+    "description": "Awk comment",
+    "body": [
+      "# ${1:TODO}"
+    ]
+  }
+}

@@ -1,0 +1,346 @@
+{
+  "sass_variable": {
+    "prefix": ["sassvar"],
+    "description": "Sass variables holding colors, spacing and fonts",
+    "body": [
+      "\\$primary: ${1:#3b82f6}",
+      "\\$text: #111827",
+      "\\$radius: 8px",
+      "\\$font-stack: system-ui, -apple-system, sans-serif",
+      "",
+      ".button",
+      "  background: \\$primary",
+      "  color: \\$text",
+      "  border-radius: \\$radius",
+      "  font-family: \\$font-stack"
+    ]
+  },
+
+  "sass_nesting": {
+    "prefix": ["sassnest"],
+    "description": "Nested rules using a parent selector reference",
+    "body": [
+      ".${1:card}",
+      "  padding: 1rem",
+      "  border-radius: 8px",
+      "",
+      "  .${1:card}__title",
+      "    margin: 0",
+      "    font-size: 1.125rem",
+      "",
+      "  &:hover",
+      "    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15)",
+      "",
+      "  &--elevated",
+      "    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2)"
+    ]
+  },
+
+  "sass_mixin": {
+    "prefix": ["sassmixin"],
+    "description": "Mixin definition together with its include call",
+    "body": [
+      "@mixin button-base",
+      "  display: inline-flex",
+      "  align-items: center",
+      "  padding: 0.5rem 1rem",
+      "  border-radius: 6px",
+      "",
+      ".button",
+      "  @include button-base",
+      "  background: #3b82f6"
+    ]
+  },
+
+  "sass_function": {
+    "prefix": ["sassfunc"],
+    "description": "Custom function converting pixels into rem units",
+    "body": [
+      "@use \"sass:math\"",
+      "",
+      "@function rem(\\$px, \\$base: 16px)",
+      "  @return math.div(\\$px, \\$base) * 1rem",
+      "",
+      ".heading",
+      "  font-size: rem(24px)"
+    ]
+  },
+
+  "sass_placeholder": {
+    "prefix": ["sassplaceholder"],
+    "description": "Placeholder selector extended by a concrete class",
+    "body": [
+      "%button-base",
+      "  display: inline-flex",
+      "  align-items: center",
+      "  gap: 0.5rem",
+      "  border-radius: 6px",
+      "",
+      ".button",
+      "  @extend %button-base",
+      "  background: #3b82f6"
+    ]
+  },
+
+  "sass_conditional": {
+    "prefix": ["sassif"],
+    "description": "Flow control with if, else if and else",
+    "body": [
+      "\\$size: medium",
+      "",
+      ".card",
+      "  @if \\$size == large",
+      "    padding: 2rem",
+      "  @else if \\$size == medium",
+      "    padding: 1.25rem",
+      "  @else",
+      "    padding: 0.75rem"
+    ]
+  },
+
+  "sass_each": {
+    "prefix": ["sasseeach"],
+    "description": "Iterate over a list of values with the each directive",
+    "body": [
+      "\\$icons: arrow, check, close",
+      "",
+      "@each \\$icon in \\$icons",
+      "  .icon-#{\\$icon}",
+      "    background-image: url(\"icons/#{\\$icon}.svg\")"
+    ]
+  },
+
+  "sass_for": {
+    "prefix": ["sassfor"],
+    "description": "Numeric loop generating a four column grid",
+    "body": [
+      "@use \"sass:math\"",
+      "",
+      "@for \\$i from 1 through 4",
+      "  .col-#{\\$i}",
+      "    width: math.percentage(math.div(\\$i, 4))"
+    ]
+  },
+
+  "sass_while": {
+    "prefix": ["sasswhile"],
+    "description": "Loop that keeps running while a condition holds",
+    "body": [
+      "\\$count: 0",
+      "",
+      "@while \\$count < 5",
+      "  .layer-#{\\$count}",
+      "    z-index: \\$count",
+      "  \\$count: \\$count + 1"
+    ]
+  },
+
+  "sass_map": {
+    "prefix": ["sassmap"],
+    "description": "Map of breakpoints read with the map module",
+    "body": [
+      "@use \"sass:map\"",
+      "",
+      "\\$breakpoints: (",
+      "  small: 576px,",
+      "  medium: 768px,",
+      "  large: 992px,",
+      ")",
+      "",
+      "@function bp(\\$name)",
+      "  @return map.get(\\$breakpoints, \\$name)",
+      "",
+      "@media (min-width: bp(medium))",
+      "  .container",
+      "    max-width: 720px"
+    ]
+  },
+
+  "sass_media": {
+    "prefix": ["sassmedia"],
+    "description": "Media query with rules nested inside it",
+    "body": [
+      "@media (min-width: 768px)",
+      "  .container",
+      "    max-width: 720px",
+      "    padding: 0 1rem",
+      "",
+      "  .sidebar",
+      "    display: none"
+    ]
+  },
+
+  "sass_color": {
+    "prefix": ["sasscolor"],
+    "description": "Adjust and scale colors with the sass color module",
+    "body": [
+      "@use \"sass:color\"",
+      "",
+      "\\$primary: ${1:#3b82f6}",
+      "",
+      ".button",
+      "  background: \\$primary",
+      "  border-color: color.adjust(\\$primary, \\$lightness: -8%)",
+      "  box-shadow: 0 4px 12px color.scale(\\$primary, \\$alpha: -70%)"
+    ]
+  },
+
+  "sass_module": {
+    "prefix": ["sassmodule"],
+    "description": "Use a partial as a module and forward its members",
+    "body": [
+      "// _tokens.sass",
+      "\\$primary: #3b82f6",
+      "\\$radius: 8px",
+      "",
+      "// _index.sass",
+      "@forward \"tokens\"",
+      "",
+      "// main.sass",
+      "@use \"index\" as tokens",
+      "",
+      ".button",
+      "  background: tokens.\\$primary",
+      "  border-radius: tokens.\\$radius"
+    ]
+  },
+
+  "sass_keyframes": {
+    "prefix": ["sasskeyframes"],
+    "description": "Keyframes animation written in the indented syntax",
+    "body": [
+      "@keyframes fade-in-up",
+      "  from",
+      "    opacity: 0",
+      "    transform: translateY(12px)",
+      "  to",
+      "    opacity: 1",
+      "    transform: translateY(0)",
+      "",
+      ".card",
+      "  animation: fade-in-up 300ms ease-out both"
+    ]
+  },
+
+  "sass_comments": {
+    "prefix": ["sasscomment"],
+    "description": "Loud block comment and a silent line comment",
+    "body": [
+      "/* Card component: styles for the card used across the dashboard. */",
+      ".card",
+      "  padding: 1rem",
+      "",
+      "// TODO: add a modifier for the compact variant",
+      ".card--compact",
+      "  padding: 0.5rem"
+    ]
+  },
+
+  "sass_bem": {
+    "prefix": ["sassbem"],
+    "description": "BEM block with element and modifier selectors",
+    "body": [
+      ".${1:card}",
+      "  padding: 1rem",
+      "  border-radius: 8px",
+      "  background: #fff",
+      "",
+      "  &__title",
+      "    margin: 0",
+      "    font-size: 1.125rem",
+      "",
+      "  &__body",
+      "    color: #4b5563",
+      "",
+      "  &--elevated",
+      "    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16)"
+    ]
+  },
+
+  "sass_theme": {
+    "prefix": ["sasstheme"],
+    "description": "Theme map with a helper function reading theme values",
+    "body": [
+      "@use \"sass:map\"",
+      "",
+      "\\$themes: (",
+      "  light: (",
+      "    bg: #ffffff,",
+      "    text: #111827,",
+      "    border: #e5e7eb,",
+      "  ),",
+      "  dark: (",
+      "    bg: #111827,",
+      "    text: #f9fafb,",
+      "    border: #374151,",
+      "  ),",
+      ")",
+      "",
+      "@function theme(\\$name, \\$key)",
+      "  \\$palette: map.get(\\$themes, \\$name)",
+      "  @return map.get(\\$palette, \\$key)",
+      "",
+      "body",
+      "  background: theme(light, bg)",
+      "  color: theme(light, text)"
+    ]
+  },
+
+  "sass_fluid": {
+    "prefix": ["sassfluid"],
+    "description": "Fluid spacing mixin scaling between two sizes",
+    "body": [
+      "@use \"sass:math\"",
+      "",
+      "@mixin fluid-space(\\$min, \\$max, \\$min-vw: 20, \\$max-vw: 90)",
+      "  \\$slope: math.div(\\$max - \\$min, \\$max-vw - \\$min-vw)",
+      "  \\$intercept: \\$min - \\$slope * \\$min-vw",
+      "  padding: clamp(#{\\$min}rem, calc(#{\\$intercept}rem + #{\\$slope * 100}vw), #{\\$max}rem)",
+      "",
+      ".card",
+      "  @include fluid-space(1, 2)"
+    ]
+  },
+
+  "sass_reset": {
+    "prefix": ["sassreset"],
+    "description": "Minimal modern CSS reset for a project base",
+    "body": [
+      "*,",
+      "*::before,",
+      "*::after",
+      "  box-sizing: border-box",
+      "",
+      "html",
+      "  -webkit-text-size-adjust: 100%",
+      "",
+      "body",
+      "  margin: 0",
+      "  font-family: system-ui, -apple-system, \"Segoe UI\", sans-serif",
+      "  line-height: 1.5",
+      "  -webkit-font-smoothing: antialiased",
+      "",
+      "img,",
+      "svg",
+      "  display: block",
+      "  max-width: 100%"
+    ]
+  },
+
+  "sass_messages": {
+    "prefix": ["sassmessages"],
+    "description": "Debug, warn and error directives giving build feedback",
+    "body": [
+      "@function spacing(\\$steps)",
+      "  @if \\$steps < 0",
+      "    @error \"spacing steps must be positive, got #{\\$steps}\"",
+      "  @return \\$steps * 4px",
+      "",
+      "@debug \"spacing scale initialised\"",
+      "@warn \"spacing() is deprecated, use rem() instead\"",
+      "",
+      ".card",
+      "  padding: spacing(2)"
+    ]
+  }
+}

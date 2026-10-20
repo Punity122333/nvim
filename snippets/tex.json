@@ -1,0 +1,250 @@
+{
+  "document_preamble": {
+    "prefix": ["documentclass"],
+    "description": "Article preamble with the common packages",
+    "body": [
+      "\\\\documentclass[11pt,a4paper]{article}",
+      "",
+      "\\\\usepackage[utf8]{inputenc}",
+      "\\\\usepackage[T1]{fontenc}",
+      "\\\\usepackage{amsmath,amssymb}",
+      "\\\\usepackage{graphicx}",
+      "\\\\usepackage{booktabs}",
+      "\\\\usepackage{listings}",
+      "\\\\usepackage[hidelinks]{hyperref}",
+      "",
+      "\\\\title{${1:Project Report}}",
+      "\\\\author{${2:Jane Doe}}",
+      "\\\\date{\\\\today}"
+    ]
+  },
+
+  "document_environment": {
+    "prefix": ["document"],
+    "description": "Wrap the report content in a document environment",
+    "body": [
+      "\\\\begin{document}",
+      "",
+      "\\\\maketitle",
+      "",
+      "${1:Introduction to the project.}",
+      "",
+      "\\\\end{document}"
+    ]
+  },
+
+  "chapter": {
+    "prefix": ["chapter"],
+    "description": "New chapter with a label for cross references",
+    "body": [
+      "\\\\chapter{${1:Chapter Title}}",
+      "\\\\label{chap:${2:chapter-key}}"
+    ]
+  },
+
+  "section": {
+    "prefix": ["section"],
+    "description": "New section with a label for cross references",
+    "body": [
+      "\\\\section{${1:Section Title}}",
+      "\\\\label{sec:${2:section-key}}"
+    ]
+  },
+
+  "subsection": {
+    "prefix": ["subsection"],
+    "description": "New subsection with a label for cross references",
+    "body": [
+      "\\\\subsection{${1:Subsection Title}}",
+      "\\\\label{sec:${2:subsection-key}}"
+    ]
+  },
+
+  "figure": {
+    "prefix": ["figure"],
+    "description": "Figure with a graphic, a caption and a label",
+    "body": [
+      "\\\\begin{figure}[htbp]",
+      "  \\\\centering",
+      "  \\\\includegraphics[width=0.7\\\\textwidth]{${1:figures/architecture.png}}",
+      "  \\\\caption{${2:System architecture}}",
+      "  \\\\label{fig:${3:architecture}}",
+      "\\\\end{figure}"
+    ]
+  },
+
+  "table": {
+    "prefix": ["table"],
+    "description": "Table with booktabs rules, a caption and a label",
+    "body": [
+      "\\\\begin{table}[htbp]",
+      "  \\\\centering",
+      "  \\\\caption{${1:Build time per compiler}}",
+      "  \\\\label{tab:${2:build-times}}",
+      "  \\\\begin{tabular}{lrr}",
+      "    \\\\toprule",
+      "    ${3:Compiler} & \\\\textbf{Time} & \\\\textbf{Binary} \\\\\\\\",
+      "    \\\\midrule",
+      "    gcc & 4.2 s & 1.8 MB \\\\\\\\",
+      "    clang & 3.1 s & 1.6 MB \\\\\\\\",
+      "    \\\\bottomrule",
+      "  \\\\end{tabular}",
+      "\\\\end{table}"
+    ]
+  },
+
+  "equation": {
+    "prefix": ["equation"],
+    "description": "Numbered equation with a label",
+    "body": [
+      "\\\\begin{equation}",
+      "  ${1:E = mc^2}",
+      "  \\\\label{eq:${2:einstein}}",
+      "\\\\end{equation}"
+    ]
+  },
+
+  "aligned_equation": {
+    "prefix": ["align"],
+    "description": "Aligned system of equations with a label",
+    "body": [
+      "\\\\begin{align}",
+      "  ${1:a} &= b + c \\\\\\\\",
+      "  ${2:d} &= e + f",
+      "  \\\\label{eq:${3:relations}}",
+      "\\\\end{align}"
+    ]
+  },
+
+  "itemize": {
+    "prefix": ["itemize"],
+    "description": "Bulleted item list",
+    "body": [
+      "\\\\begin{itemize}",
+      "  \\\\item ${1:First item}",
+      "  \\\\item ${2:Second item}",
+      "  \\\\item ${3:Third item}",
+      "\\\\end{itemize}"
+    ]
+  },
+
+  "enumerate": {
+    "prefix": ["enumerate"],
+    "description": "Numbered list of steps",
+    "body": [
+      "\\\\begin{enumerate}",
+      "  \\\\item ${1:Install the dependencies}",
+      "  \\\\item ${2:Run the test suite}",
+      "  \\\\item ${3:Open the report in the browser}",
+      "\\\\end{enumerate}"
+    ]
+  },
+
+  "description_list": {
+    "prefix": ["description"],
+    "description": "Description list of terms and their meaning",
+    "body": [
+      "\\\\begin{description}",
+      "  \\\\item[${1:Term}] ${2:Short description of the term}",
+      "  \\\\item[${3:Other term}] Another description",
+      "\\\\end{description}"
+    ]
+  },
+
+  "verbatim_block": {
+    "prefix": ["verbatim"],
+    "description": "Verbatim block for raw terminal output",
+    "body": [
+      "\\\\begin{verbatim}",
+      "\\$ cargo test --all",
+      "running 42 tests",
+      "test result: ok. 42 passed; 0 failed",
+      "\\\\end{verbatim}"
+    ]
+  },
+
+  "lstlisting_block": {
+    "prefix": ["lstlisting"],
+    "description": "Listed source code block with caption and label",
+    "body": [
+      "\\\\begin{lstlisting}[language=Python,caption={${1:Reading the config file}},label={lst:config}]",
+      "import json",
+      "from pathlib import Path",
+      "",
+      "config = json.loads(Path(\"config.json\").read_text())",
+      "\\\\end{lstlisting}"
+    ]
+  },
+
+  "table_of_contents": {
+    "prefix": ["toc"],
+    "description": "Table of contents with the list of figures and tables",
+    "body": [
+      "\\\\tableofcontents",
+      "",
+      "\\\\listoffigures",
+      "",
+      "\\\\listoftables"
+    ]
+  },
+
+  "bibliography": {
+    "prefix": ["bibliography"],
+    "description": "Bibliography style and database at the end of the document",
+    "body": [
+      "\\\\bibliographystyle{${1:plain}}",
+      "\\\\bibliography{${2:references}}"
+    ]
+  },
+
+  "citation": {
+    "prefix": ["cite"],
+    "description": "Cite a reference with natbib commands",
+    "body": [
+      "The algorithm follows \\\\cite{${1:knuth1984}} closely.",
+      "For a longer discussion see \\\\citet{${2:lamport1994}}."
+    ]
+  },
+
+  "footnote": {
+    "prefix": ["footnote"],
+    "description": "Footnote attached to the surrounding sentence",
+    "body": [
+      "The estimate is conservative.\\\\footnote{${1:Measured on 12 benchmark runs.}}"
+    ]
+  },
+
+  "theorem_environment": {
+    "prefix": ["theorem"],
+    "description": "Theorem, definition and proof environments",
+    "body": [
+      "\\\\newtheorem{theorem}{Theorem}",
+      "\\\\newtheorem{definition}[theorem]{Definition}",
+      "\\\\newtheorem{lemma}[theorem]{Lemma}",
+      "",
+      "\\\\begin{theorem}[${1:Pigeonhole principle}]",
+      "  ${2:Statement of the theorem}",
+      "\\\\end{theorem}",
+      "",
+      "\\\\begin{proof}",
+      "  ${3:Proof of the statement}",
+      "\\\\end{proof}"
+    ]
+  },
+
+  "custom_command": {
+    "prefix": ["newcmd"],
+    "description": "Custom command and a custom environment",
+    "body": [
+      "\\\\newcommand{\\\\vect}[1]{\\\\mathbf{#1}}",
+      "\\\\newcommand{\\\\norm}[1]{\\\\left\\\\| #1 \\\\right\\\\|}",
+      "",
+      "\\\\newenvironment{keyvalue}[1]{%",
+      "  \\\\begin{list}{}{\\\\setlength{\\\\leftmargin}{2em}}",
+      "  \\\\item[]\\\\textbf{#1}",
+      "}{%",
+      "  \\\\end{list}",
+      "}"
+    ]
+  }
+}

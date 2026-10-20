@@ -1,0 +1,281 @@
+{
+  "xml_document": {
+    "prefix": ["xmldoc"],
+    "description": "XML document with declaration and root element",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<order id=\"1234\">",
+      "  <customer>Ada Lovelace</customer>",
+      "  <status>shipped</status>",
+      "</order>"
+    ]
+  },
+
+  "xml_declaration_encoding": {
+    "prefix": ["xmldecl"],
+    "description": "XML declaration with encoding and standalone flag",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>",
+      "<catalog>",
+      "  <book id=\"bk101\">The Great Gatsby</book>",
+      "</catalog>"
+    ]
+  },
+
+  "xml_attributes": {
+    "prefix": ["xmlattr"],
+    "description": "Element carrying several attributes",
+    "body": [
+      "<product id=\"p-4021\" category=\"tools\" price=\"49.90\" in_stock=\"true\">",
+      "  <name>Precision Screwdriver Set</name>",
+      "</product>"
+    ]
+  },
+
+  "xml_nested": {
+    "prefix": ["xmlnested"],
+    "description": "Nested elements inside a parent element",
+    "body": [
+      "<company name=\"Acme Corp\">",
+      "  <team title=\"platform\">",
+      "    <member role=\"lead\">Ada Lovelace</member>",
+      "    <member role=\"engineer\">Grace Hopper</member>",
+      "  </team>",
+      "</company>"
+    ]
+  },
+
+  "xml_self_closing": {
+    "prefix": ["xmlself"],
+    "description": "Self closing elements with attributes",
+    "body": [
+      "<config>",
+      "  <cache ttl=\"60\" enabled=\"true\"/>",
+      "  <retry count=\"3\"/>",
+      "</config>"
+    ]
+  },
+
+  "xml_text": {
+    "prefix": ["xmltext"],
+    "description": "Element with mixed text content",
+    "body": [
+      "<p>Some <b>bold</b> text with a <a href=\"https://example.com\">link</a> inside.</p>"
+    ]
+  },
+
+  "xml_comment": {
+    "prefix": ["xmlcomment"],
+    "description": "XML comment placed inside a document",
+    "body": [
+      "<!-- Order documents are exchanged with the legacy billing system -->",
+      "<order id=\"1234\">",
+      "  <status>pending</status>",
+      "</order>"
+    ]
+  },
+
+  "xml_cdata": {
+    "prefix": ["xmlcdata"],
+    "description": "CDATA section holding raw character data",
+    "body": [
+      "<script type=\"application/json\"><![CDATA[",
+      "  {\"status\": \"ok\", \"items\": []}",
+      "]]></script>"
+    ]
+  },
+
+  "xml_namespace": {
+    "prefix": ["xmlnsprefix"],
+    "description": "Prefixed namespace elements and a namespaced attribute",
+    "body": [
+      "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">",
+      "  <soap:Body>",
+      "    <m:GetPrice xmlns:m=\"http://example.com/prices\" m:currency=\"EUR\">",
+      "      <m:Item>SKU-1234</m:Item>",
+      "    </m:GetPrice>",
+      "  </soap:Body>",
+      "</soap:Envelope>"
+    ]
+  },
+
+  "xml_default_namespace": {
+    "prefix": ["xmldefns"],
+    "description": "Element using a default namespace and a typed attribute",
+    "body": [
+      "<orders xmlns=\"http://example.com/orders/v1\"",
+      "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">",
+      "  <order id=\"1234\" xsi:type=\"Order\">",
+      "    <status>shipped</status>",
+      "  </order>",
+      "</orders>"
+    ]
+  },
+
+  "xml_repeated_elements": {
+    "prefix": ["xmlrepeat"],
+    "description": "List of repeated sibling elements",
+    "body": [
+      "<items>",
+      "  <item sku=\"A-100\" quantity=\"2\"/>",
+      "  <item sku=\"B-220\" quantity=\"1\"/>",
+      "  <item sku=\"C-310\" quantity=\"5\"/>",
+      "</items>"
+    ]
+  },
+
+  "xml_processing_instruction": {
+    "prefix": ["xmlpi"],
+    "description": "Processing instruction such as a stylesheet link",
+    "body": [
+      "<?xml-stylesheet type=\"text/xsl\" href=\"report.xsl\"?>",
+      "<report>",
+      "  <title>Quarterly report</title>",
+      "</report>"
+    ]
+  },
+
+  "xml_doctype": {
+    "prefix": ["xmldoctype"],
+    "description": "Document with a DOCTYPE declaration",
+    "body": [
+      "<!DOCTYPE note SYSTEM \"note.dtd\">",
+      "<note>",
+      "  <to>Tove</to>",
+      "  <from>Jani</from>",
+      "  <body>Reminder</body>",
+      "</note>"
+    ]
+  },
+
+  "xml_sitemap": {
+    "prefix": ["xmlsitemap"],
+    "description": "Sitemap urlset with one url entry per page",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
+      "  <url>",
+      "    <loc>https://example.com/</loc>",
+      "    <lastmod>2024-05-01</lastmod>",
+      "    <changefreq>weekly</changefreq>",
+      "    <priority>1.0</priority>",
+      "  </url>",
+      "  <url>",
+      "    <loc>https://example.com/docs</loc>",
+      "    <lastmod>2024-05-03</lastmod>",
+      "    <priority>0.8</priority>",
+      "  </url>",
+      "</urlset>"
+    ]
+  },
+
+  "xml_rss": {
+    "prefix": ["xmlrss"],
+    "description": "RSS 2.0 feed with one channel item",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss version=\"2.0\">",
+      "  <channel>",
+      "    <title>Engineering Blog</title>",
+      "    <link>https://example.com/blog</link>",
+      "    <description>Notes from the engineering team</description>",
+      "    <item>",
+      "      <title>Shipping the new API gateway</title>",
+      "      <link>https://example.com/blog/api-gateway</link>",
+      "      <guid>https://example.com/blog/api-gateway</guid>",
+      "      <pubDate>Mon, 01 Jul 2024 09:00:00 +0000</pubDate>",
+      "      <description>How traffic moved to the new gateway.</description>",
+      "    </item>",
+      "  </channel>",
+      "</rss>"
+    ]
+  },
+
+  "xml_maven_pom": {
+    "prefix": ["xmlpom"],
+    "description": "Maven project pom.xml with one dependency",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+      "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+      "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">",
+      "  <modelVersion>4.0.0</modelVersion>",
+      "  <groupId>com.example</groupId>",
+      "  <artifactId>demo-service</artifactId>",
+      "  <version>1.0.0</version>",
+      "  <packaging>jar</packaging>",
+      "  <dependencies>",
+      "    <dependency>",
+      "      <groupId>org.slf4j</groupId>",
+      "      <artifactId>slf4j-api</artifactId>",
+      "      <version>2.0.13</version>",
+      "    </dependency>",
+      "  </dependencies>",
+      "</project>"
+    ]
+  },
+
+  "xml_junit_suite": {
+    "prefix": ["xmljunit"],
+    "description": "JUnit test suite report with test cases",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<testsuite name=\"CalculatorTest\" tests=\"3\" failures=\"1\" errors=\"0\" time=\"0.42\">",
+      "  <testcase name=\"addsTwoNumbers\" classname=\"CalculatorTest\" time=\"0.01\"/>",
+      "  <testcase name=\"subtractsTwoNumbers\" classname=\"CalculatorTest\" time=\"0.01\"/>",
+      "  <testcase name=\"dividesByZero\" classname=\"CalculatorTest\" time=\"0.02\">",
+      "    <failure message=\"expected ArithmeticException\">AssertionError: expected ArithmeticException</failure>",
+      "  </testcase>",
+      "</testsuite>"
+    ]
+  },
+
+  "xml_spring_bean": {
+    "prefix": ["xmlspring"],
+    "description": "Spring beans XML with a data source and a bean",
+    "body": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<beans xmlns=\"http://www.springframework.org/schema/beans\"",
+      "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+      "  xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd\">",
+      "  <bean id=\"dataSource\" class=\"org.springframework.jdbc.datasource.DriverManagerDataSource\">",
+      "    <property name=\"url\" value=\"jdbc:postgresql://localhost:5432/demo\"/>",
+      "    <property name=\"username\" value=\"demo\"/>",
+      "  </bean>",
+      "  <bean id=\"userRepository\" class=\"com.example.repository.UserRepositoryImpl\"/>",
+      "</beans>"
+    ]
+  },
+
+  "xml_svg_root": {
+    "prefix": ["xmlsvg"],
+    "description": "SVG root element with a shape and a label",
+    "body": [
+      "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\">",
+      "  <title>Status ok</title>",
+      "  <circle cx=\"60\" cy=\"60\" r=\"48\" fill=\"#4ade80\" stroke=\"#166534\" stroke-width=\"4\"/>",
+      "  <text x=\"60\" y=\"68\" font-family=\"sans-serif\" font-size=\"18\" text-anchor=\"middle\" fill=\"#14532d\">OK</text>",
+      "</svg>"
+    ]
+  },
+
+  "xml_dto": {
+    "prefix": ["xmldto"],
+    "description": "Data transfer object with nested customer and items",
+    "body": [
+      "<Order xmlns=\"http://example.com/orders/v1\">",
+      "  <Id>1234</Id>",
+      "  <Customer>",
+      "    <Name>Ada Lovelace</Name>",
+      "    <Email>ada@example.com</Email>",
+      "  </Customer>",
+      "  <Items>",
+      "    <Item>",
+      "      <Sku>SKU-1234</Sku>",
+      "      <Quantity>2</Quantity>",
+      "    </Item>",
+      "  </Items>",
+      "</Order>"
+    ]
+  }
+}

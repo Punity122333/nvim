@@ -1,0 +1,299 @@
+{
+  "defmodule": {
+    "prefix": ["defmodule"],
+    "description": "Define a module with a moduledoc",
+    "body": [
+      "defmodule ${1:MyApp.Context} do",
+      "  @moduledoc \"\"\"",
+      "  Entry point for the application context.",
+      "  \"\"\"",
+      "",
+      "  def list_users do",
+      "    []",
+      "  end",
+      "end"
+    ]
+  },
+
+  "def_with_doc": {
+    "prefix": ["defdoc"],
+    "description": "Define a public function with a doc block",
+    "body": [
+      "@doc \"\"\"",
+      "${1:Describe what the function does}",
+      "",
+      "## Examples",
+      "",
+      "    iex> ${2:my_function}()",
+      "    :ok",
+      "\"\"\"",
+      "def ${2:my_function} do",
+      "  :ok",
+      "end"
+    ]
+  },
+
+  "defstruct": {
+    "prefix": ["defstruct"],
+    "description": "Define a struct with default field values",
+    "body": [
+      "defmodule ${1:MyApp.User} do",
+      "  defstruct ${2:id}: nil,",
+      "            name: nil,",
+      "            email: nil,",
+      "            inserted_at: nil",
+      "end"
+    ]
+  },
+
+  "defprotocol": {
+    "prefix": ["defprotocol"],
+    "description": "Define a protocol and its function specifications",
+    "body": [
+      "defprotocol ${1:Storage} do",
+      "  @doc \"Fetches the value stored under the given key.\"",
+      "  def ${2:fetch}(key)",
+      "",
+      "  @doc \"Stores a value under the given key.\"",
+      "  def ${3:store}(key, value)",
+      "end"
+    ]
+  },
+
+  "defimpl": {
+    "prefix": ["defimpl"],
+    "description": "Implement a protocol for a struct",
+    "body": [
+      "defimpl ${1:Jason.Encoder}, for: ${2:User} do",
+      "  def encode(user, _opts) do",
+      "    %{",
+      "      id: user.id,",
+      "      name: user.name",
+      "    }",
+      "  end",
+      "end"
+    ]
+  },
+
+  "behaviour": {
+    "prefix": ["behaviour"],
+    "description": "Define a behaviour with callbacks",
+    "body": [
+      "defmodule ${1:MyApp.Repo} do",
+      "  @callback fetch(id :: term()) :: {:ok, term()} | {:error, term()}",
+      "  @callback save(record :: term()) :: {:ok, term()} | {:error, term()}",
+      "",
+      "  @optional_callbacks save: 1",
+      "end"
+    ]
+  },
+
+  "supervisor": {
+    "prefix": ["supervisor"],
+    "description": "Define a supervisor that starts child processes",
+    "body": [
+      "defmodule ${1:MyApp.Supervisor} do",
+      "  use Supervisor",
+      "",
+      "  def start_link(init_arg) do",
+      "    Supervisor.start_link(__MODULE__, init_arg, name: ${1:MyApp.Supervisor})",
+      "  end",
+      "",
+      "  def init(init_arg) do",
+      "    children = [",
+      "      {MyApp.Worker, []}",
+      "    ]",
+      "",
+      "    Supervisor.init(children, strategy: :one_for_one)",
+      "  end",
+      "end"
+    ]
+  },
+
+  "genserver": {
+    "prefix": ["genserver"],
+    "description": "Define a GenServer with init and message handlers",
+    "body": [
+      "defmodule ${1:MyApp.Worker} do",
+      "  use GenServer",
+      "",
+      "  def start_link(opts) do",
+      "    GenServer.start_link(__MODULE__, opts, name: ${1:MyApp.Worker})",
+      "  end",
+      "",
+      "  def init(_opts) do",
+      "    {:ok, %{count: 0}}",
+      "  end",
+      "",
+      "  def handle_call(:get, _from, state) do",
+      "    {:reply, state.count, state}",
+      "  end",
+      "",
+      "  def handle_cast(:increment, state) do",
+      "    {:noreply, %{state | count: state.count + 1}}",
+      "  end",
+      "end"
+    ]
+  },
+
+  "case_stmt": {
+    "prefix": ["case"],
+    "description": "Case expression with pattern matching clauses",
+    "body": [
+      "subject = ${1:\"value\"},",
+      "case subject do",
+      "  {ok, Result} -> ${2:handle_success(Result)}",
+      "  {:error, reason} -> ${3:handle_error(reason)}",
+      "  _other -> ${4:handle_default}",
+      "end"
+    ]
+  },
+
+  "cond_stmt": {
+    "prefix": ["cond"],
+    "description": "Cond expression with a set of boolean clauses",
+    "body": [
+      "value = ${1:0},",
+      "cond do",
+      "  value > 0 -> ${2:\"positive\"}",
+      "  value == 0 -> ${3:\"zero\"}",
+      "  true -> ${4:\"negative\"}",
+      "end"
+    ]
+  },
+
+  "with_stmt": {
+    "prefix": ["with"],
+    "description": "With expression that short circuits on failure",
+    "body": [
+      "user_id = ${1:1},",
+      "with {:ok, ${2:user}} <- fetch_user(user_id),",
+      "    {:ok, ${3:account}} <- fetch_account(user) do",
+      "  {:ok, ${4:combine(user, account)}}",
+      "else",
+      "  {:error, reason} -> {:error, reason}",
+      "  :timeout -> {:error, :timeout}",
+      "end"
+    ]
+  },
+
+  "pipe_chain": {
+    "prefix": ["pipe"],
+    "description": "Pipe a value through a chain of function calls",
+    "body": [
+      "${1:[1, 2, 3]}",
+      "|> ${2:transform()}",
+      "|> ${3:postprocess()}",
+      "|> Enum.to_list()"
+    ]
+  },
+
+  "comprehension": {
+    "prefix": ["for"],
+    "description": "Comprehension with filters and a do keyword list",
+    "body": [
+      "source = ${1:[\"alpha\", \"beta\"]},",
+      "",
+      "${2:items} =",
+      "  for ${3:item} <- source,",
+      "      is_binary(item),",
+      "      do: String.upcase(item)"
+    ]
+  },
+
+  "keyword_list": {
+    "prefix": ["kwlist"],
+    "description": "Build a keyword list of options",
+    "body": [
+      "opts = [",
+      "  ${1:name}: \"value\",",
+      "  timeout: 5000,",
+      "  retries: 3",
+      "]"
+    ]
+  },
+
+  "struct_update": {
+    "prefix": ["structup"],
+    "description": "Update a single field of an existing struct",
+    "body": [
+      "user = %User{id: 1, name: \"Ada\"}",
+      "",
+      "updated = %{user | ${1:name}: \"Grace\"}"
+    ]
+  },
+
+  "task_async": {
+    "prefix": ["task"],
+    "description": "Run work in a Task and await the result",
+    "body": [
+      "task = Task.async(fn -> ${1:do_work()} end)",
+      "",
+      "result = Task.await(task, 5000)"
+    ]
+  },
+
+  "stream_enum": {
+    "prefix": ["stream"],
+    "description": "Build a lazy stream and collect it into a list",
+    "body": [
+      "${1:stream} = [1, 2, 3, 4, 5]",
+      "",
+      "${1:stream}",
+      "|> Stream.map(fn item -> item * 2 end)",
+      "|> Stream.filter(fn item -> item > 10 end)",
+      "|> Enum.to_list()"
+    ]
+  },
+
+  "plug_router": {
+    "prefix": ["plug"],
+    "description": "Define a Plug router with a catch all match",
+    "body": [
+      "defmodule ${1:MyApp.Router} do",
+      "  use Plug.Router",
+      "",
+      "  plug :match",
+      "  plug :dispatch",
+      "",
+      "  get \"/health\" do",
+      "    send_resp(conn, 200, \"ok\")",
+      "  end",
+      "",
+      "  match _ do",
+      "    send_resp(conn, 404, \"not found\")",
+      "  end",
+      "end"
+    ]
+  },
+
+  "exunit_test": {
+    "prefix": ["exunit"],
+    "description": "ExUnit test module with a describe block",
+    "body": [
+      "defmodule ${1:MyApp.WorkerTest} do",
+      "  use ExUnit.Case, async: true",
+      "",
+      "  describe \"${2:handle_call/1}\" do",
+      "    test \"returns the count\" do",
+      "      assert ${3:1} == ${4:Worker.count()}",
+      "    end",
+      "  end",
+      "end"
+    ]
+  },
+
+  "macro_def": {
+    "prefix": ["defmacro"],
+    "description": "Define a macro that quotes its argument",
+    "body": [
+      "defmodule ${1:MyApp.Macros} do",
+      "  defmacro ${2:log_info}(message) do",
+      "    quote do",
+      "      IO.puts(\"[info] \" <> unquote(message))",
+      "    end",
+      "  end",
+      "end"
+    ]
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "data_section": {
+    "prefix": ["datasec"],
+    "description": "Data section with named constants (NASM syntax)",
+    "body": [
+      "section .data",
+      "",
+      "MAX_ITEMS equ 128",
+      "BUFFER_SIZE equ 4096",
+      "DEFAULT_TIMEOUT equ 30",
+      "",
+      "timeout_value dd DEFAULT_TIMEOUT",
+      "max_items dd MAX_ITEMS"
+    ]
+  },
+
+  "string_constant": {
+    "prefix": ["strconst"],
+    "description": "Read-only string constant with its computed length",
+    "body": [
+      "section .rodata",
+      "",
+      "greeting db \"Hello, world!\", 10",
+      "greeting_len equ \\$ - greeting",
+      "",
+      "error_message db \"error: invalid state\", 0"
+    ]
+  },
+
+  "global_variables": {
+    "prefix": ["globalvar"],
+    "description": "Global variables in .data and an uninitialised .bss buffer",
+    "body": [
+      "global counter",
+      "global scale_factor",
+      "global buffer",
+      "",
+      "section .data",
+      "counter dd 0",
+      "scale_factor dd 100",
+      "",
+      "section .bss",
+      "buffer resb 4096"
+    ]
+  },
+
+  "function_frame": {
+    "prefix": ["fnframe"],
+    "description": "Function prologue, stack frame and epilogue (NASM)",
+    "body": [
+      "global process_frame",
+      "process_frame:",
+      "  push rbp                 ; save the caller's frame pointer",
+      "  mov rbp, rsp              ; rbp now points at the saved rbp",
+      "  sub rsp, 64               ; reserve 64 bytes for locals",
+      "  mov [rbp - 8], rdi        ; first argument",
+      "  mov [rbp - 16], rsi       ; second argument",
+      "  ; ... local work goes here ...",
+      "  leave                     ; restore rsp and rbp",
+      "  ret"
+    ]
+  },
+
+  "function_local": {
+    "prefix": ["localvar"],
+    "description": "Function keeping a local variable on the stack",
+    "body": [
+      "global sum_to",
+      "sum_to:",
+      "  push rbp",
+      "  mov rbp, rsp",
+      "  sub rsp, 16",
+      "  mov dword [rbp - 4], 0     ; local accumulator",
+      "  mov ecx, edi              ; iteration counter",
+      ".loop:",
+      "  add dword [rbp - 4], ecx",
+      "  dec ecx",
+      "  jnz .loop",
+      "  mov eax, dword [rbp - 4]",
+      "  leave",
+      "  ret"
+    ]
+  },
+
+  "function_return": {
+    "prefix": ["fnvalue"],
+    "description": "Function that returns a value in eax",
+    "body": [
+      "global clamp_byte",
+      "clamp_byte:",
+      "  push rbp",
+      "  mov rbp, rsp",
+      "  movzx eax, dil            ; take the low byte of the argument",
+      "  cmp al, 255",
+      "  jbe .done",
+      "  mov eax, 255",
+      ".done:",
+      "  pop rbp",
+      "  ret"
+    ]
+  },
+
+  "function_args": {
+    "prefix": ["fnargs"],
+    "description": "Function taking arguments in the SysV registers",
+    "body": [
+      "global collect_stats",
+      "collect_stats:",
+      "  ; rdi = buffer, rsi = element count, rdx = output pointer",
+      "  push rbp",
+      "  mov rbp, rsp",
+      "  push rbx",
+      "  mov rbx, rdx",
+      "  xor eax, eax",
+      "  mov ecx, esi",
+      ".loop:",
+      "  test rcx, rcx",
+      "  jz .done",
+      "  add eax, [rdi]",
+      "  add rdi, 4",
+      "  dec rcx",
+      "  jmp .loop",
+      ".done:",
+      "  mov [rbx], eax",
+      "  pop rbx",
+      "  pop rbp",
+      "  ret"
+    ]
+  },
+
+  "syscall": {
+    "prefix": ["syscall"],
+    "description": "Raw Linux x86-64 syscall, number in rax",
+    "body": [
+      "section .rodata",
+      "message db \"Hello, world!\", 10",
+      "message_len equ \\$ - message",
+      "",
+      "section .text",
+      "; the syscall number goes in rax, the arguments in rdi, rsi, rdx",
+      "mov eax, 1                ; SYS_write",
+      "mov edi, 1                ; file descriptor: stdout",
+      "lea rsi, [rel message]",
+      "mov edx, message_len      ; number of bytes to write",
+      "syscall"
+    ]
+  },
+
+  "syscall_stdio": {
+    "prefix": ["sysstdio"],
+    "description": "read and write syscalls moving data to and from a buffer",
+    "body": [
+      "section .bss",
+      "buffer resb BUFFER_SIZE",
+      "",
+      "section .text",
+      "; read(0, buffer, size): rax receives the number of bytes read",
+      "mov eax, 0                ; SYS_read",
+      "mov edi, 0                ; file descriptor: stdin",
+      "mov rsi, buffer",
+      "mov edx, BUFFER_SIZE",
+      "syscall",
+      "",
+      "; write(1, buffer, count): rax receives the number of bytes written",
+      "mov eax, 1                ; SYS_write",
+      "mov edi, 1                ; file descriptor: stdout",
+      "mov rsi, buffer",
+      "mov edx, rax              ; reuse the byte count returned by read",
+      "syscall"
+    ]
+  },
+
+  "exit_stub": {
+    "prefix": ["exitstub"],
+    "description": "Program entry point that exits with a status code",
+    "body": [
+      "global _start",
+      "",
+      "section .text",
+      "_start:",
+      "  mov edi, 0               ; exit status 0",
+      "  mov eax, 60              ; SYS_exit",
+      "  syscall"
+    ]
+  },
+
+  "loop": {
+    "prefix": ["loopcnt"],
+    "description": "Counted loop that decrements a counter until zero",
+    "body": [
+      "; count rdi down to zero, adding one to eax on every iteration",
+      "mov eax, 0",
+      "mov ecx, edi",
+      ".loop:",
+      "  test ecx, ecx",
+      "  jz .done",
+      "  inc eax",
+      "  dec ecx",
+      "  jmp .loop",
+      ".done:",
+      "  ; eax now holds the number of iterations"
+    ]
+  },
+
+  "conditional_jump": {
+    "prefix": ["cmpjump"],
+    "description": "Comparison followed by a conditional jump",
+    "body": [
+      "  cmp eax, 0",
+      "  jle .not_positive",
+      "  mov ebx, 1",
+      "  jmp .end",
+      ".not_positive:",
+      "  xor ebx, ebx",
+      ".end:",
+      "  ; ebx is 1 when eax was positive, 0 otherwise"
+    ]
+  },
+
+  "if_else": {
+    "prefix": ["ifelse"],
+    "description": "Two way if/else branching with labelled jumps",
+    "body": [
+      "  cmp rdi, 0",
+      "  je .use_default",
+      "  mov rax, rdi",
+      "  jmp .done",
+      ".use_default:",
+      "  mov rax, 100",
+      ".done:",
+      "  ; rax holds either the argument or the fallback value"
+    ]
+  },
+
+  "macro": {
+    "prefix": ["macro"],
+    "description": "NASM macro taking the message text and its length",
+    "body": [
+      "%macro ${1:PRINT} 2",
+      "  mov rdi, 1                ; stdout",
+      "  lea rsi, [rel %1]         ; message text",
+      "  mov rdx, %2               ; message length",
+      "  mov eax, 1                ; SYS_write",
+      "  syscall",
+      "%endmacro"
+    ]
+  },
+
+  "struct_array": {
+    "prefix": ["struc"],
+    "description": "NASM struct definition and an array of its instances",
+    "body": [
+      "struc Point",
+      "  .x: resd 1",
+      "  .y: resd 1",
+      "endstruc",
+      "",
+      "; Point_size holds the size of the structure in bytes",
+      "section .bss",
+      "points resb Point_size * 16     ; array of 16 Point values"
+    ]
+  },
+
+  "array": {
+    "prefix": ["array"],
+    "description": "Initialised array of values with an element count",
+    "body": [
+      "section .data",
+      "align 4",
+      "lookup_table dd 10, 20, 30, 40, 50, 60, 70, 80",
+      "lookup_count equ (\\$-lookup_table)/4"
+    ]
+  },
+
+  "function_calls": {
+    "prefix": ["callfn"],
+    "description": "Direct call to a function and an indirect call via a pointer",
+    "body": [
+      "  call strlen              ; rax = length of the string in rdi",
+      "  mov rbx, rax",
+      "  call log_result          ; direct call to another routine",
+      "  mov rax, [rel handler]   ; load a function pointer",
+      "  call rax                 ; indirect call through a register"
+    ]
+  },
+
+  "jump_table": {
+    "prefix": ["jmptable"],
+    "description": "Switch style dispatch through a table of code addresses",
+    "body": [
+      "  mov eax, edi",
+      "  cmp eax, 3",
+      "  ja .default",
+      "  jmp qword [rel jump_table + rax*8]",
+      "",
+      ".default:",
+      "  xor eax, eax",
+      "  ret",
+      ".case_zero:",
+      "  mov eax, 0",
+      "  ret",
+      ".case_one:",
+      "  mov eax, 1",
+      "  ret",
+      ".case_two:",
+      "  mov eax, 2",
+      "  ret",
+      ".case_three:",
+      "  mov eax, 3",
+      "  ret",
+      "",
+      "section .rodata",
+      "align 8",
+      "jump_table:",
+      "  dq .case_zero, .case_one, .case_two, .case_three"
+    ]
+  },
+
+  "pic_function": {
+    "prefix": ["picfn"],
+    "description": "Position independent function reading a global via the GOT",
+    "body": [
+      "global load_counter",
+      "load_counter:",
+      "  push rbp",
+      "  mov rbp, rsp",
+      "  mov rax, [rel counter@GOTPCREL]   ; address of the global",
+      "  mov eax, [rax]                     ; value stored in the global",
+      "  pop rbp",
+      "  ret"
+    ]
+  },
+
+  "global_export": {
+    "prefix": ["globalfn"],
+    "description": "Function exported to the linker with the global directive",
+    "body": [
+      "global compute_sum",
+      "compute_sum:",
+      "  push rbp",
+      "  mov rbp, rsp",
+      "  mov eax, edi            ; first argument",
+      "  add eax, esi            ; second argument",
+      "  pop rbp",
+      "  ret"
+    ]
+  },
+
+  "comment_block": {
+    "prefix": ["cmtblock"],
+    "description": "Banner comment documenting a routine",
+    "body": [
+      "; ---------------------------------------------------------------------------",
+      "; compute_sum",
+      ";",
+      "; Adds the two 32-bit integers passed in rdi and rsi and returns the sum in",
+      "; eax.  Clobbers rax and the condition flags.",
+      "; ---------------------------------------------------------------------------"
+    ]
+  },
+
+  "printf_call": {
+    "prefix": ["printf"],
+    "description": "Call to printf with a format string from the rodata section",
+    "body": [
+      "  ; printf(\"value = %d\\\\n\", value)",
+      "  lea rdi, [rel fmt]",
+      "  mov esi, eax",
+      "  xor eax, eax            ; no floating point arguments",
+      "  call printf",
+      "",
+      "section .rodata",
+      "fmt db \"value = %d\", 10, 0"
+    ]
+  }
+}

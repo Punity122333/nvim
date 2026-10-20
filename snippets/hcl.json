@@ -1,0 +1,151 @@
+{
+  "hcl_variable": {
+    "prefix": ["variable"],
+    "description": "Variable block with a type and a default value",
+    "body": [
+      "variable \"${1:name}\" {",
+      "  type        = ${2:string}",
+      "  description = \"${3:description}\"",
+      "  default     = ${4:value}",
+      "}"
+    ]
+  },
+
+  "hcl_output": {
+    "prefix": ["output"],
+    "description": "Output value exposed by the module",
+    "body": [
+      "output \"${1:name}\" {",
+      "  description = \"${2:description}\"",
+      "  value       = ${3:var.name}",
+      "}"
+    ]
+  },
+
+  "hcl_locals": {
+    "prefix": ["locals"],
+    "description": "Local values shared by the resources",
+    "body": [
+      "locals {",
+      "  ${1:name} = ${2:value}",
+      "}"
+    ]
+  },
+
+  "hcl_resource": {
+    "prefix": ["resource"],
+    "description": "Resource block with a couple of arguments",
+    "body": [
+      "resource \"${1:aws_instance}\" \"${2:name}\" {",
+      "  ${3:ami}           = \"${4:ami-0abcdef}\"",
+      "  ${5:instance_type} = \"${6:t3.micro}\"",
+      "}"
+    ]
+  },
+
+  "hcl_data": {
+    "prefix": ["data"],
+    "description": "Data source block",
+    "body": [
+      "data \"${1:aws_ami}\" \"${2:name}\" {",
+      "  most_recent = true",
+      "}"
+    ]
+  },
+
+  "hcl_module": {
+    "prefix": ["module"],
+    "description": "Module call with the source and the version",
+    "body": [
+      "module \"${1:name}\" {",
+      "  source = \"${2:./modules/${1:name}}\"",
+      "  ${3:version = \"1.0.0\"}",
+      "}"
+    ]
+  },
+
+  "hcl_provider": {
+    "prefix": ["provider"],
+    "description": "Provider block with the region",
+    "body": [
+      "provider \"${1:aws}\" {",
+      "  region = \"${2:eu-west-1}\"",
+      "}"
+    ]
+  },
+
+  "hcl_terraform": {
+    "prefix": ["terraform"],
+    "description": "Terraform block with the required providers",
+    "body": [
+      "terraform {",
+      "  required_version = \">= ${1:1.5.0}\"",
+      "",
+      "  required_providers {",
+      "    ${2:aws} = {",
+      "      source  = \"hashicorp/${2:aws}\"",
+      "      version = \"~> ${3:5.0}\"",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "hcl_for_each": {
+    "prefix": ["foreach"],
+    "description": "Resource created for every item of a collection",
+    "body": [
+      "resource \"${1:aws_instance}\" \"${2:name}\" {",
+      "  for_each = ${3:toset(var.subnets)}",
+      "",
+      "  ${4:ami} = each.value",
+      "}"
+    ]
+  },
+
+  "hcl_count": {
+    "prefix": ["count"],
+    "description": "Resource created a number of times",
+    "body": [
+      "resource \"${1:aws_instance}\" \"${2:name}\" {",
+      "  count = ${3:var.instance_count}",
+      "}"
+    ]
+  },
+
+  "hcl_dynamic_block": {
+    "prefix": ["dynamic"],
+    "description": "Dynamic block generated from a collection",
+    "body": [
+      "dynamic \"${1:ingress}\" {",
+      "  for_each = ${2:var.ingress_rules}",
+      "  content {",
+      "    from_port = ${1:ingress}.value.from_port",
+      "    to_port   = ${1:ingress}.value.to_port",
+      "  }",
+      "}"
+    ]
+  },
+
+  "hcl_map_variable": {
+    "prefix": ["mapvariable"],
+    "description": "Variable holding a map of strings",
+    "body": [
+      "variable \"${1:tags}\" {",
+      "  type    = map(string)",
+      "  default = {}",
+      "}"
+    ]
+  },
+
+  "hcl_list_variable": {
+    "prefix": ["listvariable"],
+    "description": "Variable holding a list of strings",
+    "body": [
+      "variable \"${1:subnets}\" {",
+      "  type    = list(string)",
+      "  default = []",
+      "}"
+    ]
+  }
+}

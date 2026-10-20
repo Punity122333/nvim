@@ -1,0 +1,113 @@
+{
+  "less_variable": {
+    "prefix": ["lessvar", "variable"],
+    "description": "Less variable holding a colour",
+    "body": [
+      "@${1:color}: ${2:#3498db};"
+    ]
+  },
+
+  "less_mixin": {
+    "prefix": ["mixin"],
+    "description": "Mixin with a couple of declarations",
+    "body": [
+      ".${1:button}-mixin() {",
+      "  color: ${2:white};",
+      "  background: @${3:blue};",
+      "  border-radius: ${4:4px};",
+      "}"
+    ]
+  },
+
+  "less_mixin_call": {
+    "prefix": ["mixincall"],
+    "description": "Mixin applied with the class keyword",
+    "body": [
+      ".${1:button} {",
+      "  .${2:button}-mixin();",
+      "}"
+    ]
+  },
+
+  "less_nesting": {
+    "prefix": ["nesting"],
+    "description": "Nested selectors",
+    "body": [
+      ".${1:parent} {",
+      "  ${2:color}: red;",
+      "",
+      "  &.${3:active} {",
+      "    ${4:color}: blue;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "less_import": {
+    "prefix": ["import"],
+    "description": "Import another less file",
+    "body": [
+      "@import \"${1:variables.less}\";"
+    ]
+  },
+
+  "less_media_query": {
+    "prefix": ["media"],
+    "description": "Media query block",
+    "body": [
+      "@media ${1:screen} and (min-width: ${2:768px}) {",
+      "  ${3:.container} {",
+      "    max-width: ${4:960px};",
+      "  }",
+      "}"
+    ]
+  },
+
+  "less_extend": {
+    "prefix": ["extend"],
+    "description": "Extend an existing selector",
+    "body": [
+      ".${1:button} {",
+      "  &:extend(.${2:base});",
+      "}"
+    ]
+  },
+
+  "less_guard": {
+    "prefix": ["guard"],
+    "description": "Mixin guard matching an argument",
+    "body": [
+      ".mixin(@color; @guard: ${1:default}) when (@guard = ${1:default}) {",
+      "  color: @color;",
+      "}"
+    ]
+  },
+
+  "less_operation": {
+    "prefix": ["operation"],
+    "description": "Math operation on two variables",
+    "body": [
+      "@base: ${1:16px};",
+      "@large: @base * ${2:2};"
+    ]
+  },
+
+  "less_selector": {
+    "prefix": ["lesssel"],
+    "description": "Selector with a few declarations",
+    "body": [
+      ".${1:container} {",
+      "  margin: 0 auto;",
+      "  padding: 0 ${2:1rem};",
+      "}"
+    ]
+  },
+
+  "less_comment": {
+    "prefix": ["lesscomment"],
+    "description": "Less comment",
+    "body": [
+      "// ${1:TODO}"
+    ]
+  }
+}

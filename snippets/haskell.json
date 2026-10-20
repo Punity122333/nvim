@@ -1,0 +1,248 @@
+{
+  "module_header": {
+    "prefix": ["modhead"],
+    "description": "Module header with haddock comment and export list",
+    "body": [
+      "{- | Module documentation goes here.",
+      "-",
+      "- Explain what this module provides and who should use it.",
+      "-}",
+      "module ${1:Example}",
+      "  ( ${2:run}",
+      "  ) where"
+    ]
+  },
+
+  "function_with_signature": {
+    "prefix": ["sigfn"],
+    "description": "Function with an explicit type signature",
+    "body": [
+      "${1:describeUser} :: UserId -> Either String User",
+      "${1:describeUser} userId =",
+      "  case lookupUser userId of",
+      "    Nothing -> Left (\"Unknown user: \" ++ show userId)",
+      "    Just user -> Right user"
+    ]
+  },
+
+  "where_clause": {
+    "prefix": ["whereclause"],
+    "description": "Function definition with a where clause for helpers",
+    "body": [
+      "${1:total} :: [Int] -> Int",
+      "${1:total} values =",
+      "  sum (map normalize values)",
+      "  where",
+      "    normalize value = abs value"
+    ]
+  },
+
+  "data_type": {
+    "prefix": ["datatype"],
+    "description": "Sum type with several constructors and deriving",
+    "body": [
+      "data Shape",
+      "  = Circle Double",
+      "  | Rectangle Double Double",
+      "  | Triangle Double Double Double",
+      "  deriving (Eq, Show)"
+    ]
+  },
+
+  "newtype": {
+    "prefix": ["newty"],
+    "description": "Newtype wrapper around a single value with deriving",
+    "body": [
+      "newtype UserId = UserId Int",
+      "  deriving (Eq, Ord, Show)"
+    ]
+  },
+
+  "type_class": {
+    "prefix": ["typeclass"],
+    "description": "Type class with a default method and an instance",
+    "body": [
+      "class Pretty a where",
+      "  pretty :: a -> String",
+      "  pretty _ = \"<?>\"",
+      "",
+      "instance Pretty Shape where",
+      "  pretty (Circle r) = \"Circle \" ++ show r",
+      "  pretty (Rectangle w h) = \"Rectangle \" ++ show (w, h)"
+    ]
+  },
+
+  "record_syntax": {
+    "prefix": ["record"],
+    "description": "Record type with field selectors and a record update",
+    "body": [
+      "data Account = Account",
+      "  { accountId :: Int",
+      "  , accountName :: String",
+      "  , accountBalance :: Double",
+      "  }",
+      "  deriving (Eq, Show)",
+      "",
+      "deposit :: Account -> Double -> Account",
+      "deposit account amount =",
+      "  account {accountBalance = accountBalance account + amount}"
+    ]
+  },
+
+  "list_comprehension": {
+    "prefix": ["listcomp"],
+    "description": "List comprehension with a generator and a guard",
+    "body": [
+      "${1:evenSquares} :: [Int] -> [Int]",
+      "${1:evenSquares} numbers =",
+      "  [ n * n",
+      "  | n <- numbers",
+      "  , even n",
+      "  ]"
+    ]
+  },
+
+  "monadic_bind": {
+    "prefix": ["monbind"],
+    "description": "Chain two actions in the Either monad with the bind operator",
+    "body": [
+      "${1:greeting} :: User -> Either String String",
+      "${1:greeting} user =",
+      "  firstName user >>= \\\\name ->",
+      "    pure (\"Hello, \" ++ name)"
+    ]
+  },
+
+  "do_block": {
+    "prefix": ["doblock"],
+    "description": "Do block binding a result and returning it",
+    "body": [
+      "loadSettings :: FilePath -> IO Settings",
+      "loadSettings path = do",
+      "  contents <- readFile path",
+      "  let settings = parseSettings contents",
+      "  pure settings"
+    ]
+  },
+
+  "io_action": {
+    "prefix": ["ioact"],
+    "description": "IO action that writes a report to a file",
+    "body": [
+      "writeReport :: FilePath -> [String] -> IO ()",
+      "writeReport path rows = do",
+      "  let body = unlines rows",
+      "  writeFile path body"
+    ]
+  },
+
+  "lazy_value": {
+    "prefix": ["lazyval"],
+    "description": "Lazily defined infinite list built from itself",
+    "body": [
+      "fibs :: [Int]",
+      "fibs = 0 : 1 : zipWith (+) fibs (drop 1 fibs)",
+      "",
+      "primes :: [Int]",
+      "primes = sieve [2 ..]",
+      "  where",
+      "    sieve (p : xs) = p : sieve [x | x <- xs, x `mod` p /= 0]",
+      "    sieve [] = []"
+    ]
+  },
+
+  "pattern_match": {
+    "prefix": ["pmatch"],
+    "description": "Case expression matching on the constructors of a type",
+    "body": [
+      "describePayment :: Payment -> String",
+      "describePayment payment =",
+      "  case payment of",
+      "    Cash amount -> \"Cash: \" ++ show amount",
+      "    Card lastFour amount -> \"Card ***\" ++ lastFour ++ \": \" ++ show amount"
+    ]
+  },
+
+  "guarded_function": {
+    "prefix": ["guards"],
+    "description": "Function whose result is chosen with pattern guards",
+    "body": [
+      "classify :: Int -> String",
+      "classify score",
+      "  | score >= 90 = \"excellent\"",
+      "  | score >= 70 = \"good\"",
+      "  | otherwise = \"needs improvement\""
+    ]
+  },
+
+  "type_family": {
+    "prefix": ["typefam"],
+    "description": "Type family with instances for list, maybe and tuple",
+    "body": [
+      "type family Elem c",
+      "",
+      "type instance Elem [e] = e",
+      "type instance Elem (Maybe e) = e",
+      "type instance Elem (e, e) = e"
+    ]
+  },
+
+  "gadt": {
+    "prefix": ["gadt"],
+    "description": "GADT that refines the element type per constructor",
+    "body": [
+      "data Expr a where",
+      "  IntLit :: Int -> Expr Int",
+      "  BoolLit :: Bool -> Expr Bool",
+      "  Add :: Expr Int -> Expr Int -> Expr Int",
+      "  IfElse :: Expr Bool -> Expr a -> Expr a -> Expr a"
+    ]
+  },
+
+  "quickcheck_property": {
+    "prefix": ["qcprop"],
+    "description": "QuickCheck property asserting an algebraic law",
+    "body": [
+      "prop_reverseTwice :: [Int] -> Property",
+      "prop_reverseTwice xs =",
+      "  property (reverse (reverse xs) == xs)"
+    ]
+  },
+
+  "hunit_tests": {
+    "prefix": ["hunit"],
+    "description": "HUnit test list with a couple of assertions",
+    "body": [
+      "tests :: Tests",
+      "tests = TestList",
+      "  [ TestCase (assertEqual \"sum\" 6 (sum [1, 2, 3]))",
+      "  , TestCase (assertEqual \"reverse\" \"cba\" (reverse \"abc\"))",
+      "  ]"
+    ]
+  },
+
+  "functor_instance": {
+    "prefix": ["functor"],
+    "description": "Newtype with a Functor instance",
+    "body": [
+      "newtype Identity a = Identity {runIdentity :: a}",
+      "",
+      "instance Functor Identity where",
+      "  fmap f (Identity a) = Identity (f a)"
+    ]
+  },
+
+  "traversable_instance": {
+    "prefix": ["traversable"],
+    "description": "Functor and Traversable instances for a list-like type",
+    "body": [
+      "data Cons a = Cons a [a]",
+      "",
+      "instance Functor Cons where",
+      "  fmap f (Cons a as) = Cons (f a) (map f as)",
+      "",
+      "instance Traversable Cons where",
+      "  traverse f (Cons a as) = Cons <\\$> f a <*> traverse (fmap f) as"
+    ]
+  }
+}

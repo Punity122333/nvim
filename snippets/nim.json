@@ -1,0 +1,271 @@
+{
+  "nim_proc": {
+    "prefix": ["proc"],
+    "description": "Procedure with a doc comment and a result variable",
+    "body": [
+      "proc ${1:slugify}*(text: string): string =",
+      "  ## Lowercases the text and replaces every other character with a dash.",
+      "  var slug = newStringOfCap(text.len)",
+      "  for ch in text:",
+      "    if ch in {'a'..'z', '0'..'9'}:",
+      "      slug.add(ch)",
+      "    elif ch in {'A'..'Z'}:",
+      "      slug.add(ch.toLowerAscii)",
+      "    else:",
+      "      slug.add('-')",
+      "  result = slug"
+    ]
+  },
+
+  "nim_func": {
+    "prefix": ["func"],
+    "description": "Side effect free function that sums even values",
+    "body": [
+      "func ${1:sumEven}*(values: seq[int]): int =",
+      "  ## Returns the sum of all even values in the sequence.",
+      "  for value in values:",
+      "    if value mod 2 == 0:",
+      "      result += value"
+    ]
+  },
+
+  "nim_type_alias": {
+    "prefix": ["typealias"],
+    "description": "Type aliases for an identifier and a closure type",
+    "body": [
+      "type",
+      "  ${1:UserId}* = int",
+      "  ${2:Handler}* = proc (message: string): void {.closure.}"
+    ]
+  },
+
+  "nim_object": {
+    "prefix": ["object"],
+    "description": "Object type with exported fields and a helper proc",
+    "body": [
+      "type",
+      "  ${1:Point}* = object",
+      "    x*: float",
+      "    y*: float",
+      "",
+      "proc ${2:distanceSquared}*(a, b: Point): float =",
+      "  let dx = a.x - b.x",
+      "  let dy = a.y - b.y",
+      "  result = dx * dx + dy * dy"
+    ]
+  },
+
+  "nim_ref_object": {
+    "prefix": ["refobj"],
+    "description": "Reference object type with a constructor proc",
+    "body": [
+      "type",
+      "  ${1:Node}* = ref object",
+      "    value*: int",
+      "    next*: Node",
+      "",
+      "proc ${2:newNode}*(value: int): Node =",
+      "  Node(value: value, next: nil)"
+    ]
+  },
+
+  "nim_variant_object": {
+    "prefix": ["varobj"],
+    "description": "Variant object with one branch per enum case",
+    "body": [
+      "type",
+      "  ${1:ShapeKind}* = enum",
+      "    skCircle, skRectangle",
+      "",
+      "  ${2:ShapeBase} = object of RootObj",
+      "    case kind: ShapeKind",
+      "    of skCircle:",
+      "      radius: float",
+      "    of skRectangle:",
+      "      width, height: float",
+      "",
+      "  ${3:Shape}* = ref ShapeBase"
+    ]
+  },
+
+  "nim_template": {
+    "prefix": ["template"],
+    "description": "Template that runs a block only when a condition is false",
+    "body": [
+      "template ${1:unless}*(condition: bool, body: untyped) =",
+      "  ## Executes the body only when the condition is false.",
+      "  if not condition:",
+      "    body"
+    ]
+  },
+
+  "nim_macro": {
+    "prefix": ["macro"],
+    "description": "Compile time macro that repeats a statement block",
+    "body": [
+      "macro ${1:repeat}*(count: int, body: untyped): untyped =",
+      "  ## Repeats the body the given number of times.",
+      "  result = newStmtList()",
+      "  for _ in 0 ..< count:",
+      "    result.add(newStmtList(body))"
+    ]
+  },
+
+  "nim_generic_proc": {
+    "prefix": ["genericproc"],
+    "description": "Generic procedure mapping a sequence with a callback",
+    "body": [
+      "proc ${1:map}*[T, R](items: openArray[T], transform: proc (T): R): seq[R] =",
+      "  ## Applies the transform to every item and collects the results.",
+      "  result = newSeqOfCap[R](items.len)",
+      "  for item in items:",
+      "    result.add(transform(item))"
+    ]
+  },
+
+  "nim_iterator": {
+    "prefix": ["iterator"],
+    "description": "Iterator yielding every non empty line of a string",
+    "body": [
+      "iterator ${1:linesOf}*(text: string): string =",
+      "  ## Yields every non empty line of the text.",
+      "  for line in text.splitLines():",
+      "    if line.len > 0:",
+      "      yield line"
+    ]
+  },
+
+  "nim_closure": {
+    "prefix": ["closure"],
+    "description": "Procedure returning a closure that captures its argument",
+    "body": [
+      "proc ${1:makeAdder}*(base: int): proc (x: int): int =",
+      "  ## Returns a closure that adds base to its argument.",
+      "  result = proc (x: int): int = base + x"
+    ]
+  },
+
+  "nim_seq": {
+    "prefix": ["seq"],
+    "description": "Building and folding over a sequence of integers",
+    "body": [
+      "var ${1:scores}: seq[int] = @[]",
+      "for i in 1 .. 10:",
+      "  scores.add(i * i)",
+      "",
+      "var total = 0",
+      "for score in scores:",
+      "  total += score"
+    ]
+  },
+
+  "nim_table": {
+    "prefix": ["table"],
+    "description": "Counting words with a hash table",
+    "body": [
+      "import tables",
+      "",
+      "var ${1:counts} = initTable[string, int]()",
+      "for word in [\"swift\", \"dart\", \"nim\", \"zig\"]:",
+      "  counts[word] = counts.getOrDefault(word, 0) + 1",
+      "",
+      "for word, count in counts.pairs:",
+      "  echo word, \": \", count"
+    ]
+  },
+
+  "nim_set": {
+    "prefix": ["set"],
+    "description": "Collecting characters in a set and testing membership",
+    "body": [
+      "var ${1:visited}: set[char] = {}",
+      "",
+      "for ch in \"hello world\":",
+      "  visited.incl(ch)",
+      "",
+      "if 'e' in visited:",
+      "  echo \"already seen\""
+    ]
+  },
+
+  "nim_string_formatting": {
+    "prefix": ["fmt"],
+    "description": "String formatting with interpolated values",
+    "body": [
+      "import strformat",
+      "",
+      "let ${1:name} = \"Ada\"",
+      "let ${2:score} = 99",
+      "let message = fmt\"{name} scored {score} points\""
+    ]
+  },
+
+  "nim_try_except": {
+    "prefix": ["tryexcept"],
+    "description": "Try except block with specific and generic handlers",
+    "body": [
+      "try:",
+      "  ${1:doWork}()",
+      "except IOError as e:",
+      "  echo \"I/O error: \", e.msg",
+      "except ValueError:",
+      "  echo \"invalid value\"",
+      "except Exception as e:",
+      "  echo \"unexpected: \", e.msg"
+    ]
+  },
+
+  "nim_defer": {
+    "prefix": ["defer"],
+    "description": "Block that always runs when the proc returns",
+    "body": [
+      "proc ${1:process}(): string =",
+      "  var buffer = newStringOfCap(64)",
+      "  defer:",
+      "    echo \"processed \", buffer.len, \" bytes\"",
+      "  buffer.add(\"hello\")",
+      "  result = buffer"
+    ]
+  },
+
+  "nim_unit_test": {
+    "prefix": ["unittest"],
+    "description": "Unit test suite with a check and an expect block",
+    "body": [
+      "import unittest",
+      "",
+      "suite ${1:CalculatorTests}:",
+      "  test \"adds two numbers\":",
+      "    check 1 + 1 == 2",
+      "",
+      "  test \"rejects invalid input\":",
+      "    expect ValueError:",
+      "      raise newException(ValueError, \"negative value\")"
+    ]
+  },
+
+  "nim_module": {
+    "prefix": ["module"],
+    "description": "Module block holding shared helper procedures",
+    "body": [
+      "module ${1:utils}:",
+      "  ## Small helpers shared across the project.",
+      "",
+      "  import strutils",
+      "",
+      "  proc ${2:isBlank}*(text: string): bool =",
+      "    result = text.strip.len == 0"
+    ]
+  },
+
+  "nim_const": {
+    "prefix": ["const"],
+    "description": "Constant section with exported compile time values",
+    "body": [
+      "const",
+      "  ${1:MaxRetries}* = 3",
+      "  ${2:DefaultTimeout}* = 30",
+      "  ${3:AppName}* = \"my-service\""
+    ]
+  }
+}

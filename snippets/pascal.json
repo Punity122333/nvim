@@ -1,0 +1,406 @@
+{
+  "console_program": {
+    "prefix": ["program"],
+    "description": "Console program block reading a file given on the command line",
+    "body": [
+      "program ConfigTool;",
+      "",
+      "uses",
+      "  SysUtils, Classes;",
+      "",
+      "var",
+      "  ConfigPath: string;",
+      "  Settings: TStringList;",
+      "",
+      "begin",
+      "  ConfigPath := ParamStr(1);",
+      "  if ConfigPath = '' then",
+      "  begin",
+      "    WriteLn('Usage: ', ParamStr(0), ' <config file>');",
+      "    Halt(1);",
+      "  end;",
+      "",
+      "  Settings := TStringList.Create;",
+      "  try",
+      "    Settings.LoadFromFile(ConfigPath);",
+      "    WriteLn('Loaded ', Settings.Count, ' settings');",
+      "  finally",
+      "    Settings.Free;",
+      "  end;",
+      "end."
+    ]
+  },
+
+  "unit_skeleton": {
+    "prefix": ["unit"],
+    "description": "Unit with an interface and an implementation section",
+    "body": [
+      "unit ${1:Geometry};",
+      "",
+      "interface",
+      "",
+      "type",
+      "  TShape = class",
+      "    procedure Draw; virtual; abstract;",
+      "  end;",
+      "",
+      "implementation",
+      "",
+      "procedure TShape.Draw;",
+      "begin",
+      "  { implemented by the descendants of TShape }",
+      "end;",
+      "",
+      "end."
+    ]
+  },
+
+  "procedures_and_functions": {
+    "prefix": ["proc"],
+    "description": "Procedure with default parameters and a function with a result",
+    "body": [
+      "procedure LogMessage(const Message: string; Level: Integer = 1);",
+      "begin",
+      "  WriteLn(Message);",
+      "end;",
+      "",
+      "function SumOf(const Values: array of Integer): Integer;",
+      "var",
+      "  I: Integer;",
+      "  Total: Integer;",
+      "begin",
+      "  Total := 0;",
+      "  for I := Low(Values) to High(Values) do",
+      "    Total := Total + Values[I];",
+      "  SumOf := Total;",
+      "end;"
+    ]
+  },
+
+  "record_type": {
+    "prefix": ["record"],
+    "description": "Record type with a field and a method",
+    "body": [
+      "type",
+      "  TPoint = record",
+      "    X: Integer;",
+      "    Y: Integer;",
+      "    procedure Offset(DX, DY: Integer);",
+      "  end;",
+      "",
+      "procedure TPoint.Offset(DX, DY: Integer);",
+      "begin",
+      "  X := X + DX;",
+      "  Y := Y + DY;",
+      "end;"
+    ]
+  },
+
+  "object_and_class": {
+    "prefix": ["classtype"],
+    "description": "Object type and a class type deriving from it",
+    "body": [
+      "type",
+      "  TAnimal = object",
+      "  public",
+      "    Name: string;",
+      "    procedure Speak; virtual;",
+      "  end;",
+      "",
+      "  TDog = class(TAnimal)",
+      "  public",
+      "    procedure Speak; override;",
+      "  end;"
+    ]
+  },
+
+  "constructor_destructor": {
+    "prefix": ["ctor"],
+    "description": "Class with a constructor and a destructor",
+    "body": [
+      "type",
+      "  TAccount = class",
+      "  private",
+      "    FOwner: string;",
+      "    FBalance: Currency;",
+      "  public",
+      "    constructor Create(const AOwner: string);",
+      "    destructor Destroy; override;",
+      "  end;",
+      "",
+      "constructor TAccount.Create(const AOwner: string);",
+      "begin",
+      "  inherited Create;",
+      "  FOwner := AOwner;",
+      "  FBalance := 0;",
+      "end;",
+      "",
+      "destructor TAccount.Destroy;",
+      "begin",
+      "  inherited Destroy;",
+      "end;"
+    ]
+  },
+
+  "property": {
+    "prefix": ["prop"],
+    "description": "Property backed by private fields with getter and setter",
+    "body": [
+      "type",
+      "  TCustomer = class",
+      "  private",
+      "    FName: string;",
+      "    FAge: Integer;",
+      "  public",
+      "    property Name: string read FName write FName;",
+      "    property Age: Integer read FAge write FAge default 0;",
+      "  end;"
+    ]
+  },
+
+  "const_and_type_sections": {
+    "prefix": ["types"],
+    "description": "Const and type sections with a set, a string and a pointer",
+    "body": [
+      "const",
+      "  MaxRetries = 3;",
+      "  DefaultTimeoutMs = 5000;",
+      "  Greeting = 'Hello';",
+      "",
+      "type",
+      "  TLogLevel = (llDebug, llInfo, llWarn, llError);",
+      "  TLogLevels = set of TLogLevel;",
+      "  TByteArray = array[0..255] of Byte;",
+      "  PByteArray = ^TByteArray;",
+      "  TFileName = string;"
+    ]
+  },
+
+  "arrays": {
+    "prefix": ["array"],
+    "description": "Static array, dynamic array and two dimensional array",
+    "body": [
+      "type",
+      "  TScores = array[0..9] of Integer;",
+      "  TNameList = array of string;",
+      "  TMatrix = array[0..2, 0..2] of Double;",
+      "",
+      "var",
+      "  Scores: TScores;",
+      "  Names: TNameList;"
+    ]
+  },
+
+  "try_except": {
+    "prefix": ["tryexcept"],
+    "description": "try/except block catching specific exception types",
+    "body": [
+      "try",
+      "  LoadConfig(ConfigPath);",
+      "  WriteLn('Configuration loaded');",
+      "except",
+      "  on E: EFileNotFound do",
+      "    WriteLn('Missing file: ', E.Message);",
+      "  on E: Exception do",
+      "    WriteLn('Unexpected error: ', E.Message);",
+      "end;"
+    ]
+  },
+
+  "try_finally": {
+    "prefix": ["tryfinally"],
+    "description": "try/finally block that always releases its resources",
+    "body": [
+      "Settings := TStringList.Create;",
+      "try",
+      "  Settings.LoadFromFile(ConfigPath);",
+      "  WriteLn('Loaded ', Settings.Count, ' settings');",
+      "finally",
+      "  Settings.Free;",
+      "end;"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["unittest"],
+    "description": "DUnit test case with published test methods",
+    "body": [
+      "unit LoggerTests;",
+      "",
+      "interface",
+      "",
+      "uses",
+      "  TestFramework;",
+      "",
+      "type",
+      "  TLoggerTests = class(TTestCase)",
+      "  published",
+      "    procedure TestFormatsLine;",
+      "    procedure TestRejectsEmptyMessage;",
+      "  end;",
+      "",
+      "implementation",
+      "procedure TLoggerTests.TestFormatsLine;",
+      "begin",
+      "  CheckEquals('INFO: started', FormatLine('INFO', 'started'));",
+      "end;",
+      "procedure TLoggerTests.TestRejectsEmptyMessage;",
+      "begin",
+      "  CheckFalse(FormatLine('INFO', '') = '');",
+      "end;",
+      "",
+      "end."
+    ]
+  },
+
+  "interface_type": {
+    "prefix": ["ifinterface"],
+    "description": "Interface type with a GUID and a couple of methods",
+    "body": [
+      "type",
+      "  IPaymentGateway = interface",
+      "    ['{6B2E7C1A-9E4D-4A3B-8F0C-1D2E3F4A5B6C}']",
+      "    function Charge(const Amount: Currency; const Reference: string): Boolean;",
+      "    function LastError: string;",
+      "  end;"
+    ]
+  },
+
+  "generic_function": {
+    "prefix": ["genfunc"],
+    "description": "Generic function that works with any element type",
+    "body": [
+      "function FirstOr<T>(const Values: array of T; const Fallback: T): T;",
+      "begin",
+      "  if Length(Values) = 0 then",
+      "    Result := Fallback",
+      "  else",
+      "    Result := Values[0];",
+      "end;"
+    ]
+  },
+
+  "generic_class": {
+    "prefix": ["genclass"],
+    "description": "Generic class storing items of an arbitrary type",
+    "body": [
+      "type",
+      "  TItemList<T> = class(TObject)",
+      "  private",
+      "    FItems: array of T;",
+      "  public",
+      "    procedure Add(const Item: T);",
+      "    function Count: Integer;",
+      "  end;",
+      "",
+      "procedure TItemList<T>.Add(const Item: T);",
+      "begin",
+      "  SetLength(FItems, Length(FItems) + 1);",
+      "  FItems[High(FItems)] := Item;",
+      "end;",
+      "",
+      "function TItemList<T>.Count: Integer;",
+      "begin",
+      "  Result := Length(FItems);",
+      "end;"
+    ]
+  },
+
+  "with_statement": {
+    "prefix": ["withstmt"],
+    "description": "with statement addressing the fields of a record directly",
+    "body": [
+      "with Report do",
+      "begin",
+      "  Title := 'Quarterly Summary';",
+      "  Generated := Now;",
+      "  SaveToFile('quarterly.pdf');",
+      "end;"
+    ]
+  },
+
+  "loops": {
+    "prefix": ["loops"],
+    "description": "for, while and repeat until loops side by side",
+    "body": [
+      "for I := 1 to Count do",
+      "  Total := Total + Values[I];",
+      "",
+      "while not Done do",
+      "begin",
+      "  Step;",
+      "  Done := Next;",
+      "end;",
+      "",
+      "repeat",
+      "  Attempt;",
+      "  Retries := Retries - 1;",
+      "until Retries = 0;"
+    ]
+  },
+
+  "case_statement": {
+    "prefix": ["case"],
+    "description": "case statement dispatching on an enumerated value",
+    "body": [
+      "case State of",
+      "  stIdle:",
+      "    WriteLn('Idle');",
+      "  stRunning:",
+      "    WriteLn('Running');",
+      "  stPaused:",
+      "    WriteLn('Paused');",
+      "  stFinished:",
+      "    WriteLn('Finished');",
+      "else",
+      "  WriteLn('Unknown state');",
+      "end;"
+    ]
+  },
+
+  "file_handling": {
+    "prefix": ["fileio"],
+    "description": "Writing and reading a text file with try/finally blocks",
+    "body": [
+      "var",
+      "  ConfigFile: TextFile;",
+      "  Line: string;",
+      "begin",
+      "  AssignFile(ConfigFile, 'config.ini');",
+      "  Rewrite(ConfigFile);",
+      "  try",
+      "    WriteLn(ConfigFile, 'mode=release');",
+      "    WriteLn(ConfigFile, 'retries=3');",
+      "  finally",
+      "    CloseFile(ConfigFile);",
+      "  end;",
+      "",
+      "  Reset(ConfigFile);",
+      "  try",
+      "    while not Eof(ConfigFile) do",
+      "    begin",
+      "      ReadLn(ConfigFile, Line);",
+      "      WriteLn(Line);",
+      "    end;",
+      "  finally",
+      "    CloseFile(ConfigFile);",
+      "  end;",
+      "end;"
+    ]
+  },
+
+  "comment_block": {
+    "prefix": ["cmtblock"],
+    "description": "Brace comment block documenting a routine",
+    "body": [
+      "{ ---------------------------------------------------------------------------",
+      "  ProcessTransaction",
+      "",
+      "  Charges the given amount to the customer card and writes the outcome to",
+      "  the audit log.  Returns False when the gateway rejects the request.",
+      "",
+      "  Requires a valid customer and an amount greater than zero.",
+      "  --------------------------------------------------------------------------- }"
+    ]
+  }
+}

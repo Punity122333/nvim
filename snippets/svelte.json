@@ -1,0 +1,380 @@
+{
+  "svelte_component": {
+    "prefix": ["sveltecomp"],
+    "description": "Svelte 5 component with runes, markup and component styles",
+    "body": [
+      "<script>",
+      "  let { title = '${1:Recent activity}' } = \\$props()",
+      "",
+      "  let items = \\$state([",
+      "    { id: 1, label: 'Deploy to staging' },",
+      "    { id: 2, label: 'Run smoke tests' },",
+      "  ])",
+      "",
+      "  let done = \\$derived(items.filter((item) => item.done).length)",
+      "</script>",
+      "",
+      "<section class=\"panel\">",
+      "  <h2 class=\"panel__title\">{title}</h2>",
+      "  <p class=\"panel__summary\">{done} of {items.length} done</p>",
+      "  <ul class=\"panel__list\">",
+      "    {#each items as item (item.id)}",
+      "      <li>{item.label}</li>",
+      "    {/each}",
+      "  </ul>",
+      "</section>",
+      "",
+      "<style>",
+      "  .panel { padding: 1rem; }",
+      "</style>"
+    ]
+  },
+
+  "svelte_script": {
+    "prefix": ["sveltescript"],
+    "description": "Script block with rune state, a derived value and an effect",
+    "body": [
+      "<script>",
+      "  import { onMount } from 'svelte'",
+      "",
+      "  let count = \\$state(0)",
+      "  let doubled = \\$derived(count * 2)",
+      "",
+      "  \\$effect(() => {",
+      "    console.log('count changed to', count)",
+      "  })",
+      "",
+      "  onMount(() => {",
+      "    console.log('component mounted')",
+      "  })",
+      "</script>"
+    ]
+  },
+
+  "svelte_module_script": {
+    "prefix": ["sveltemodule"],
+    "description": "Module script exporting shared constants from a component",
+    "body": [
+      "<script module>",
+      "  export const VERSION = '1.4.0'",
+      "",
+      "  export const theme = {",
+      "    accent: '#3b82f6',",
+      "    radius: '8px',",
+      "  }",
+      "</script>"
+    ]
+  },
+
+  "svelte_reactive": {
+    "prefix": ["sveltestate"],
+    "description": "Reactive rune state updated from an event handler",
+    "body": [
+      "<script>",
+      "  let count = \\$state(0)",
+      "",
+      "  function increment() {",
+      "    count += 1",
+      "  }",
+      "</script>",
+      "",
+      "<button type=\"button\" onclick={increment}>Clicked {count} times</button>"
+    ]
+  },
+
+  "svelte_reactive_object": {
+    "prefix": ["sveltestateobj"],
+    "description": "Reactive object mutated property by property",
+    "body": [
+      "<script>",
+      "  let form = \\$state({",
+      "    email: '',",
+      "    password: '',",
+      "    rememberMe: true,",
+      "  })",
+      "",
+      "  function reset() {",
+      "    form.email = ''",
+      "    form.password = ''",
+      "    form.rememberMe = true",
+      "  }",
+      "</script>"
+    ]
+  },
+
+  "svelte_prop": {
+    "prefix": ["svelteprop"],
+    "description": "Typed component props with defaults and a bindable value",
+    "body": [
+      "<script lang=\"ts\">",
+      "  let {",
+      "    ${1:title},",
+      "    count = 0,",
+      "    value = \\$bindable(''),",
+      "  }: { ${1:title}: string; count?: number; value?: string } = \\$props()",
+      "</script>"
+    ]
+  },
+
+  "svelte_dispatch": {
+    "prefix": ["sveltedispatch"],
+    "description": "Create an event dispatcher and emit a custom event",
+    "body": [
+      "<script>",
+      "  import { createEventDispatcher } from 'svelte'",
+      "",
+      "  const dispatch = createEventDispatcher()",
+      "",
+      "  function save() {",
+      "    dispatch('save', { id: 42, savedAt: new Date().toISOString() })",
+      "  }",
+      "</script>",
+      "",
+      "<button type=\"button\" onclick={save}>Save</button>"
+    ]
+  },
+
+  "svelte_slot": {
+    "prefix": ["svelteslot"],
+    "description": "Named snippets passed to a child component and rendered",
+    "body": [
+      "<!-- parent component -->",
+      "<Card>",
+      "  {#snippet header()}",
+      "    <h2>Account settings</h2>",
+      "  {/snippet}",
+      "",
+      "  {#snippet footer()}",
+      "    <button type=\"button\" onclick={save}>Save</button>",
+      "  {/snippet}",
+      "",
+      "  <p>Account body content</p>",
+      "</Card>"
+    ]
+  },
+
+  "svelte_if": {
+    "prefix": ["svelteif"],
+    "description": "Conditional block with an else branch",
+    "body": [
+      "{#if user.isAdmin}",
+      "  <p>Welcome back, {user.name}. You have admin rights.</p>",
+      "{:else}",
+      "  <p>Welcome back, {user.name}.</p>",
+      "{/if}"
+    ]
+  },
+
+  "svelte_each": {
+    "prefix": ["svelteeach"],
+    "description": "Loop over a list with an each block and the index",
+    "body": [
+      "<ul class=\"todo-list\">",
+      "  {#each todos as todo, index}",
+      "    <li class=\"todo-list__item\">{index + 1}. {todo.title}</li>",
+      "  {/each}",
+      "</ul>"
+    ]
+  },
+
+  "svelte_keyed_each": {
+    "prefix": ["sveltekeyed"],
+    "description": "Keyed each block keeping DOM nodes stable per item id",
+    "body": [
+      "{#each todos as todo (todo.id)}",
+      "  <li class=\"todo-list__item\">",
+      "    <input type=\"checkbox\" bind:checked={todo.done} />",
+      "    <span class:done={todo.done}>{todo.title}</span>",
+      "  </li>",
+      "{/each}"
+    ]
+  },
+
+  "svelte_bind": {
+    "prefix": ["sveltebind"],
+    "description": "Two way binding of an input value and a select option",
+    "body": [
+      "<script>",
+      "  let email = \\$state('')",
+      "  let plan = \\$state('free')",
+      "</script>",
+      "",
+      "<label class=\"field\">",
+      "  Email",
+      "  <input type=\"email\" bind:value={email} />",
+      "</label>",
+      "",
+      "<select class=\"field\" bind:value={plan}>",
+      "  <option value=\"free\">Free</option>",
+      "  <option value=\"pro\">Pro</option>",
+      "</select>"
+    ]
+  },
+
+  "svelte_directives": {
+    "prefix": ["sveltedirectives"],
+    "description": "Class and style directives driven by reactive state",
+    "body": [
+      "<div",
+      "  class=\"card\"",
+      "  class:active={isActive}",
+      "  class:card--wide={isWide}",
+      "  style:width=\"{width}px\"",
+      ">",
+      "  <p>Panel content</p>",
+      "</div>"
+    ]
+  },
+
+  "svelte_action": {
+    "prefix": ["svelteaction"],
+    "description": "Custom action focusing a node and cleaning up on destroy",
+    "body": [
+      "<script>",
+      "  function focusOnMount(node) {",
+      "    node.focus()",
+      "",
+      "    return {",
+      "      destroy() {",
+      "        node.blur()",
+      "      },",
+      "    }",
+      "  }",
+      "</script>",
+      "",
+      "<input use:focusOnMount placeholder=\"Search projects\" />"
+    ]
+  },
+
+  "svelte_transition": {
+    "prefix": ["sveltetransition"],
+    "description": "Fade transition and flip animation inside an each block",
+    "body": [
+      "<script>",
+      "  import { flip } from 'svelte/animate'",
+      "  import { fade } from 'svelte/transition'",
+      "</script>",
+      "",
+      "{#each items as item (item.id)}",
+      "  <li animate:flip transition:fade={{ duration: ${1:200} }}>",
+      "    {item.label}",
+      "  </li>",
+      "{/each}"
+    ]
+  },
+
+  "svelte_store": {
+    "prefix": ["sveltestore"],
+    "description": "Writable store updated and read with the store syntax",
+    "body": [
+      "<script>",
+      "  import { writable } from 'svelte/store'",
+      "",
+      "  const todos = writable([])",
+      "",
+      "  function addTodo(text) {",
+      "    todos.update((all) => [...all, { id: all.length + 1, text, done: false }])",
+      "  }",
+      "</script>",
+      "",
+      "<button type=\"button\" onclick={() => addTodo('${1:Write docs}')}>Add todo</button>",
+      "",
+      "{#each \\$todos as todo (todo.id)}",
+      "  <p>{todo.text}</p>",
+      "{/each}"
+    ]
+  },
+
+  "svelte_context": {
+    "prefix": ["sveltecontext"],
+    "description": "Provide and consume a value through the component tree",
+    "body": [
+      "<script>",
+      "  import { setContext } from 'svelte'",
+      "",
+      "  const user = { name: 'Ada Lovelace', role: 'admin' }",
+      "",
+      "  setContext('user', user)",
+      "</script>",
+      "",
+      "<!-- a descendant reads it with:",
+      "//   const user = getContext('user')",
+      "-->"
+    ]
+  },
+
+  "svelte_derived": {
+    "prefix": ["sveltederived"],
+    "description": "Derived store computing the total of a cart store",
+    "body": [
+      "<script>",
+      "  import { derived, writable } from 'svelte/store'",
+      "",
+      "  const cart = writable([{ id: 1, price: 20 }, { id: 2, price: 30 }])",
+      "",
+      "  const total = derived(cart, (\\$cart) =>",
+      "    \\$cart.reduce((sum, item) => sum + item.price, 0),",
+      "  )",
+      "</script>",
+      "",
+      "<p>Total: {\\$total}</p>"
+    ]
+  },
+
+  "svelte_typescript": {
+    "prefix": ["sveltets"],
+    "description": "TypeScript component with typed props and derived filtering",
+    "body": [
+      "<script lang=\"ts\">",
+      "  interface Todo {",
+      "    id: number",
+      "    title: string",
+      "    done: boolean",
+      "  }",
+      "",
+      "  let { todos = [] }: { todos?: Todo[] } = \\$props()",
+      "",
+      "  let query = \\$state('')",
+      "  let visible = \\$derived(todos.filter((todo) => todo.title.includes(query)))",
+      "</script>",
+      "",
+      "<input bind:value={query} placeholder=\"Filter todos\" />",
+      "",
+      "{#each visible as todo (todo.id)}",
+      "  <p>{todo.title}</p>",
+      "{/each}"
+    ]
+  },
+
+  "svelte_form": {
+    "prefix": ["svelteform"],
+    "description": "Form with bound fields, validation and a submit handler",
+    "body": [
+      "<script>",
+      "  let email = \\$state('')",
+      "  let password = \\$state('')",
+      "  let error = \\$state('')",
+      "",
+      "  function submit(event) {",
+      "    error = ''",
+      "",
+      "    if (!email || !password) {",
+      "      error = '${1:Email and password are required}'",
+      "      return",
+      "    }",
+      "",
+      "    console.log('signing in as', email)",
+      "  }",
+      "</script>",
+      "",
+      "<form onsubmit={submit}>",
+      "  <input type=\"email\" bind:value={email} />",
+      "  <input type=\"password\" bind:value={password} />",
+      "  {#if error}",
+      "    <p role=\"alert\">{error}</p>",
+      "  {/if}",
+      "  <button type=\"submit\">Sign in</button>",
+      "</form>"
+    ]
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "bzl_rule": {
+    "prefix": ["bzlrule", "rule"],
+    "description": "Starlark rule implementation",
+    "body": [
+      "def ${1:_impl}(ctx):",
+      "    $0",
+      "",
+      "${1:_impl} = rule(",
+      "    implementation = ${1:_impl},",
+      "    attrs = {",
+      "        \"${2:srcs}\": attr.label_list(allow_files = True),",
+      "    },",
+      ")"
+    ]
+  },
+
+  "bzl_macro": {
+    "prefix": ["macro"],
+    "description": "Macro wrapping a rule with the common attributes",
+    "body": [
+      "def ${1:my_macro}(name, ${2:srcs} = [], **kwargs):",
+      "    native.${3:cc_binary}(",
+      "        name = name,",
+      "        srcs = ${2:srcs},",
+      "        **kwargs",
+      "    )"
+    ]
+  },
+
+  "bzl_cc_binary": {
+    "prefix": ["ccbinary"],
+    "description": "C++ binary target",
+    "body": [
+      "cc_binary(",
+      "    name = \"${1:name}\",",
+      "    srcs = [\"${2:main.cc}\"],",
+      "    deps = [",
+      "        \"//src:${3:library}\",",
+      "    ],",
+      ")"
+    ]
+  },
+
+  "bzl_cc_library": {
+    "prefix": ["cclibrary"],
+    "description": "C++ library target",
+    "body": [
+      "cc_library(",
+      "    name = \"${1:n}\",",
+      "    srcs = glob([\"${2:*.cc}\"]),",
+      "    hdrs = glob([\"${3:*.h}\"]),",
+      "    deps = [",
+      "    ],",
+      ")"
+    ]
+  },
+
+  "bzl_glob": {
+    "prefix": ["glob"],
+    "description": "Glob of the matching files",
+    "body": [
+      "glob([\"${1:*.cc}\"], exclude = [\"${2:*_test.cc}\"])"
+    ]
+  },
+
+  "bzl_genrule": {
+    "prefix": ["genrule"],
+    "description": "Genrule running a command",
+    "body": [
+      "genrule(",
+      "    name = \"${1:n}\",",
+      "    srcs = [\"${2:input.txt}\"],",
+      "    outs = [\"${3:output.txt}\"],",
+      "    cmd = \"${4:cat \\$(SRCS) > \\$(OUTS)}\",",
+      ")"
+    ]
+  },
+
+  "bzl_filegroup": {
+    "prefix": ["filegroup"],
+    "description": "Filegroup grouping the sources of a package",
+    "body": [
+      "filegroup(",
+      "    name = \"${1:srcs}\",",
+      "    srcs = glob([\"${2:*.cc}\"]),",
+      ")"
+    ]
+  },
+
+  "bzl_test": {
+    "prefix": ["bzltest", "test"],
+    "description": "Test target",
+    "body": [
+      "cc_test(",
+      "    name = \"${1:name}_test\",",
+      "    srcs = [\"${1:name}_test.cc\"],",
+      ")"
+    ]
+  },
+
+  "bzl_select": {
+    "prefix": ["select"],
+    "description": "Select the value depending on the platform",
+    "body": [
+      "select({",
+      "    \"//conditions:default\": [\"${1:default.cc}\"],",
+      "    \"@platforms//os:linux\": [\"${2:linux.cc}\"],",
+      "})"
+    ]
+  },
+
+  "bzl_load": {
+    "prefix": ["load"],
+    "description": "Load the symbols of another bzl file",
+    "body": [
+      "load(\"//tools:${1:defs.bzl}\", \"${2:symbol}\")"
+    ]
+  },
+
+  "bzl_package": {
+    "prefix": ["bzlpackage"],
+    "description": "Package visibility declaration",
+    "body": [
+      "package(default_visibility = [\"//visibility:public\"])"
+    ]
+  },
+
+  "bzl_comment": {
+    "prefix": ["bzlcomment"],
+    "description": "Starlark comment",
+    "body": [
+      "# ${1:TODO}"
+    ]
+  }
+}

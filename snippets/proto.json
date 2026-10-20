@@ -1,0 +1,285 @@
+{
+  "proto_message": {
+    "prefix": ["msg"],
+    "description": "Message with scalar fields and their field numbers",
+    "body": [
+      "message User {",
+      "  int64 id = 1;",
+      "  string username = 2;",
+      "  string email = 3;",
+      "  bool is_active = 4;",
+      "  int32 follower_count = 5;",
+      "}"
+    ]
+  },
+
+  "proto_nested_message": {
+    "prefix": ["nmsg"],
+    "description": "Message with a nested message type defined inside it",
+    "body": [
+      "message Order {",
+      "  int64 id = 1;",
+      "  Customer customer = 2;",
+      "  repeated OrderLine lines = 3;",
+      "",
+      "  message OrderLine {",
+      "    string sku = 1;",
+      "    int32 quantity = 2;",
+      "    int64 price_cents = 3;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "proto_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a zero value and prefixed enumerators",
+    "body": [
+      "enum OrderStatus {",
+      "  ORDER_STATUS_UNSPECIFIED = 0;",
+      "  ORDER_STATUS_PENDING = 1;",
+      "  ORDER_STATUS_PAID = 2;",
+      "  ORDER_STATUS_SHIPPED = 3;",
+      "  ORDER_STATUS_CANCELLED = 4;",
+      "}"
+    ]
+  },
+
+  "proto_repeated_field": {
+    "prefix": ["rep"],
+    "description": "Message with repeated scalar and message fields",
+    "body": [
+      "message Article {",
+      "  int64 id = 1;",
+      "  string title = 2;",
+      "  repeated string tags = 3;",
+      "  repeated Author authors = 4;",
+      "}"
+    ]
+  },
+
+  "proto_map_field": {
+    "prefix": ["mapf"],
+    "description": "Message with map fields keyed by string",
+    "body": [
+      "message FeatureFlags {",
+      "  map<string, bool> enabled = 1;",
+      "  map<string, string> labels = 2;",
+      "  map<string, int64> limits = 3;",
+      "}"
+    ]
+  },
+
+  "proto_oneof": {
+    "prefix": ["oneof"],
+    "description": "Oneof block that holds mutually exclusive alternatives",
+    "body": [
+      "message Contact {",
+      "  string id = 1;",
+      "",
+      "  oneof contact {",
+      "    string email = 2;",
+      "    string phone_number = 3;",
+      "    ContactAddress postal_address = 4;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "proto_service": {
+    "prefix": ["svc"],
+    "description": "Service definition listing several rpc methods",
+    "body": [
+      "service UserService {",
+      "  rpc GetUser(GetUserRequest) returns (GetUserResponse);",
+      "  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);",
+      "  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);",
+      "}"
+    ]
+  },
+
+  "proto_rpc_method": {
+    "prefix": ["rpc"],
+    "description": "Rpc method with an http option mapping it to a route",
+    "body": [
+      "import \"google/api/annotations.proto\";",
+      "",
+      "rpc GetUser(GetUserRequest) returns (GetUserResponse) {",
+      "  option (google.api.http) = {",
+      "    get: \"/v1/users/{user_id}\"",
+      "  };",
+      "}"
+    ]
+  },
+
+  "proto_streaming_rpc": {
+    "prefix": ["streamrpc"],
+    "description": "Client and server streaming rpc methods",
+    "body": [
+      "rpc Upload(stream FileChunk) returns (UploadResponse);",
+      "",
+      "rpc Watch(WatchRequest) returns (stream FileEvent);",
+      "",
+      "rpc Chat(stream ChatMessage) returns (stream ChatMessage);"
+    ]
+  },
+
+  "proto_package": {
+    "prefix": ["pkg"],
+    "description": "Package declaration with the matching language options",
+    "body": [
+      "package acme.users.v1;",
+      "",
+      "option go_package = \"github.com/acme/users-go;usersv1\";",
+      "option java_multiple_files = true;"
+    ]
+  },
+
+  "proto_import": {
+    "prefix": ["imp"],
+    "description": "Import of well known and shared proto files",
+    "body": [
+      "import \"google/protobuf/timestamp.proto\";",
+      "import \"google/protobuf/any.proto\";",
+      "import public \"acme/common/types.proto\";"
+    ]
+  },
+
+  "proto_reserved": {
+    "prefix": ["rsv"],
+    "description": "Reserved field numbers and names for a message",
+    "body": [
+      "message User {",
+      "  reserved 2, 15, 9 to 11;",
+      "  reserved \"username\", \"email\";",
+      "",
+      "  int64 id = 1;",
+      "  string display_name = 3;",
+      "}"
+    ]
+  },
+
+  "proto_nested_enum": {
+    "prefix": ["nenum"],
+    "description": "Enum nested inside a message and used by one of its fields",
+    "body": [
+      "message Payment {",
+      "  enum Method {",
+      "    METHOD_UNSPECIFIED = 0;",
+      "    METHOD_CARD = 1;",
+      "    METHOD_TRANSFER = 2;",
+      "  }",
+      "",
+      "  string id = 1;",
+      "  Method method = 2;",
+      "}"
+    ]
+  },
+
+  "proto_custom_option": {
+    "prefix": ["opt"],
+    "description": "Custom field option defined with an extend block",
+    "body": [
+      "syntax = \"proto3\";",
+      "",
+      "import \"google/protobuf/descriptor.proto\";",
+      "",
+      "extend google.protobuf.FieldOptions {",
+      "  string sensitive = 50001;",
+      "  int32 max_length = 50002;",
+      "}",
+      "",
+      "message User {",
+      "  string email = 1 [(sensitive) = true];",
+      "}"
+    ]
+  },
+
+  "proto_field_default": {
+    "prefix": ["deflt"],
+    "description": "Proto2 optional fields that carry explicit default values",
+    "body": [
+      "// Proto2 syntax: explicit defaults need the optional label.",
+      "message UserProfile {",
+      "  string username = 1;",
+      "  optional string display_name = 2 [default = \"anonymous\"];",
+      "  optional int32 login_count = 3 [default = 0];",
+      "  optional bool email_verified = 4 [default = false];",
+      "}"
+    ]
+  },
+
+  "proto_timestamp_field": {
+    "prefix": ["tsfield"],
+    "description": "Timestamp fields using the google.protobuf.Timestamp type",
+    "body": [
+      "import \"google/protobuf/timestamp.proto\";",
+      "",
+      "message Event {",
+      "  string id = 1;",
+      "  google.protobuf.Timestamp created_at = 2;",
+      "  google.protobuf.Timestamp expires_at = 3;",
+      "}"
+    ]
+  },
+
+  "proto_wrapper_message": {
+    "prefix": ["wrapmsg"],
+    "description": "Wrapper types used for nullable primitive fields",
+    "body": [
+      "import \"google/protobuf/wrappers.proto\";",
+      "",
+      "message MetricsResponse {",
+      "  int64 request_count = 1;",
+      "  google.protobuf.Int64Value total_latency_ms = 2;",
+      "  google.protobuf.BoolValue degraded = 3;",
+      "}"
+    ]
+  },
+
+  "proto_well_known_types": {
+    "prefix": ["wkt"],
+    "description": "Well known types such as Any, Duration, Struct and Timestamp",
+    "body": [
+      "import \"google/protobuf/any.proto\";",
+      "import \"google/protobuf/duration.proto\";",
+      "import \"google/protobuf/struct.proto\";",
+      "import \"google/protobuf/timestamp.proto\";",
+      "",
+      "message Envelope {",
+      "  google.protobuf.Any payload = 1;",
+      "  google.protobuf.Timestamp sent_at = 2;",
+      "  google.protobuf.Duration latency = 3;",
+      "  google.protobuf.Struct metadata = 4;",
+      "}"
+    ]
+  },
+
+  "proto_comment_block": {
+    "prefix": ["cmt"],
+    "description": "Doc comment block above a service and its methods",
+    "body": [
+      "// UserService exposes the user CRUD operations.",
+      "//",
+      "// All methods are idempotent and safe to retry.",
+      "// Errors are reported with google.rpc.Status.",
+      "service UserService {",
+      "  // GetUser returns a single user by id.",
+      "  rpc GetUser(GetUserRequest) returns (GetUserResponse);",
+      "}"
+    ]
+  },
+
+  "proto_file_options": {
+    "prefix": ["fopt"],
+    "description": "File level options for the generated code in each language",
+    "body": [
+      "option java_package = \"com.acme.users.v1\";",
+      "option java_outer_classname = \"UsersProto\";",
+      "option java_multiple_files = true;",
+      "option go_package = \"github.com/acme/users-go;usersv1\";",
+      "option optimize_for = SPEED;",
+      "option cc_enable_arenas = true;"
+    ]
+  }
+}

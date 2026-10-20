@@ -1,0 +1,367 @@
+{
+  "script_header": {
+    "prefix": ["sheader", "psheader"],
+    "description": "Comment based help block for a PowerShell script",
+    "body": [
+      "<#",
+      ".SYNOPSIS",
+      "    ${1:Short summary of what the script does}",
+      "",
+      ".DESCRIPTION",
+      "    ${2:Longer description of the behaviour and the side effects}",
+      "",
+      ".PARAMETER Path",
+      "    Root directory the script operates on.",
+      "",
+      ".EXAMPLE",
+      "    .\\\\deploy.ps1 -Path C:\\\\Projects\\\\app -Verbose",
+      "#>"
+    ]
+  },
+
+  "ps_function": {
+    "prefix": ["func", "fn"],
+    "description": "Simple PowerShell function with a mandatory parameter",
+    "body": [
+      "function Get-ConfigValue {",
+      "  param(",
+      "    [Parameter(Mandatory)]",
+      "    [string]\\$Key,",
+      "",
+      "    [string]\\$Default = ''",
+      "  )",
+      "",
+      "  \\$value = [Environment]::GetEnvironmentVariable(\\$Key)",
+      "",
+      "  if ([string]::IsNullOrEmpty(\\$value)) {",
+      "    return \\$Default",
+      "  }",
+      "",
+      "  return \\$value",
+      "}"
+    ]
+  },
+
+  "advanced_function": {
+    "prefix": ["advfunc"],
+    "description": "Advanced function with CmdletBinding and a typed param block",
+    "body": [
+      "function Invoke-RestEndpoint {",
+      "  [CmdletBinding()]",
+      "  [OutputType([hashtable])]",
+      "  param(",
+      "    [Parameter(Mandatory, Position = 0)]",
+      "    [ValidateNotNullOrEmpty()]",
+      "    [string]\\$Uri,",
+      "",
+      "    [Parameter(ValueFromPipeline)]",
+      "    [ValidateSet('GET', 'POST', 'PUT', 'DELETE')]",
+      "    [string]\\$Method = 'GET',",
+      "",
+      "    [int]\\$TimeoutSec = 30",
+      "  )",
+      "",
+      "  process {",
+      "    \\$params = @{",
+      "      Uri         = \\$Uri",
+      "      Method      = \\$Method",
+      "      TimeoutSec  = \\$TimeoutSec",
+      "      ErrorAction = 'Stop'",
+      "    }",
+      "",
+      "    Invoke-RestMethod @params",
+      "  }",
+      "}"
+    ]
+  },
+
+  "param_validation": {
+    "prefix": ["paramvalid"],
+    "description": "Parameters validated with ValidateSet, ValidateRange and pattern",
+    "body": [
+      "function Set-LogLevel {",
+      "  param(",
+      "    [Parameter(Mandatory)]",
+      "    [ValidateSet('Debug', 'Info', 'Warn', 'Error')]",
+      "    [string]\\$Level,",
+      "",
+      "    [ValidateRange(1, 60)]",
+      "    [int]\\$TimeoutMinutes = 15,",
+      "",
+      "    [ValidatePattern('^[a-z][a-z0-9_-]*\\$')]",
+      "    [string]\\$Channel = 'default'",
+      "  )",
+      "",
+      "  Write-Host \"level=\\$Level timeout=\\$TimeoutMinutes channel=\\$Channel\"",
+      "}"
+    ]
+  },
+
+  "try_catch": {
+    "prefix": ["trycatch"],
+    "description": "Try catch block with a typed catch for a missing file",
+    "body": [
+      "try {",
+      "  \\$raw = Get-Content -Path \\$ConfigPath -Raw -ErrorAction Stop",
+      "  \\$settings = \\$raw | ConvertFrom-Json",
+      "}",
+      "catch [System.IO.FileNotFoundException] {",
+      "  Write-Error \"Config file not found: \\$ConfigPath\"",
+      "}",
+      "catch {",
+      "  Write-Error \"Failed to read the config: \\$(\\$_.Exception.Message)\"",
+      "}"
+    ]
+  },
+
+  "try_catch_finally": {
+    "prefix": ["trycatchfinally"],
+    "description": "Try catch finally block that always cleans up the temp files",
+    "body": [
+      "try {",
+      "  Invoke-Deploy -Environment \\$Environment -ErrorAction Stop",
+      "}",
+      "catch {",
+      "  Write-Error \"Deployment failed: \\$(\\$_.Exception.Message)\"",
+      "  throw",
+      "}",
+      "finally {",
+      "  Remove-Item -Path \\$tempDir -Recurse -Force -ErrorAction SilentlyContinue",
+      "}"
+    ]
+  },
+
+  "error_action": {
+    "prefix": ["erraction"],
+    "description": "Stop on terminating errors and handle the access denied case",
+    "body": [
+      "\\$files = Get-ChildItem -Path \\$Path -Filter '*.ps1' -ErrorAction Stop",
+      "",
+      "try {",
+      "  \\$content = Get-Content -Path \\$files.FullName -Raw -ErrorAction Stop",
+      "}",
+      "catch [System.UnauthorizedAccessException] {",
+      "  Write-Error \"Access denied while reading the files\"",
+      "  exit 1",
+      "}"
+    ]
+  },
+
+  "write_error": {
+    "prefix": ["writeerr"],
+    "description": "Function that reports a problem with Write-Error and a bool",
+    "body": [
+      "function Assert-NotEmpty {",
+      "  param(",
+      "    [AllowNull()]",
+      "    [string]\\$Value,",
+      "",
+      "    [string]\\$Name = 'Value'",
+      "  )",
+      "",
+      "  if ([string]::IsNullOrWhiteSpace(\\$Value)) {",
+      "    Write-Error \"\\$Name must not be empty\"",
+      "    return \\$false",
+      "  }",
+      "",
+      "  return \\$true",
+      "}"
+    ]
+  },
+
+  "pipeline": {
+    "prefix": ["pipeline", "pipe"],
+    "description": "Filter, sort and limit a list of processes with a pipeline",
+    "body": [
+      "\\$processes = Get-Process |",
+      "  Where-Object { \\$_.CPU -gt 10 } |",
+      "  Sort-Object -Property CPU -Descending |",
+      "  Select-Object -First 10 Name, Id, CPU",
+      "",
+      "\\$processes | Format-Table -AutoSize"
+    ]
+  },
+
+  "foreach_object": {
+    "prefix": ["foreachobj", "foreach"],
+    "description": "Format every file of a directory with ForEach-Object",
+    "body": [
+      "Get-ChildItem -Path \\$Path -Filter '*.log' | ForEach-Object {",
+      "  \\$sizeInKb = [math]::Round(\\$_.Length / 1KB, 2)",
+      "  Write-Host \"\\$(\\$_.Name): \\$sizeInKb KB\"",
+      "}"
+    ]
+  },
+
+  "where_object": {
+    "prefix": ["whereobj", "where"],
+    "description": "Select the old temporary files with Where-Object",
+    "body": [
+      "Get-ChildItem -Path \\$Path -Recurse -File |",
+      "  Where-Object { \\$_.Extension -eq '.tmp' -and \\$_.LastWriteTime -lt (Get-Date).AddDays(-7) } |",
+      "  Select-Object FullName, LastWriteTime"
+    ]
+  },
+
+  "select_object": {
+    "prefix": ["selectobj", "select"],
+    "description": "Project the wanted columns out of an object with Select-Object",
+    "body": [
+      "Get-Service |",
+      "  Select-Object Name, Status, @{Name = 'StartType'; Expression = { \\$_.StartType }} |",
+      "  Sort-Object Name"
+    ]
+  },
+
+  "hashtable": {
+    "prefix": ["hashtable", "hash"],
+    "description": "Build a hashtable of settings and walk through its keys",
+    "body": [
+      "\\$config = @{",
+      "  Name        = 'app-service'",
+      "  Environment = 'production'",
+      "  Replicas    = 3",
+      "  Tags        = @('backend', 'api')",
+      "  Enabled     = \\$true",
+      "}",
+      "",
+      "foreach (\\$key in \\$config.Keys) {",
+      "  Write-Host \"\\$key = \\$(\\$config[\\$key])\"",
+      "}"
+    ]
+  },
+
+  "pscustomobject": {
+    "prefix": ["pscustom", "customobj"],
+    "description": "Create a PSCustomObject with the fields you need",
+    "body": [
+      "\\$user = [PSCustomObject]@{",
+      "  Id        = 42",
+      "  UserName  = 'pxnity'",
+      "  Email     = 'dev@example.com'",
+      "  CreatedAt = (Get-Date)",
+      "}",
+      "",
+      "Write-Host \"\\$(\\$user.UserName) <\\$(\\$user.Email)>\""
+    ]
+  },
+
+  "ps_class": {
+    "prefix": ["class"],
+    "description": "Define a PowerShell class with typed properties and a method",
+    "body": [
+      "class BuildInfo {",
+      "  [string]\\$Version",
+      "  [string]\\$CommitHash",
+      "  [datetime]\\$BuiltAt",
+      "",
+      "  [string] ToString() {",
+      "    return \"\\$(\\$this.Version) (\\$(\\$this.CommitHash.Substring(0, 7)))\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "ps_class_constructor": {
+    "prefix": ["classctor", "clsctor"],
+    "description": "PowerShell class with a constructor and getter style methods",
+    "body": [
+      "class Config {",
+      "  [string]\\$Path",
+      "  [hashtable]\\$Values",
+      "",
+      "  Config([string]\\$Path) {",
+      "    \\$this.Path = \\$Path",
+      "    \\$this.Values = @{}",
+      "  }",
+      "",
+      "  [void] Set([string]\\$Key, \\$Value) {",
+      "    \\$this.Values[\\$Key] = \\$Value",
+      "  }",
+      "",
+      "  [string] Get([string]\\$Key) {",
+      "    if (\\$this.Values.ContainsKey(\\$Key)) {",
+      "      return \\$this.Values[\\$Key]",
+      "    }",
+      "",
+      "    return ''",
+      "  }",
+      "}"
+    ]
+  },
+
+  "file_io": {
+    "prefix": ["fileio", "file"],
+    "description": "Write, read and append lines of a text file",
+    "body": [
+      "\\$path = Join-Path \\$PSScriptRoot 'output.txt'",
+      "",
+      "Set-Content -Path \\$path -Value \"generated at \\$(Get-Date -Format s)\" -Encoding utf8",
+      "",
+      "if (Test-Path \\$path) {",
+      "  Get-Content -Path \\$path | ForEach-Object { Write-Host \\$_ }",
+      "}",
+      "",
+      "Add-Content -Path \\$path -Value 'appended line'"
+    ]
+  },
+
+  "json_convert": {
+    "prefix": ["json", "tojson"],
+    "description": "Convert an object to JSON and read it back with ConvertFrom-Json",
+    "body": [
+      "\\$object = [PSCustomObject]@{",
+      "  name    = 'app'",
+      "  version = '1.4.0'",
+      "  tags    = @('api', 'backend')",
+      "}",
+      "",
+      "\\$json = \\$object | ConvertTo-Json -Depth 5",
+      "\\$json | Set-Content -Path 'config.json' -Encoding utf8",
+      "",
+      "\\$parsed = Get-Content -Path 'config.json' -Raw | ConvertFrom-Json",
+      "Write-Host \"\\$(\\$parsed.name) \\$(\\$parsed.version)\""
+    ]
+  },
+
+  "rest_call": {
+    "prefix": ["restapi", "rest"],
+    "description": "Call a REST API with Invoke-RestMethod and handle the failure",
+    "body": [
+      "\\$headers = @{",
+      "  Accept        = 'application/json'",
+      "  Authorization = \"Bearer \\$env:API_TOKEN\"",
+      "}",
+      "",
+      "try {",
+      "  \\$response = Invoke-RestMethod -Uri 'https://api.example.com/v1/items' -Method Get -Headers \\$headers -TimeoutSec 30 -ErrorAction Stop",
+      "",
+      "  \\$response.items | Select-Object id, name | Format-Table -AutoSize",
+      "}",
+      "catch {",
+      "  Write-Error \"API call failed: \\$(\\$_.Exception.Message)\"",
+      "}"
+    ]
+  },
+
+  "pester_test": {
+    "prefix": ["pester", "test"],
+    "description": "Pester Describe block with a BeforeAll and two It cases",
+    "body": [
+      "Describe 'Get-ConfigValue' {",
+      "  BeforeAll {",
+      "    \\$script:expected = 'value'",
+      "  }",
+      "",
+      "  It 'returns the default when the variable is missing' {",
+      "    Get-ConfigValue -Key 'MISSING_VARIABLE' -Default 'value' | Should -Be \\$script:expected",
+      "  }",
+      "",
+      "  It 'returns the value when the variable exists' {",
+      "    \\$env:PRESENT_VARIABLE = 'value'",
+      "    Get-ConfigValue -Key 'PRESENT_VARIABLE' | Should -Be \\$script:expected",
+      "  }",
+      "}"
+    ]
+  }
+}

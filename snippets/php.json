@@ -1,0 +1,354 @@
+{
+  "php_class": {
+    "prefix": ["klass"],
+    "description": "Final class with a promoted constructor and typed getters",
+    "body": [
+      "final class User",
+      "{",
+      "    public function __construct(",
+      "        private readonly int \\$id,",
+      "        private string \\$email,",
+      "    ) {",
+      "    }",
+      "",
+      "    public function id(): int",
+      "    {",
+      "        return \\$this->id;",
+      "    }",
+      "",
+      "    public function email(): string",
+      "    {",
+      "        return \\$this->email;",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_use_statements": {
+    "prefix": ["usestmt", "imports"],
+    "description": "Import classes, functions and constants with use statements",
+    "body": [
+      "use App\\\\Exceptions\\\\ValidationException;",
+      "use App\\\\Models\\\\{Customer, Order};",
+      "use App\\\\Services\\\\PaymentGateway;",
+      "",
+      "use function App\\\\Helpers\\\\format_money;",
+      "use const App\\\\Config\\\\DEFAULT_CURRENCY;"
+    ]
+  },
+
+  "php_function": {
+    "prefix": ["func"],
+    "description": "Function with typed parameters and a return type",
+    "body": [
+      "function calculate_total(array \\$items, float \\$taxRate = 0.0): float",
+      "{",
+      "    \\$subtotal = array_sum(array_column(\\$items, 'price'));",
+      "    \\$total = \\$subtotal * (1 + \\$taxRate);",
+      "",
+      "    return round(\\$total, 2);",
+      "}"
+    ]
+  },
+
+  "php_interface": {
+    "prefix": ["iface", "interface"],
+    "description": "Interface with the methods a gateway has to implement",
+    "body": [
+      "interface PaymentGateway",
+      "{",
+      "    public function charge(int \\$orderId, int \\$amountInCents): bool;",
+      "",
+      "    public function refund(string \\$transactionId): bool;",
+      "}"
+    ]
+  },
+
+  "php_abstract_class": {
+    "prefix": ["abstrk", "abstract"],
+    "description": "Abstract class with an abstract method and a template method",
+    "body": [
+      "abstract class Notification",
+      "{",
+      "    public function __construct(protected readonly string \\$recipient)",
+      "    {",
+      "    }",
+      "",
+      "    abstract public function send(string \\$message): bool;",
+      "",
+      "    public function deliver(string \\$message): bool",
+      "    {",
+      "        return \\$this->send(\\$message);",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_trait": {
+    "prefix": ["traituse", "mixin"],
+    "description": "Trait that adds a timestamp to any class",
+    "body": [
+      "trait Timestamps",
+      "{",
+      "    private ?\\\\DateTimeImmutable \\$createdAt = null;",
+      "",
+      "    public function touch(): void",
+      "    {",
+      "        \\$this->createdAt = new \\\\DateTimeImmutable();",
+      "    }",
+      "",
+      "    public function createdAt(): ?\\\\DateTimeImmutable",
+      "    {",
+      "        return \\$this->createdAt;",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_static": {
+    "prefix": ["statics", "staticmethod"],
+    "description": "Static method with a class constant and a counter",
+    "body": [
+      "final class Money",
+      "{",
+      "    public const DEFAULT_CURRENCY = 'EUR';",
+      "",
+      "    private static int \\$conversionCount = 0;",
+      "",
+      "    public static function format(int \\$amountInCents, string \\$currency = self::DEFAULT_CURRENCY): string",
+      "    {",
+      "        self::\\$conversionCount++;",
+      "",
+      "        return sprintf('%s %.2f', \\$currency, \\$amountInCents / 100);",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_closure": {
+    "prefix": ["closure"],
+    "description": "Anonymous function used as a validator callback",
+    "body": [
+      "\\$validator = function (array \\$payload): bool {",
+      "    return isset(\\$payload['id']) && \\$payload['id'] > 0;",
+      "};",
+      "",
+      "if (!\\$validator(['id' => 42])) {",
+      "    throw new ValidationException('Invalid payload');",
+      "}"
+    ]
+  },
+
+  "php_arrow_function": {
+    "prefix": ["arrowfn", "fn"],
+    "description": "Arrow function that maps a discount onto each customer",
+    "body": [
+      "\\$discounts = array_map(",
+      "    fn (array \\$customer): float => (\\$customer['orders'] > 10 ? 0.15 : 0.05),",
+      "    \\$customers",
+      ");"
+    ]
+  },
+
+  "php_array": {
+    "prefix": ["arrlist", "array"],
+    "description": "Nested array literal with a null coalescing fallback",
+    "body": [
+      "\\$config = [",
+      "    'host' => 'localhost',",
+      "    'port' => 5432,",
+      "    'options' => [",
+      "        'timeout' => 30,",
+      "        'retries' => 3,",
+      "    ],",
+      "];",
+      "",
+      "\\$timeout = \\$config['options']['timeout'] ?? 10;"
+    ]
+  },
+
+  "php_foreach": {
+    "prefix": ["foreachit", "foreach"],
+    "description": "Iterate over a list and over a map of items",
+    "body": [
+      "foreach (\\$orders as \\$order) {",
+      "    printf(\"#%d: %.2f\\\\n\", \\$order['id'], \\$order['total']);",
+      "}",
+      "",
+      "foreach (\\$users as \\$id => \\$user) {",
+      "    echo \\$id, ': ', \\$user['email'], PHP_EOL;",
+      "}"
+    ]
+  },
+
+  "php_match": {
+    "prefix": ["matchexp", "match"],
+    "description": "Match expression that maps a status to a label",
+    "body": [
+      "\\$label = match (\\$status) {",
+      "    'new' => 'New order',",
+      "    'paid', 'shipped' => 'In progress',",
+      "    default => 'Unknown',",
+      "};"
+    ]
+  },
+
+  "php_try_catch": {
+    "prefix": ["trycatch", "catchit"],
+    "description": "Try, catch and finally around a payment call",
+    "body": [
+      "try {",
+      "    \\$result = \\$gateway->charge(\\$orderId, \\$amountInCents);",
+      "} catch (PaymentException \\$exception) {",
+      "    \\$logger->error('Payment failed', [",
+      "        'order_id' => \\$orderId,",
+      "        'reason' => \\$exception->getMessage(),",
+      "    ]);",
+      "",
+      "    throw new OrderProcessingException('Could not charge order ' . \\$orderId, 0, \\$exception);",
+      "} finally {",
+      "    \\$metrics->increment('payments.attempted');",
+      "}"
+    ]
+  },
+
+  "php_pdo_query": {
+    "prefix": ["pdostmt", "pdo"],
+    "description": "Prepared PDO statement that fetches all matching rows",
+    "body": [
+      "\\$stmt = \\$pdo->prepare(",
+      "    'SELECT id, email FROM ${1:users} WHERE active = :active ORDER BY created_at DESC'",
+      ");",
+      "\\$stmt->execute(['active' => 1]);",
+      "",
+      "\\$users = \\$stmt->fetchAll(PDO::FETCH_ASSOC);"
+    ]
+  },
+
+  "php_json": {
+    "prefix": ["jsonout", "json"],
+    "description": "Encode a payload as JSON and decode a JSON body",
+    "body": [
+      "\\$payload = ['status' => 'ok', 'data' => \\$result];",
+      "",
+      "header('Content-Type: application/json');",
+      "echo json_encode(\\$payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);",
+      "",
+      "\\$decoded = json_decode(\\$body, true, flags: JSON_THROW_ON_ERROR);"
+    ]
+  },
+
+  "php_curl": {
+    "prefix": ["curlreq", "curl"],
+    "description": "Perform a JSON API request with cURL",
+    "body": [
+      "\\$ch = curl_init('https://api.example.com/v1/customers');",
+      "curl_setopt_array(\\$ch, [",
+      "    CURLOPT_RETURNTRANSFER => true,",
+      "    CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . \\$token],",
+      "    CURLOPT_TIMEOUT => 10,",
+      "]);",
+      "",
+      "\\$response = curl_exec(\\$ch);",
+      "if (\\$response === false) {",
+      "    throw new RuntimeException('Request failed: ' . curl_error(\\$ch));",
+      "}",
+      "curl_close(\\$ch);",
+      "",
+      "\\$data = json_decode(\\$response, true, flags: JSON_THROW_ON_ERROR);"
+    ]
+  },
+
+  "php_file_upload": {
+    "prefix": ["fileup", "upload"],
+    "description": "Validate and store an uploaded file",
+    "body": [
+      "\\$upload = \\$_FILES['avatar'] ?? null;",
+      "",
+      "if (\\$upload === null || \\$upload['error'] !== UPLOAD_ERR_OK) {",
+      "    throw new RuntimeException('The upload did not complete');",
+      "}",
+      "",
+      "if (\\$upload['size'] > 2 * 1024 * 1024) {",
+      "    throw new RuntimeException('The file is larger than 2 MB');",
+      "}",
+      "",
+      "\\$target = __DIR__ . '/uploads/' . basename(\\$upload['name']);",
+      "move_uploaded_file(\\$upload['tmp_name'], \\$target);"
+    ]
+  },
+
+  "php_unit_test": {
+    "prefix": ["phpunit", "unittest"],
+    "description": "PHPUnit test case with two assertions",
+    "body": [
+      "use PHPUnit\\\\Framework\\\\TestCase;",
+      "",
+      "final class OrderTest extends TestCase",
+      "{",
+      "    public function test_total_is_summed(): void",
+      "    {",
+      "        \\$order = new Order([1, 2, 3]);",
+      "",
+      "        \\$this->assertSame(6, \\$order->total());",
+      "    }",
+      "",
+      "    public function test_empty_order_has_zero_total(): void",
+      "    {",
+      "        \\$this->assertSame(0, (new Order([]))->total());",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_enum": {
+    "prefix": ["enumcase", "enum"],
+    "description": "Backed enum with a match based label method",
+    "body": [
+      "enum OrderStatus: string",
+      "{",
+      "    case New = 'new';",
+      "    case Paid = 'paid';",
+      "    case Shipped = 'shipped';",
+      "    case Cancelled = 'cancelled';",
+      "",
+      "    public function label(): string",
+      "    {",
+      "        return match (\\$this) {",
+      "            self::New => 'New order',",
+      "            self::Paid => 'Payment received',",
+      "            self::Shipped => 'On the way',",
+      "            self::Cancelled => 'Cancelled',",
+      "        };",
+      "    }",
+      "}"
+    ]
+  },
+
+  "php_docblock": {
+    "prefix": ["docblock", "phpdoc"],
+    "description": "PHPDoc block documenting a method and its parameters",
+    "body": [
+      "class Order",
+      "{",
+      "    /**",
+      "    * Calculate the discounted total of the order.",
+      "    *",
+      "    * @param float \\$discountRate Discount to apply, between 0 and 1.",
+      "    * @return float The discounted total, rounded to two decimals.",
+      "    * @throws InvalidArgumentException When the discount rate is out of range.",
+      "    */",
+      "    public function total(float \\$discountRate = 0.0): float",
+      "    {",
+      "        if (\\$discountRate < 0 || \\$discountRate > 1) {",
+      "            throw new InvalidArgumentException('Discount rate must be between 0 and 1');",
+      "        }",
+      "",
+      "        \\$subtotal = array_sum(array_column(\\$this->items, 'price'));",
+      "",
+      "        return round(\\$subtotal * (1 - \\$discountRate), 2);",
+      "    }",
+      "}"
+    ]
+  }
+}

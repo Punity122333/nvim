@@ -1,0 +1,292 @@
+{
+  "class_definition": {
+    "prefix": ["classdef"],
+    "description": "Class with auto properties and a private setter",
+    "body": [
+      "public class ${1:Customer}",
+      "{",
+      "  public string Name { get; set; } = string.Empty;",
+      "  public string Email { get; set; } = string.Empty;",
+      "  public int Age { get; set; }",
+      "  public bool IsActive { get; private set; } = true;",
+      "}"
+    ]
+  },
+
+  "record_definition": {
+    "prefix": ["recdef"],
+    "description": "Record with positional parameters and an extra property",
+    "body": [
+      "public record ${1:Customer}(string Name, string Email)",
+      "{",
+      "  public int Age { get; init; }",
+      "",
+      "  public bool IsAdult => Age >= 18;",
+      "}"
+    ]
+  },
+
+  "interface_definition": {
+    "prefix": ["iface"],
+    "description": "Interface with async and synchronous members",
+    "body": [
+      "public interface ${1:ICustomerRepository}",
+      "{",
+      "  Task<Customer?> GetByIdAsync(int id);",
+      "  void Add(Customer customer);",
+      "  IReadOnlyList<Customer> List();",
+      "}"
+    ]
+  },
+
+  "enum_definition": {
+    "prefix": ["enumdef"],
+    "description": "Enum with explicit values for every member",
+    "body": [
+      "public enum ${1:OrderStatus}",
+      "{",
+      "  Draft = 0,",
+      "  Pending = 1,",
+      "  Shipped = 2,",
+      "  Delivered = 3,",
+      "  Cancelled = 4,",
+      "}"
+    ]
+  },
+
+  "constructor": {
+    "prefix": ["ctor"],
+    "description": "Constructor assigning the properties of the object",
+    "body": [
+      "public ${1:Customer}(string name, string email)",
+      "{",
+      "  Name = name;",
+      "  Email = email;",
+      "  CreatedAt = DateTime.UtcNow;",
+      "}"
+    ]
+  },
+
+  "primary_constructor": {
+    "prefix": ["pctor"],
+    "description": "Class using a primary constructor for its arguments",
+    "body": [
+      "public class ${1:Order}(string Customer, decimal Total)",
+      "{",
+      "  public DateTime PlacedAt { get; } = DateTime.UtcNow;",
+      "  public string Status { get; private set; } = \"Draft\";",
+      "}"
+    ]
+  },
+
+  "property": {
+    "prefix": ["prop"],
+    "description": "Property with a backing field and a validating setter",
+    "body": [
+      "private string _name = string.Empty;",
+      "",
+      "public string Name",
+      "{",
+      "  get => _name;",
+      "  set => _name = value ?? throw new ArgumentNullException(nameof(value));",
+      "}"
+    ]
+  },
+
+  "expression_bodied_member": {
+    "prefix": ["exprbody"],
+    "description": "Expression bodied property and method",
+    "body": [
+      "public bool IsExpired => DateTime.UtcNow > ExpiresAt;",
+      "",
+      "public string Describe() => \\$\"{Name} ({Status})\";"
+    ]
+  },
+
+  "static_method": {
+    "prefix": ["statmethod"],
+    "description": "Static helper method inside a static class",
+    "body": [
+      "public static class ${1:Validation}",
+      "{",
+      "  public static bool IsValidEmail(string email)",
+      "  {",
+      "    return !string.IsNullOrWhiteSpace(email) && email.Contains('@');",
+      "  }",
+      "}"
+    ]
+  },
+
+  "extension_method": {
+    "prefix": ["extmethod"],
+    "description": "Extension methods on string",
+    "body": [
+      "public static class ${1:StringExtensions}",
+      "{",
+      "  public static bool IsNullOrWhiteSpace(this string? value)",
+      "  {",
+      "    return string.IsNullOrWhiteSpace(value);",
+      "  }",
+      "",
+      "  public static string Truncate(this string value, int length)",
+      "  {",
+      "    return value.Length <= length ? value : value[..length] + \"...\";",
+      "  }",
+      "}"
+    ]
+  },
+
+  "generic_method": {
+    "prefix": ["genmethod"],
+    "description": "Generic method that finds the first matching item",
+    "body": [
+      "public static T ${1:FindFirstOrDefault}<T>(IEnumerable<T> items, Func<T, bool> predicate)",
+      "{",
+      "  foreach (var item in items)",
+      "  {",
+      "    if (predicate(item))",
+      "    {",
+      "      return item;",
+      "    }",
+      "  }",
+      "",
+      "  return default!;",
+      "}"
+    ]
+  },
+
+  "linq_query": {
+    "prefix": ["linq"],
+    "description": "Query syntax over a collection of customers",
+    "body": [
+      "var activeCustomers = from customer in customers",
+      "                      where customer.Age >= 18",
+      "                      orderby customer.Name",
+      "                      select customer.Name;"
+    ]
+  },
+
+  "async_method": {
+    "prefix": ["asyncmethod"],
+    "description": "Async method awaiting an http response",
+    "body": [
+      "public async Task<string> ${1:FetchProfile}Async(int customerId)",
+      "{",
+      "  using var client = new HttpClient();",
+      "  var response = await client.GetAsync(\\$\"/customers/{customerId}\");",
+      "  response.EnsureSuccessStatusCode();",
+      "  return await response.Content.ReadAsStringAsync();",
+      "}"
+    ]
+  },
+
+  "task_method": {
+    "prefix": ["taskdef"],
+    "description": "Method returning a task that does the work in the background",
+    "body": [
+      "public Task ProcessAsync(IEnumerable<string> items)",
+      "{",
+      "  return Task.Run(() =>",
+      "  {",
+      "    foreach (var item in items)",
+      "    {",
+      "      Console.WriteLine(item);",
+      "    }",
+      "  });",
+      "}"
+    ]
+  },
+
+  "nullable_reference": {
+    "prefix": ["nullable"],
+    "description": "Nullable reference type and null conditional access",
+    "body": [
+      "public string? MiddleName { get; set; }",
+      "",
+      "public int LengthOf(string? value)",
+      "{",
+      "  return value?.Length ?? 0;",
+      "}"
+    ]
+  },
+
+  "using_statement": {
+    "prefix": ["usingstmt"],
+    "description": "Using statement that disposes the reader at the end",
+    "body": [
+      "using (var reader = new StreamReader(File.OpenRead(path)))",
+      "{",
+      "  var contents = reader.ReadToEnd();",
+      "  Console.WriteLine(contents);",
+      "}"
+    ]
+  },
+
+  "try_catch_finally": {
+    "prefix": ["trycatch"],
+    "description": "Try catch finally with a filtered catch clause",
+    "body": [
+      "try",
+      "{",
+      "  var rows = LoadRows(path);",
+      "  Process(rows);",
+      "}",
+      "catch (FileNotFoundException ex)",
+      "{",
+      "  Console.Error.WriteLine(\\$\"Missing file: {ex.FileName}\");",
+      "}",
+      "catch (Exception ex) when (ex is TimeoutException)",
+      "{",
+      "  Console.Error.WriteLine(\"The operation timed out\");",
+      "}",
+      "finally",
+      "{",
+      "  Cleanup();",
+      "}"
+    ]
+  },
+
+  "lock_statement": {
+    "prefix": ["lockblock"],
+    "description": "Lock on a private static sync root object",
+    "body": [
+      "private static readonly object SyncRoot = new();",
+      "",
+      "lock (SyncRoot)",
+      "{",
+      "  Counter++;",
+      "}"
+    ]
+  },
+
+  "switch_expression": {
+    "prefix": ["switchexpr"],
+    "description": "Switch expression mapping promo codes to discounts",
+    "body": [
+      "public static decimal ApplyDiscount(decimal total, string promoCode)",
+      "{",
+      "  return promoCode switch",
+      "  {",
+      "    \"SAVE10\" => total * 0.9m,",
+      "    \"SAVE20\" => total * 0.8m,",
+      "    \"FREESHIP\" => total,",
+      "    _ => total,",
+      "  };",
+      "}"
+    ]
+  },
+
+  "xunit_test": {
+    "prefix": ["xtest"],
+    "description": "xUnit test case with a single assertion",
+    "body": [
+      "[Fact]",
+      "public void ApplyDiscount_ReturnsTenPercentOff()",
+      "{",
+      "  var result = Pricing.ApplyDiscount(100m, \"SAVE10\");",
+      "",
+      "  Assert.Equal(90m, result);",
+      "}"
+    ]
+  }
+}

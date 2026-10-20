@@ -1,0 +1,496 @@
+{
+  "main_method": {
+    "prefix": ["main"],
+    "description": "Entry point with a simple argument check",
+    "body": [
+      "final class App {",
+      "  public static void main(String[] args) {",
+      "    if (args.length == 0) {",
+      "      System.out.println(\"usage: java App <name>\");",
+      "      return;",
+      "    }",
+      "    System.out.println(\"hello, \" + args[0]);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "class_fields_constructor": {
+    "prefix": ["clss"],
+    "description": "Immutable class with fields and a validating constructor",
+    "body": [
+      "import java.time.Instant;",
+      "import java.util.List;",
+      "import java.util.Objects;",
+      "",
+      "class Order {",
+      "  private final String id;",
+      "  private final List<String> items;",
+      "  private final Instant createdAt;",
+      "",
+      "  public Order(String id, List<String> items, Instant createdAt) {",
+      "    this.id = Objects.requireNonNull(id, \"id must not be null\");",
+      "    this.items = List.copyOf(items);",
+      "    this.createdAt = createdAt == null ? Instant.now() : createdAt;",
+      "  }",
+      "",
+      "  public String id() {",
+      "    return id;",
+      "  }",
+      "",
+      "  public List<String> items() {",
+      "    return items;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "record_type": {
+    "prefix": ["record"],
+    "description": "Record with a compact constructor and a static factory",
+    "body": [
+      "record Money(long amountCents, String currency) {",
+      "  public Money {",
+      "    if (amountCents < 0) {",
+      "      throw new IllegalArgumentException(\"${1:amountCents} must not be negative\");",
+      "    }",
+      "    if (currency == null || currency.isBlank()) {",
+      "      throw new IllegalArgumentException(\"currency must not be blank\");",
+      "    }",
+      "  }",
+      "",
+      "  public static Money zero(String currency) {",
+      "    return new Money(0, currency);",
+      "  }",
+      "",
+      "  public Money plus(Money other) {",
+      "    return new Money(amountCents + other.amountCents, currency);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "interface_type": {
+    "prefix": ["interface"],
+    "description": "Interface with a nested type and a default method",
+    "body": [
+      "import java.util.List;",
+      "import java.util.Optional;",
+      "",
+      "interface UserRepository {",
+      "  record User(String id, String email) {}",
+      "",
+      "  Optional<User> findById(String id);",
+      "",
+      "  List<User> findByEmailDomain(String domain);",
+      "",
+      "  default List<User> findAll() {",
+      "    return List.of();",
+      "  }",
+      "}"
+    ]
+  },
+
+  "enum_type": {
+    "prefix": ["enum"],
+    "description": "Enum with a label per constant and a helper predicate",
+    "body": [
+      "enum OrderStatus {",
+      "  NEW(\"created\"),",
+      "  PAID(\"payment received\"),",
+      "  SHIPPED(\"handed to the carrier\"),",
+      "  CANCELLED(\"cancelled by the customer\");",
+      "",
+      "  private final String label;",
+      "",
+      "  OrderStatus(String label) {",
+      "    this.label = label;",
+      "  }",
+      "",
+      "  public String label() {",
+      "    return label;",
+      "  }",
+      "",
+      "  public boolean isFinal() {",
+      "    return this == SHIPPED || this == CANCELLED;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "abstract_class": {
+    "prefix": ["abstract"],
+    "description": "Abstract base class with a shared validation helper",
+    "body": [
+      "abstract class NotificationService {",
+      "  public abstract void send(String recipient, String message);",
+      "",
+      "  protected void requireText(String value, String field) {",
+      "    if (value == null || value.isBlank()) {",
+      "      throw new IllegalArgumentException(field + \" must not be blank\");",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "generic_method": {
+    "prefix": ["generic"],
+    "description": "Static generic helpers over a list of elements",
+    "body": [
+      "import java.util.List;",
+      "import java.util.Optional;",
+      "",
+      "final class ListUtils {",
+      "  private ListUtils() {}",
+      "",
+      "  public static <T> Optional<T> firstOrEmpty(List<T> items) {",
+      "    if (items == null || items.isEmpty()) {",
+      "      return Optional.empty();",
+      "    }",
+      "    return Optional.ofNullable(items.get(0));",
+      "  }",
+      "",
+      "  public static <T> List<T> distinct(List<T> items) {",
+      "    return items.stream().distinct().toList();",
+      "  }",
+      "}"
+    ]
+  },
+
+  "builder_pattern": {
+    "prefix": ["builder"],
+    "description": "Fluent builder that collects headers and returns a request",
+    "body": [
+      "import java.util.LinkedHashMap;",
+      "import java.util.Map;",
+      "",
+      "final class HttpRequestBuilder {",
+      "  public record Request(String method, String url, Map<String, String> headers) {}",
+      "",
+      "  private final Map<String, String> headers = new LinkedHashMap<>();",
+      "  private String method = \"GET\";",
+      "  private String url = \"\";",
+      "",
+      "  public HttpRequestBuilder url(String url) {",
+      "    this.url = url;",
+      "    return this;",
+      "  }",
+      "",
+      "  public HttpRequestBuilder header(String name, String value) {",
+      "    headers.put(name, value);",
+      "    return this;",
+      "  }",
+      "",
+      "  public Request build() {",
+      "    return new Request(method, url, Map.copyOf(headers));",
+      "  }",
+      "}"
+    ]
+  },
+
+  "static_factory": {
+    "prefix": ["factory"],
+    "description": "Static factory methods plus a singleton accessor",
+    "body": [
+      "import java.util.Objects;",
+      "",
+      "final class Session {",
+      "  private static final Session INSTANCE = new Session(\"local\");",
+      "",
+      "  private final String owner;",
+      "",
+      "  private Session(String owner) {",
+      "    this.owner = owner;",
+      "  }",
+      "",
+      "  public static Session getInstance() {",
+      "    return INSTANCE;",
+      "  }",
+      "",
+      "  public static Session of(String owner) {",
+      "    return new Session(Objects.requireNonNull(owner, \"owner\"));",
+      "  }",
+      "",
+      "  public String owner() {",
+      "    return owner;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "equals_hashcode": {
+    "prefix": ["equals"],
+    "description": "Value object with equals, hashCode and a readable toString",
+    "body": [
+      "import java.util.Objects;",
+      "",
+      "final class Point {",
+      "  private final int x, y;",
+      "",
+      "  public Point(int x, int y) {",
+      "    this.x = x;",
+      "    this.y = y;",
+      "  }",
+      "",
+      "  @Override",
+      "  public boolean equals(Object other) {",
+      "    return other instanceof Point point && x == point.x && y == point.y;",
+      "  }",
+      "",
+      "  @Override",
+      "  public int hashCode() {",
+      "    return Objects.hash(x, y);",
+      "  }",
+      "",
+      "  @Override",
+      "  public String toString() {",
+      "    return \"${1:Point}[x=\" + x + \", y=\" + y + \"]\";",
+      "  }",
+      "}"
+    ]
+  },
+
+  "custom_exception": {
+    "prefix": ["exception"],
+    "description": "Custom runtime exception carrying a status code",
+    "body": [
+      "class ApiException extends RuntimeException {",
+      "  private final int statusCode;",
+      "",
+      "  public ApiException(String message, int statusCode) {",
+      "    super(message);",
+      "    this.statusCode = statusCode;",
+      "  }",
+      "",
+      "  public ApiException(String message, int statusCode, Throwable cause) {",
+      "    super(message, cause);",
+      "    this.statusCode = statusCode;",
+      "  }",
+      "",
+      "  public int statusCode() {",
+      "    return statusCode;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "try_with_resources": {
+    "prefix": ["trywith"],
+    "description": "Try-with-resources that closes a reader automatically",
+    "body": [
+      "import java.io.BufferedReader;",
+      "import java.io.IOException;",
+      "import java.nio.charset.StandardCharsets;",
+      "import java.nio.file.Files;",
+      "import java.nio.file.Path;",
+      "",
+      "final class FirstLineReader {",
+      "  public String firstLine(Path path) throws IOException {",
+      "    try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {",
+      "      return reader.readLine();",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "lambda_function": {
+    "prefix": ["lambda"],
+    "description": "Functional interfaces combined into a reusable rule",
+    "body": [
+      "import java.util.function.Function;",
+      "import java.util.function.Predicate;",
+      "",
+      "final class ValidationRule {",
+      "  private final Predicate<String> condition;",
+      "  private final Function<String, String> transform;",
+      "",
+      "  public ValidationRule(Predicate<String> condition, Function<String, String> transform) {",
+      "    this.condition = condition;",
+      "    this.transform = transform;",
+      "  }",
+      "",
+      "  public static ValidationRule notBlank() {",
+      "    return new ValidationRule(value -> !value.isBlank(), String::trim);",
+      "  }",
+      "",
+      "  public String apply(String value) {",
+      "    return condition.test(value) ? transform.apply(value) : value;",
+      "  }",
+      "}"
+    ]
+  },
+
+  "stream_pipeline": {
+    "prefix": ["stream"],
+    "description": "Stream pipeline grouping orders and summing their amounts",
+    "body": [
+      "import java.util.List;",
+      "import java.util.Map;",
+      "import java.util.stream.Collectors;",
+      "",
+      "final class SalesReport {",
+      "  public record Order(String region, long amountCents) {}",
+      "",
+      "  public Map<String, Long> totalByRegion(List<Order> orders) {",
+      "    return orders.stream()",
+      "        .collect(Collectors.groupingBy(",
+      "            Order::region,",
+      "            Collectors.summingLong(Order::amountCents)));",
+      "  }",
+      "",
+      "  public List<Order> paidOrders(List<Order> orders) {",
+      "    return orders.stream()",
+      "        .filter(order -> order.amountCents() > 0)",
+      "        .toList();",
+      "  }",
+      "}"
+    ]
+  },
+
+  "optional_chain": {
+    "prefix": ["optional"],
+    "description": "Optional chain that never returns a null value",
+    "body": [
+      "import java.util.Map;",
+      "import java.util.Optional;",
+      "",
+      "final class UserDirectory {",
+      "  private final Map<String, String> emails = Map.of(\"u-1\", \"ada@example.com\");",
+      "",
+      "  public Optional<String> emailOf(String userId) {",
+      "    return Optional.ofNullable(userId)",
+      "        .map(String::trim)",
+      "        .filter(id -> !id.isEmpty())",
+      "        .map(emails::get);",
+      "  }",
+      "",
+      "  public String emailOrGuest(String userId) {",
+      "    return emailOf(userId).orElse(\"${1:guest@example.com}\");",
+      "  }",
+      "}"
+    ]
+  },
+
+  "switch_expression": {
+    "prefix": ["switchexpr"],
+    "description": "Switch expression with arrow labels and a yield branch",
+    "body": [
+      "final class StatusLabel {",
+      "  public String label(String status) {",
+      "    return switch (status) {",
+      "      case \"new\" -> \"Created\";",
+      "      case \"paid\" -> \"Payment received\";",
+      "      case \"shipped\" -> \"Handed to the carrier\";",
+      "      case \"cancelled\" -> \"Cancelled by the customer\";",
+      "      default -> {",
+      "        String unknown = status.toUpperCase();",
+      "        yield \"Unknown status: \" + unknown;",
+      "      }",
+      "    };",
+      "  }",
+      "}"
+    ]
+  },
+
+  "read_file_lines": {
+    "prefix": ["readfile"],
+    "description": "Read a text file line by line and close the stream",
+    "body": [
+      "import java.io.IOException;",
+      "import java.nio.charset.StandardCharsets;",
+      "import java.nio.file.Files;",
+      "import java.nio.file.Path;",
+      "import java.util.List;",
+      "import java.util.stream.Stream;",
+      "",
+      "final class TextFiles {",
+      "  public List<String> readAll(Path path) throws IOException {",
+      "    return Files.readAllLines(path, StandardCharsets.UTF_8);",
+      "  }",
+      "",
+      "  public long countNonEmpty(Path path) throws IOException {",
+      "    try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {",
+      "      return lines.filter(line -> !line.isBlank()).count();",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "executor_service": {
+    "prefix": ["executor"],
+    "description": "Fixed thread pool that runs tasks and shuts down cleanly",
+    "body": [
+      "import java.util.concurrent.Callable;",
+      "import java.util.concurrent.ExecutorService;",
+      "import java.util.concurrent.Executors;",
+      "import java.util.concurrent.Future;",
+      "import java.util.concurrent.TimeUnit;",
+      "",
+      "final class TaskRunner {",
+      "  private final ExecutorService pool = Executors.newFixedThreadPool(4);",
+      "",
+      "  public <T> Future<T> submit(Callable<T> task) {",
+      "    return pool.submit(task);",
+      "  }",
+      "",
+      "  public void shutdown() throws InterruptedException {",
+      "    pool.shutdown();",
+      "    if (!pool.awaitTermination(30, TimeUnit.SECONDS)) {",
+      "      pool.shutdownNow();",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "unit_test_class": {
+    "prefix": ["test"],
+    "description": "Unit test class with explicit assertions, no test framework",
+    "body": [
+      "import java.util.List;",
+      "",
+      "// JUnit 5: annotate the methods with @Test and use assertEquals instead.",
+      "class OrderTotalTest {",
+      "  void sumsLineItems() {",
+      "    List<Order> orders = List.of(new Order(\"keyboard\", 2, 4990), new Order(\"mouse\", 1, 1995));",
+      "",
+      "    int total = orders.stream().mapToInt(Order::totalCents).sum();",
+      "",
+      "    if (total != 11975) {",
+      "      throw new AssertionError(\"expected 11975 but was \" + total);",
+      "    }",
+      "  }",
+      "",
+      "  record Order(String title, int quantity, int unitPriceCents) {",
+      "    int totalCents() {",
+      "      return quantity * unitPriceCents;",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "logger_usage": {
+    "prefix": ["logger"],
+    "description": "Logger with a lazy message supplier and a failure log",
+    "body": [
+      "import java.util.logging.Level;",
+      "import java.util.logging.Logger;",
+      "",
+      "final class PaymentService {",
+      "  private static final Logger LOG = Logger.getLogger(PaymentService.class.getName());",
+      "",
+      "  public void settle(String reference, long amountCents) {",
+      "    LOG.info(() -> \"settling \" + reference + \" for \" + amountCents + \" cents\");",
+      "  }",
+      "",
+      "  public void fail(String reference, Throwable cause) {",
+      "    LOG.log(Level.SEVERE, \"payment \" + reference + \" failed\", cause);",
+      "  }",
+      "}"
+    ]
+  }
+}

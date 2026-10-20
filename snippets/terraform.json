@@ -1,0 +1,327 @@
+{
+  "terraform_required_providers": {
+    "prefix": ["tfrequired"],
+    "description": "Terraform block pinning the required provider versions",
+    "body": [
+      "terraform {",
+      "  required_version = \">= 1.6.0\"",
+      "",
+      "  required_providers {",
+      "    aws = {",
+      "      source  = \"hashicorp/aws\"",
+      "      version = \"~> 5.60\"",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_provider_block": {
+    "prefix": ["tfprovider"],
+    "description": "Provider configuration with default tags for every resource",
+    "body": [
+      "provider \"aws\" {",
+      "  region = var.region",
+      "",
+      "  default_tags {",
+      "    tags = local.common_tags",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_variable_with_default": {
+    "prefix": ["tfvar"],
+    "description": "Input variable with a type and a default value",
+    "body": [
+      "variable \"${1:region}\" {",
+      "  description = \"AWS region the infrastructure is deployed to\"",
+      "  type        = string",
+      "  default     = \"eu-central-1\"",
+      "}"
+    ]
+  },
+
+  "terraform_variable_with_validation": {
+    "prefix": ["tfvarvalid"],
+    "description": "Input variable guarded by a validation rule",
+    "body": [
+      "variable \"instance_count\" {",
+      "  description = \"Number of application instances to run\"",
+      "  type        = number",
+      "",
+      "  validation {",
+      "    condition     = var.instance_count > 0 && var.instance_count <= 10",
+      "    error_message = \"instance_count must be between 1 and 10.\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_output": {
+    "prefix": ["tfoutput"],
+    "description": "Output value exported from the module",
+    "body": [
+      "output \"api_endpoint\" {",
+      "  description = \"Public URL of the API gateway stage\"",
+      "  value       = aws_apigatewayv2_stage.default.invoke_url",
+      "}"
+    ]
+  },
+
+  "terraform_local_value": {
+    "prefix": ["tflocal"],
+    "description": "Local values shared by the resources of the module",
+    "body": [
+      "locals {",
+      "  name_prefix = \"\\${var.project_name}-\\${var.environment}\"",
+      "",
+      "  common_tags = {",
+      "    Project     = var.project_name",
+      "    Environment = var.environment",
+      "    ManagedBy   = \"terraform\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_resource_block": {
+    "prefix": ["tfresource"],
+    "description": "Resource block creating a storage bucket",
+    "body": [
+      "resource \"aws_s3_bucket\" \"assets\" {",
+      "  bucket = \"\\${var.project_name}-assets-\\${var.environment}\"",
+      "",
+      "  tags = {",
+      "    Name = \"assets\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_data_source": {
+    "prefix": ["tfdata"],
+    "description": "Data source that looks up the latest base image",
+    "body": [
+      "data \"aws_ami\" \"ubuntu\" {",
+      "  most_recent = true",
+      "  owners      = [\"099720109477\"]",
+      "",
+      "  filter {",
+      "    name   = \"name\"",
+      "    values = [\"ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*\"]",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_module_call": {
+    "prefix": ["tfmodule"],
+    "description": "Call a module from the Terraform registry",
+    "body": [
+      "module \"vpc\" {",
+      "  source = \"terraform-aws-modules/vpc/aws\"",
+      "",
+      "  name = \"\\${var.project_name}-vpc\"",
+      "  cidr = \"10.0.0.0/16\"",
+      "",
+      "  azs             = [\"eu-central-1a\", \"eu-central-1b\"]",
+      "  private_subnets = [\"10.0.1.0/24\", \"10.0.2.0/24\"]",
+      "",
+      "  tags = local.common_tags",
+      "}"
+    ]
+  },
+
+  "terraform_for_each": {
+    "prefix": ["tfforeach"],
+    "description": "Create one resource per element of a set",
+    "body": [
+      "resource \"aws_iam_role\" \"worker\" {",
+      "  for_each = toset(var.environments)",
+      "",
+      "  name = \"\\${var.project_name}-worker-\\${each.key}\"",
+      "",
+      "  assume_role_policy = jsonencode({",
+      "    Version = \"2012-10-17\"",
+      "    Statement = [{",
+      "      Effect    = \"Allow\"",
+      "      Action    = \"sts:AssumeRole\"",
+      "      Principal = { Service = \"ec2.amazonaws.com\" }",
+      "    }]",
+      "  })",
+      "}"
+    ]
+  },
+
+  "terraform_count": {
+    "prefix": ["tfcount"],
+    "description": "Create numbered resources with count and count.index",
+    "body": [
+      "resource \"aws_subnet\" \"private\" {",
+      "  count = length(var.availability_zones)",
+      "",
+      "  vpc_id            = aws_vpc.main.id",
+      "  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)",
+      "  availability_zone = var.availability_zones[count.index]",
+      "}"
+    ]
+  },
+
+  "terraform_dynamic_block": {
+    "prefix": ["tfdynamic"],
+    "description": "Generate repeated nested blocks with a dynamic block",
+    "body": [
+      "resource \"aws_security_group\" \"app\" {",
+      "  name = \"\\${var.project_name}-app\"",
+      "",
+      "  dynamic \"ingress\" {",
+      "    for_each = var.ingress_rules",
+      "",
+      "    content {",
+      "      from_port   = ingress.value.port",
+      "      to_port     = ingress.value.port",
+      "      protocol    = \"tcp\"",
+      "      cidr_blocks = ingress.value.cidr_blocks",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_map_and_object_literals": {
+    "prefix": ["tfvalues"],
+    "description": "Map literal with the service ports and an object literal",
+    "body": [
+      "locals {",
+      "  service_ports = {",
+      "    http  = 8080",
+      "    https = 8443",
+      "    grpc  = 9090",
+      "  }",
+      "",
+      "  database = {",
+      "    engine = \"postgres\"",
+      "    port   = 5432",
+      "    name   = \"appdb\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_list_literal": {
+    "prefix": ["tflist"],
+    "description": "List literal with the environments of the project",
+    "body": [
+      "locals {",
+      "  environments = [\"dev\", \"staging\", \"prod\"]",
+      "",
+      "  admin_emails = [",
+      "    \"alice@example.com\",",
+      "    \"bob@example.com\",",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "terraform_conditional_expression": {
+    "prefix": ["tfcond"],
+    "description": "Conditional expression that picks a value per environment",
+    "body": [
+      "locals {",
+      "  instance_type = var.environment == \"prod\" ? \"m5.xlarge\" : \"t3.micro\"",
+      "",
+      "  log_retention_days = var.environment == \"prod\" ? 30 : 7",
+      "}"
+    ]
+  },
+
+  "terraform_function_call": {
+    "prefix": ["tffunc"],
+    "description": "Builtin functions used to compute values",
+    "body": [
+      "locals {",
+      "  subnet_cidrs = [",
+      "    for index, zone in var.availability_zones : cidrsubnet(var.vpc_cidr, 8, index)",
+      "  ]",
+      "",
+      "  owner = lookup(var.team_contacts, \"platform\", \"platform@example.com\")",
+      "",
+      "  enabled_features = coalesce(var.feature_flags, [\"logging\"])",
+      "}"
+    ]
+  },
+
+  "terraform_resource_with_tags": {
+    "prefix": ["tftags"],
+    "description": "Resource with merged common and specific tags",
+    "body": [
+      "resource \"aws_instance\" \"api\" {",
+      "  ami           = data.aws_ami.ubuntu.id",
+      "  instance_type = var.instance_type",
+      "",
+      "  tags = merge(local.common_tags, {",
+      "    Name = \"api-server\"",
+      "    Role = \"api\"",
+      "  })",
+      "}"
+    ]
+  },
+
+  "terraform_resource_with_lifecycle": {
+    "prefix": ["tflifecycle"],
+    "description": "Resource with a lifecycle block and an explicit dependency",
+    "body": [
+      "resource \"aws_db_instance\" \"app\" {",
+      "  identifier        = \"app-db\"",
+      "  instance_class    = \"db.t3.medium\"",
+      "  engine            = \"postgres\"",
+      "  allocated_storage = 50",
+      "",
+      "  tags = local.common_tags",
+      "",
+      "  depends_on = [aws_kms_key.app]",
+      "",
+      "  lifecycle {",
+      "    prevent_destroy = true",
+      "    ignore_changes  = [engine_version]",
+      "  }",
+      "}"
+    ]
+  },
+
+  "terraform_heredoc": {
+    "prefix": ["tfheredoc"],
+    "description": "Heredoc with a multi line user data script",
+    "body": [
+      "locals {",
+      "  user_data = <<-EOT",
+      "    #!/bin/bash",
+      "    set -euo pipefail",
+      "    echo \"starting \\${var.project_name}\"",
+      "  EOT",
+      "",
+      "  policy_statements = join(\"\\\\n\", [",
+      "    \"Allow s3:GetObject\",",
+      "    \"Allow s3:PutObject\",",
+      "  ])",
+      "}"
+    ]
+  },
+
+  "terraform_backend_configuration": {
+    "prefix": ["tfbackend"],
+    "description": "Remote state backend stored in an S3 bucket",
+    "body": [
+      "terraform {",
+      "  backend \"s3\" {",
+      "    bucket         = \"myapp-terraform-state\"",
+      "    key            = \"production/terraform.tfstate\"",
+      "    region         = \"eu-central-1\"",
+      "    dynamodb_table = \"terraform-locks\"",
+      "    encrypt        = true",
+      "  }",
+      "}"
+    ]
+  }
+}

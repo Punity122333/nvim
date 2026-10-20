@@ -1,0 +1,167 @@
+{
+  "dosbatch_script": {
+    "prefix": ["batch", "dosbatch"],
+    "description": "Batch script header with the local scope enabled",
+    "body": [
+      "@echo off",
+      "setlocal EnableExtensions EnableDelayedExpansion",
+      "",
+      "rem ${1:Describe what this script does}",
+      "",
+      "$0",
+      "",
+      "endlocal"
+    ]
+  },
+
+  "dosbatch_echo": {
+    "prefix": ["echo"],
+    "description": "Print a message to the console",
+    "body": [
+      "echo ${1:message}"
+    ]
+  },
+
+  "dosbatch_comment": {
+    "prefix": ["rem"],
+    "description": "Batch comment",
+    "body": [
+      "rem ${1:TODO}"
+    ]
+  },
+
+  "dosbatch_if_exist": {
+    "prefix": ["ifexist"],
+    "description": "Run a block when a file or a folder exists",
+    "body": [
+      "if exist \"${1:path}\" (",
+      "  ${2:echo found}",
+      ") else (",
+      "  ${3:echo missing}",
+      ")"
+    ]
+  },
+
+  "dosbatch_if_errorlevel": {
+    "prefix": ["iferrorlevel"],
+    "description": "Branch on the exit code of the previous command",
+    "body": [
+      "if errorlevel ${1:1} (",
+      "  ${2:echo failed}",
+      ") else (",
+      "  ${3:echo succeeded}",
+      ")"
+    ]
+  },
+
+  "dosbatch_if_defined": {
+    "prefix": ["ifdef"],
+    "description": "Branch on whether an environment variable is defined",
+    "body": [
+      "if defined ${1:VAR} (",
+      "  ${2:echo %${1:VAR}%}",
+      ")"
+    ]
+  },
+
+  "dosbatch_if_error": {
+    "prefix": ["iferror"],
+    "description": "Check the exit code of the last command",
+    "body": [
+      "if %errorlevel% neq 0 (",
+      "  ${1:echo the command failed}",
+      "  exit /b %errorlevel%",
+      ")"
+    ]
+  },
+
+  "dosbatch_for": {
+    "prefix": ["for"],
+    "description": "Loop over a list of values",
+    "body": [
+      "for %%${1:i} in (${2:a b c}) do (",
+      "  echo %%${1:i}",
+      ")"
+    ]
+  },
+
+  "dosbatch_for_files": {
+    "prefix": ["forfiles"],
+    "description": "Loop over the files matching a pattern",
+    "body": [
+      "for %%${1:f} in (\"${2:*.txt}\") do (",
+      "  echo %%~n${1:f}",
+      ")"
+    ]
+  },
+
+  "dosbatch_for_f": {
+    "prefix": ["forf"],
+    "description": "Loop over the output of a command",
+    "body": [
+      "for /f \"tokens=*\" %%${1:i} in ('${2:command}') do (",
+      "  echo %%${1:i}",
+      ")"
+    ]
+  },
+
+  "dosbatch_call": {
+    "prefix": ["call"],
+    "description": "Call a label inside the script",
+    "body": [
+      "call :${1:label} ${2:argument}"
+    ]
+  },
+
+  "dosbatch_label": {
+    "prefix": ["label"],
+    "description": "Label that can be jumped to with goto or call",
+    "body": [
+      ":${1:label}",
+      "echo ${2:doing something}",
+      "goto :eof"
+    ]
+  },
+
+  "dosbatch_goto": {
+    "prefix": ["goto"],
+    "description": "Jump to a label",
+    "body": [
+      "goto :${1:label}"
+    ]
+  },
+
+  "dosbatch_set": {
+    "prefix": ["set"],
+    "description": "Set an environment variable",
+    "body": [
+      "set \"${1:VAR}=${2:value}\""
+    ]
+  },
+
+  "dosbatch_exit": {
+    "prefix": ["exit"],
+    "description": "Leave the script with an exit code",
+    "body": [
+      "exit /b ${1:0}"
+    ]
+  },
+
+  "dosbatch_pushd_popd": {
+    "prefix": ["pushd"],
+    "description": "Change the directory and restore it later",
+    "body": [
+      "pushd \"${1:path}\"",
+      "${2:command}",
+      "popd"
+    ]
+  },
+
+  "dosbatch_delay": {
+    "prefix": ["timeout"],
+    "description": "Wait for a few seconds",
+    "body": [
+      "timeout /t ${1:5} /nobreak > nul"
+    ]
+  }
+}

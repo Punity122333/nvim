@@ -1,0 +1,265 @@
+{
+  "make_variable_assignment": {
+    "prefix": ["mkvar"],
+    "description": "Makefile variables for compiler, directories and flags",
+    "body": [
+      "CC := ${1:gcc}",
+      "CFLAGS := -Wall -Wextra -O2",
+      "SRC_DIR := src",
+      "BUILD_DIR := build",
+      "TARGET := app"
+    ]
+  },
+
+  "make_shell_assignment": {
+    "prefix": ["mkshell"],
+    "description": "Variables filled from the output of shell commands",
+    "body": [
+      "BUILD_DATE := \\$(shell date -u +%Y-%m-%d)",
+      "VERSION := \\$(shell git describe --tags --always --dirty)",
+      "BUILD_COMMIT := \\$(shell git rev-parse --short HEAD)"
+    ]
+  },
+
+  "make_export_variable": {
+    "prefix": ["mkexport"],
+    "description": "Export a variable to the environment of every recipe",
+    "body": [
+      "PREFIX ?= /usr/local",
+      "export PREFIX",
+      "export CFLAGS"
+    ]
+  },
+
+  "make_simple_target": {
+    "prefix": ["mktarget"],
+    "description": "Simple target with a short recipe",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "all:",
+      ">mkdir -p \\$(BUILD_DIR)",
+      ">echo \"built \\$(TARGET) at \\$(BUILD_DATE)\""
+    ]
+  },
+
+  "make_target_with_prerequisites": {
+    "prefix": ["mkdeps"],
+    "description": "Target built from a list of prerequisite object files",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "\\$(TARGET): \\$(BUILD_DIR)/main.o \\$(BUILD_DIR)/util.o",
+      ">\\$(CC) \\$(CFLAGS) -o \\$@ \\$^"
+    ]
+  },
+
+  "make_pattern_rule": {
+    "prefix": ["mkpattern"],
+    "description": "Pattern rule that compiles one source file",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "\\$(BUILD_DIR)/%.o: \\$(SRC_DIR)/%.c",
+      ">\\$(CC) \\$(CFLAGS) -c \\$< -o \\$@"
+    ]
+  },
+
+  "make_phony_target": {
+    "prefix": ["mkphony"],
+    "description": "Declare targets that never produce a real file",
+    "body": [
+      ".PHONY: all build test clean install",
+      "",
+      "all: build test"
+    ]
+  },
+
+  "make_order_only_prerequisite": {
+    "prefix": ["mkorder"],
+    "description": "Directory target used as an order-only prerequisite",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "\\$(BUILD_DIR):",
+      ">mkdir -p \\$(BUILD_DIR)",
+      "",
+      "\\$(TARGET): \\$(SRC_DIR)/main.c | \\$(BUILD_DIR)",
+      ">\\$(CC) \\$(CFLAGS) -o \\$@ \\$<"
+    ]
+  },
+
+  "make_conditional_block": {
+    "prefix": ["mkcond"],
+    "description": "Conditional block selected with ifeq and else",
+    "body": [
+      "ifeq (\\$(OS),Windows_NT)",
+      "EXE_SUFFIX := .exe",
+      "SHELL := cmd.exe",
+      "else",
+      "EXE_SUFFIX :=",
+      "endif"
+    ]
+  },
+
+  "make_foreach_loop": {
+    "prefix": ["mkforeach"],
+    "description": "Expand a list into another list with foreach",
+    "body": [
+      "SRCS := \\$(wildcard \\$(SRC_DIR)/*.c)",
+      "",
+      "OBJS := \\$(foreach src,\\$(SRCS),\\$(BUILD_DIR)/\\$(notdir \\$(src:.c=.o)))",
+      "DEPS := \\$(OBJS:.o=.d)"
+    ]
+  },
+
+  "make_default_goal": {
+    "prefix": ["mkdefault"],
+    "description": "Set the goal that runs when make is called without arguments",
+    "body": [
+      ".DEFAULT_GOAL := all",
+      "",
+      "all: build test"
+    ]
+  },
+
+  "make_clean_target": {
+    "prefix": ["mkclean"],
+    "description": "Remove all build artefacts with a clean target",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      ".PHONY: clean",
+      "",
+      "clean:",
+      ">rm -rf \\$(BUILD_DIR)",
+      ">find \\$(SRC_DIR) -name '*.o' -delete"
+    ]
+  },
+
+  "make_test_target": {
+    "prefix": ["mktest"],
+    "description": "Run the test suite of the project with ctest",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      ".PHONY: test",
+      "",
+      "test: build",
+      ">ctest --test-dir \\$(BUILD_DIR) --output-on-failure"
+    ]
+  },
+
+  "make_run_target": {
+    "prefix": ["mkrun"],
+    "description": "Build the project and run the application locally",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      ".PHONY: run",
+      "",
+      "run: build",
+      ">./\\$(BUILD_DIR)/\\$(TARGET) --config config/dev.yaml"
+    ]
+  },
+
+  "make_install_target": {
+    "prefix": ["mkinstall"],
+    "description": "Install the built binary below PREFIX",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "PREFIX ?= /usr/local",
+      "",
+      ".PHONY: install",
+      "",
+      "install: build",
+      ">install -d \\$(DESTDIR)\\$(PREFIX)/bin",
+      ">install -m 0755 \\$(BUILD_DIR)/\\$(TARGET) \\$(DESTDIR)\\$(PREFIX)/bin"
+    ]
+  },
+
+  "make_recursive_call": {
+    "prefix": ["mkrecurse"],
+    "description": "Call make recursively inside a sub directory",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      ".PHONY: deps",
+      "",
+      "deps:",
+      ">+\\$(MAKE) -C third_party/lib",
+      ">+\\$(MAKE) -C third_party/lib install"
+    ]
+  },
+
+  "make_include": {
+    "prefix": ["mkinclude"],
+    "description": "Include another makefile, optionally if it exists",
+    "body": [
+      "include config.mk",
+      "",
+      "-include \\$(wildcard local.mk)"
+    ]
+  },
+
+  "make_wildcard_sources": {
+    "prefix": ["mksrc"],
+    "description": "Collect sources and objects with wildcard and patsubst",
+    "body": [
+      "SRCS := \\$(wildcard \\$(SRC_DIR)/*.c)",
+      "OBJS := \\$(patsubst \\$(SRC_DIR)/%.c,\\$(BUILD_DIR)/%.o,\\$(SRCS))",
+      "DEPS := \\$(OBJS:.o=.d)"
+    ]
+  },
+
+  "make_define_macro": {
+    "prefix": ["mkdefine"],
+    "description": "Reusable multi line recipe written with define",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "define RUN_TESTS",
+      ">echo \"running the test suite\"",
+      ">ctest --test-dir \\$(BUILD_DIR) --output-on-failure",
+      "endef",
+      "",
+      ".PHONY: test",
+      "",
+      "test:",
+      ">\\$(RUN_TESTS)"
+    ]
+  },
+
+  "make_c_project_skeleton": {
+    "prefix": ["mkproject"],
+    "description": "Skeleton Makefile for a C project with several targets",
+    "body": [
+      ".RECIPEPREFIX = >",
+      "",
+      "CC := gcc",
+      "CFLAGS := -Wall -Wextra -O2",
+      "SRC_DIR := src",
+      "BUILD_DIR := build",
+      "TARGET := app",
+      "SRCS := \\$(wildcard \\$(SRC_DIR)/*.c)",
+      "OBJS := \\$(patsubst \\$(SRC_DIR)/%.c,\\$(BUILD_DIR)/%.o,\\$(SRCS))",
+      "",
+      ".PHONY: all build clean",
+      "",
+      "all: \\$(TARGET)",
+      "",
+      "\\$(TARGET): \\$(OBJS)",
+      ">\\$(CC) \\$(CFLAGS) -o \\$@ \\$^",
+      "",
+      "\\$(BUILD_DIR)/%.o: \\$(SRC_DIR)/%.c | \\$(BUILD_DIR)",
+      ">\\$(CC) \\$(CFLAGS) -c \\$< -o \\$@",
+      "",
+      "\\$(BUILD_DIR):",
+      ">mkdir -p \\$(BUILD_DIR)",
+      "",
+      "clean:",
+      ">rm -rf \\$(BUILD_DIR)"
+    ]
+  }
+}

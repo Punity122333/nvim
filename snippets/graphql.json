@@ -1,0 +1,282 @@
+{
+  "query": {
+    "prefix": ["query", "gq"],
+    "description": "GraphQL query selecting fields from a collection",
+    "body": [
+      "query ${1:GetUsers} {",
+      "  users {",
+      "    id",
+      "    name",
+      "    email",
+      "    createdAt",
+      "  }",
+      "}"
+    ]
+  },
+
+  "query_with_variables": {
+    "prefix": ["queryvars", "qvars"],
+    "description": "GraphQL query with typed variables",
+    "body": [
+      "query ${1:GetUser}(\\$id: ID!) {",
+      "  user(id: \\$id) {",
+      "    id",
+      "    name",
+      "    email",
+      "  }",
+      "}"
+    ]
+  },
+
+  "mutation": {
+    "prefix": ["mutation", "mut"],
+    "description": "GraphQL mutation that deletes a record by id",
+    "body": [
+      "mutation ${1:DeletePost}(\\$id: ID!) {",
+      "  deletePost(id: \\$id) {",
+      "    id",
+      "    deleted",
+      "  }",
+      "}"
+    ]
+  },
+
+  "mutation_with_input": {
+    "prefix": ["mutinput", "mutin"],
+    "description": "GraphQL mutation passing an input object to a field",
+    "body": [
+      "mutation ${1:UpdateProfile}(\\$input: UpdateProfileInput!) {",
+      "  updateProfile(input: \\$input) {",
+      "    id",
+      "    displayName",
+      "    avatarUrl",
+      "  }",
+      "}"
+    ]
+  },
+
+  "subscription": {
+    "prefix": ["subscription", "sub"],
+    "description": "GraphQL subscription for live updates of a room",
+    "body": [
+      "subscription ${1:OnMessageAdded}(\\$roomId: ID!) {",
+      "  messageAdded(roomId: \\$roomId) {",
+      "    id",
+      "    body",
+      "    createdAt",
+      "  }",
+      "}"
+    ]
+  },
+
+  "fragment": {
+    "prefix": ["fragment", "frag"],
+    "description": "GraphQL fragment definition with reusable field set",
+    "body": [
+      "fragment ${1:UserFields} on User {",
+      "  id",
+      "  name",
+      "  email",
+      "  createdAt",
+      "}"
+    ]
+  },
+
+  "fragment_spread": {
+    "prefix": ["fragspread", "spread"],
+    "description": "GraphQL query using a fragment spread",
+    "body": [
+      "query ${1:GetUsers} {",
+      "  users {",
+      "    ...UserFields",
+      "  }",
+      "}"
+    ]
+  },
+
+  "inline_fragment": {
+    "prefix": ["inlinefrag", "inline"],
+    "description": "GraphQL query with inline fragments per concrete type",
+    "body": [
+      "query ${1:Search}(\\$term: String!) {",
+      "  search(term: \\$term) {",
+      "    ... on User {",
+      "      id",
+      "      name",
+      "    }",
+      "    ... on Post {",
+      "      id",
+      "      title",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "object_type": {
+    "prefix": ["typedef", "type"],
+    "description": "GraphQL object type definition with scalar and list fields",
+    "body": [
+      "type ${1:Product} {",
+      "  id: ID!",
+      "  name: String!",
+      "  description: String",
+      "  price: Float!",
+      "  tags: [String!]!",
+      "}"
+    ]
+  },
+
+  "interface_type": {
+    "prefix": ["interface", "iface"],
+    "description": "GraphQL interface definition shared by several types",
+    "body": [
+      "interface ${1:Node} {",
+      "  id: ID!",
+      "  createdAt: DateTime!",
+      "}"
+    ]
+  },
+
+  "union_type": {
+    "prefix": ["union"],
+    "description": "GraphQL union type listing the possible members",
+    "body": ["union ${1:SearchResult} = User | Post | Comment"]
+  },
+
+  "enum_type": {
+    "prefix": ["enum"],
+    "description": "GraphQL enum type with the allowed states",
+    "body": [
+      "enum ${1:OrderStatus} {",
+      "  PENDING",
+      "  PAID",
+      "  SHIPPED",
+      "  DELIVERED",
+      "  CANCELLED",
+      "}"
+    ]
+  },
+
+  "input_type": {
+    "prefix": ["inputtype", "input"],
+    "description": "GraphQL input type with defaulted fields used by mutations",
+    "body": [
+      "input ${1:CreateUserInput} {",
+      "  name: String!",
+      "  email: String!",
+      "  role: Role = USER",
+      "  newsletter: Boolean = false",
+      "}"
+    ]
+  },
+
+  "scalar_type": {
+    "prefix": ["scalar"],
+    "description": "GraphQL custom scalar definitions with a short description",
+    "body": [
+      "# ISO-8601 timestamp with timezone offset, e.g. 2024-01-15T09:30:00Z",
+      "scalar DateTime",
+      "",
+      "# Fixed precision decimal value, e.g. 19.99",
+      "scalar Decimal"
+    ]
+  },
+
+  "directive_definition": {
+    "prefix": ["directive", "dir"],
+    "description": "GraphQL directive definitions usable in the schema",
+    "body": [
+      "# Requires the caller to hold the given role",
+      "directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION",
+      "",
+      "# Adds a custom header to the response, e.g. X-Request-Id",
+      "directive @header(name: String!, value: String!) on FIELD_DEFINITION"
+    ]
+  },
+
+  "schema_definition": {
+    "prefix": ["schema"],
+    "description": "GraphQL schema definition mapping root operation types",
+    "body": [
+      "schema {",
+      "  query: Query",
+      "  mutation: Mutation",
+      "  subscription: Subscription",
+      "}"
+    ]
+  },
+
+  "field_with_arguments": {
+    "prefix": ["fieldargs", "fargs"],
+    "description": "GraphQL field taking arguments with a default value",
+    "body": [
+      "type Query {",
+      "  # Full text search over the product catalogue",
+      "  search(term: String!, first: Int = 20, after: String): [Product!]!",
+      "}"
+    ]
+  },
+
+  "connection_type": {
+    "prefix": ["connection", "conn"],
+    "description": "Relay style connection types for cursor pagination",
+    "body": [
+      "type UserConnection {",
+      "  edges: [UserEdge!]!",
+      "  pageInfo: PageInfo!",
+      "  totalCount: Int!",
+      "}",
+      "",
+      "type UserEdge {",
+      "  cursor: String!",
+      "  node: User!",
+      "}",
+      "",
+      "type PageInfo {",
+      "  hasNextPage: Boolean!",
+      "  hasPreviousPage: Boolean!",
+      "  startCursor: String",
+      "  endCursor: String",
+      "}"
+    ]
+  },
+
+  "field_with_directive": {
+    "prefix": ["fielddir", "fdir"],
+    "description": "GraphQL query using a directive on a selected field",
+    "body": [
+      "query GetUsers(\\$withPosts: Boolean! = false) {",
+      "  users {",
+      "    id",
+      "    name",
+      "    posts @include(if: \\$withPosts) {",
+      "      id",
+      "      title",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "aliased_query": {
+    "prefix": ["alias", "aliased"],
+    "description": "GraphQL query using field aliases and nested selections",
+    "body": [
+      "query ${1:GetDashboard} {",
+      "  viewer: currentUser {",
+      "    id",
+      "    name",
+      "    profile {",
+      "      avatarUrl",
+      "    }",
+      "  }",
+      "  posts: recentPosts(first: 5) {",
+      "    id",
+      "    title",
+      "    publishedAt",
+      "  }",
+      "}"
+    ]
+  }
+}

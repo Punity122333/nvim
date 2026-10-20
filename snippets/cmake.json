@@ -1,0 +1,278 @@
+{
+  "cmake_project_declaration": {
+    "prefix": ["cmproject"],
+    "description": "Minimum CMake version and project declaration",
+    "body": [
+      "cmake_minimum_required(VERSION 3.20)",
+      "",
+      "project(${1:myapp} VERSION 0.1.0 LANGUAGES CXX)"
+    ]
+  },
+
+  "cmake_executable_target": {
+    "prefix": ["cmexe"],
+    "description": "Executable target with its sources",
+    "body": [
+      "add_executable(myapp",
+      "  src/main.cpp",
+      "  src/engine.cpp",
+      ")",
+      "",
+      "target_sources(myapp PRIVATE src/util.cpp)"
+    ]
+  },
+
+  "cmake_library_target": {
+    "prefix": ["cmlib"],
+    "description": "Static library target built from a list of sources",
+    "body": [
+      "add_library(mylib STATIC",
+      "  src/parser.cpp",
+      "  src/lexer.cpp",
+      ")",
+      "",
+      "set_target_properties(mylib PROPERTIES POSITION_INDEPENDENT_CODE ON)"
+    ]
+  },
+
+  "cmake_object_library": {
+    "prefix": ["cmobj"],
+    "description": "Object library compiled once and reused by other targets",
+    "body": [
+      "add_library(myobjects OBJECT",
+      "  src/parser.cpp",
+      "  src/lexer.cpp",
+      ")",
+      "",
+      "target_include_directories(myobjects PUBLIC include)"
+    ]
+  },
+
+  "cmake_interface_library": {
+    "prefix": ["cmiface"],
+    "description": "Interface library that only carries usage requirements",
+    "body": [
+      "add_library(myheaders INTERFACE)",
+      "",
+      "target_include_directories(myheaders INTERFACE",
+      "  \\$<BUILD_INTERFACE:\\${CMAKE_CURRENT_SOURCE_DIR}/include>",
+      "  \\$<INSTALL_INTERFACE:include>",
+      ")"
+    ]
+  },
+
+  "cmake_find_package": {
+    "prefix": ["cmfind"],
+    "description": "Look for an installed dependency package",
+    "body": [
+      "find_package(Threads REQUIRED)",
+      "",
+      "find_package(Python3 REQUIRED COMPONENTS Interpreter Development)"
+    ]
+  },
+
+  "cmake_target_compile_settings": {
+    "prefix": ["cmcompile"],
+    "description": "Include paths, compile definitions and compile options",
+    "body": [
+      "target_include_directories(myapp PRIVATE",
+      "  \\${CMAKE_CURRENT_SOURCE_DIR}/include",
+      ")",
+      "",
+      "target_compile_definitions(myapp PRIVATE",
+      "  PROJECT_NAME=\"myapp\"",
+      "  ENABLE_LOGGING",
+      ")",
+      "",
+      "target_compile_options(myapp PRIVATE",
+      "  -Wall",
+      "  -Wextra",
+      "  -Wpedantic",
+      ")"
+    ]
+  },
+
+  "cmake_target_link_libraries": {
+    "prefix": ["cmlink"],
+    "description": "Link the target against libraries and imported targets",
+    "body": [
+      "target_link_libraries(myapp",
+      "  PRIVATE",
+      "    mylib",
+      "    Threads::Threads",
+      ")"
+    ]
+  },
+
+  "cmake_custom_target": {
+    "prefix": ["cmcustom"],
+    "description": "Custom target that runs external commands",
+    "body": [
+      "add_custom_target(generate_sources",
+      "  COMMAND \\${CMAKE_COMMAND} -E make_directory \\${CMAKE_CURRENT_BINARY_DIR}/gen",
+      "  COMMAND my_generator --out \\${CMAKE_CURRENT_BINARY_DIR}/gen",
+      "  COMMENT \"Generating the schema sources\"",
+      "  VERBATIM",
+      ")"
+    ]
+  },
+
+  "cmake_test_target": {
+    "prefix": ["cmtest"],
+    "description": "Register a test executable with CTest",
+    "body": [
+      "enable_testing()",
+      "",
+      "add_test(NAME parser_unit_tests COMMAND mytests)",
+      "",
+      "set_tests_properties(parser_unit_tests PROPERTIES TIMEOUT 60)"
+    ]
+  },
+
+  "cmake_add_subdirectory": {
+    "prefix": ["cmsubdir"],
+    "description": "Add a sub directory with its own CMakeLists.txt",
+    "body": [
+      "# Sub directories that bring their own CMakeLists.txt",
+      "add_subdirectory(src)",
+      "add_subdirectory(tests)"
+    ]
+  },
+
+  "cmake_set_variable": {
+    "prefix": ["cmset"],
+    "description": "Set cache and normal variables in the CMake script",
+    "body": [
+      "set(SOURCE_DIR \\${CMAKE_CURRENT_SOURCE_DIR}/src)",
+      "",
+      "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY \\${CMAKE_BINARY_DIR}/bin)",
+      "",
+      "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)"
+    ]
+  },
+
+  "cmake_cross_compile_block": {
+    "prefix": ["cmcross"],
+    "description": "Toolchain settings for cross compiling to another arch",
+    "body": [
+      "set(CMAKE_SYSTEM_NAME Linux)",
+      "set(CMAKE_SYSTEM_PROCESSOR aarch64)",
+      "",
+      "set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)",
+      "set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)",
+      "",
+      "set(CMAKE_FIND_ROOT_PATH /usr/aarch64-linux-gnu)",
+      "set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)",
+      "set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)",
+      "set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)"
+    ]
+  },
+
+  "cmake_message": {
+    "prefix": ["cmmsg"],
+    "description": "Print status, warning and error messages during configure",
+    "body": [
+      "message(STATUS \"Configuring \\${PROJECT_NAME} \\${PROJECT_VERSION}\")",
+      "",
+      "message(WARNING \"No debug symbols were found for the build\")"
+    ]
+  },
+
+  "cmake_install_rule": {
+    "prefix": ["cminstall"],
+    "description": "Install targets and headers with the install command",
+    "body": [
+      "install(TARGETS myapp mylib",
+      "  RUNTIME DESTINATION bin",
+      "  LIBRARY DESTINATION lib",
+      "  ARCHIVE DESTINATION lib",
+      ")",
+      "",
+      "install(DIRECTORY include/ DESTINATION include)"
+    ]
+  },
+
+  "cmake_option": {
+    "prefix": ["cmoption"],
+    "description": "Boolean build option with a cached default value",
+    "body": [
+      "# Build options that can be switched with -D on the command line",
+      "option(BUILD_TESTS \"Build the unit tests\" ON)",
+      "option(BUILD_SHARED_LIBS \"Build shared instead of static libraries\" OFF)"
+    ]
+  },
+
+  "cmake_configuration_block": {
+    "prefix": ["cmif"],
+    "description": "Conditional block with compiler specific sanitizers",
+    "body": [
+      "option(ENABLE_SANITIZERS \"Enable address and undefined sanitizers\" OFF)",
+      "",
+      "if(ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES \"GNU|Clang\")",
+      "  add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)",
+      "  add_link_options(-fsanitize=address,undefined)",
+      "elseif(WIN32)",
+      "  add_compile_options(/W4)",
+      "else()",
+      "  add_compile_options(-Wall -Wextra)",
+      "endif()"
+    ]
+  },
+
+  "cmake_function_and_macro": {
+    "prefix": ["cmfunc"],
+    "description": "Reusable function and macro for the build script",
+    "body": [
+      "function(add_app_target name)",
+      "  add_executable(\\${name} \\${ARGN})",
+      "  target_link_libraries(\\${name} PRIVATE mylib)",
+      "endfunction()",
+      "",
+      "macro(enable_warnings target)",
+      "  target_compile_options(\\${target} PRIVATE -Wall -Wextra)",
+      "endmacro()"
+    ]
+  },
+
+  "cmake_generator_expression": {
+    "prefix": ["cmgen"],
+    "description": "Generator expressions for configuration and platform",
+    "body": [
+      "target_compile_definitions(myapp PRIVATE",
+      "  \\$<\\$<CONFIG:Debug>:DEBUG_BUILD>",
+      "  \\$<\\$<NOT:\\$<CONFIG:Debug>>:NDEBUG>",
+      ")",
+      "",
+      "target_sources(myapp PRIVATE",
+      "  \\$<\\$<PLATFORM_ID:Linux>:src/platform_linux.cpp>",
+      "  \\$<\\$<PLATFORM_ID:Windows>:src/platform_windows.cpp>",
+      ")"
+    ]
+  },
+
+  "cmake_package_config": {
+    "prefix": ["cmpkg"],
+    "description": "Generate and install the CMake package config files",
+    "body": [
+      "include(CMakePackageConfigHelpers)",
+      "",
+      "configure_package_config_file(",
+      "  \\${CMAKE_CURRENT_SOURCE_DIR}/cmake/myproject-config.cmake.in",
+      "  \\${CMAKE_CURRENT_BINARY_DIR}/myproject-config.cmake",
+      "  INSTALL_DESTINATION lib/cmake/myproject",
+      ")",
+      "",
+      "write_basic_package_version_file(",
+      "  \\${CMAKE_CURRENT_BINARY_DIR}/myproject-config-version.cmake",
+      "  VERSION \\${PROJECT_VERSION}",
+      "  COMPATIBILITY SameMajorVersion",
+      ")",
+      "",
+      "install(FILES",
+      "  \\${CMAKE_CURRENT_BINARY_DIR}/myproject-config.cmake",
+      "  \\${CMAKE_CURRENT_BINARY_DIR}/myproject-config-version.cmake",
+      "  DESTINATION lib/cmake/myproject",
+      ")"
+    ]
+  }
+}

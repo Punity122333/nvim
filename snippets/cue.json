@@ -1,0 +1,114 @@
+{
+  "cue_package": {
+    "prefix": ["package"],
+    "description": "CUE package declaration",
+    "body": [
+      "package ${1:myapp}",
+      "",
+      "$0"
+    ]
+  },
+
+  "cue_struct": {
+    "prefix": ["cue", "struct"],
+    "description": "CUE struct with a field",
+    "body": [
+      "${1:Config}: {",
+      "\t${2:field}: ${3:string}",
+      "}"
+    ]
+  },
+
+  "cue_field": {
+    "prefix": ["field"],
+    "description": "Field with a type and an optional value",
+    "body": [
+      "${1:name}: ${2:string}",
+      "${1:name}?: ${2:string}"
+    ]
+  },
+
+  "cue_enum": {
+    "prefix": ["enum"],
+    "description": "CUE enum with a few members",
+    "body": [
+      "${1:Status}: \"${2:pending}\" | \"${3:active}\" | \"${4:closed}\""
+    ]
+  },
+
+  "cue_definition": {
+    "prefix": ["def"],
+    "description": "CUE definition with a constraint",
+    "body": [
+      "#${1:Name}: {",
+      "\t${2:field}: string",
+      "}",
+      "",
+      "${1:Name}: {",
+      "\t${2:field}: ${3:value}",
+      "}"
+    ]
+  },
+
+  "cue_alias": {
+    "prefix": ["alias"],
+    "description": "CUE type alias",
+    "body": [
+      "${1:Name}: ${2:#\"${3:value}\"}"
+    ]
+  },
+
+  "cue_import": {
+    "prefix": ["import"],
+    "description": "Import a package or a file",
+    "body": [
+      "import \"${1:strings}\"",
+      "import ${2:list} \"${3:list}\""
+    ]
+  },
+
+  "cue_if": {
+    "prefix": ["cueif"],
+    "description": "Conditional field value",
+    "body": [
+      "if ${1:condition} {",
+      "\t${2:field}: ${3:value}",
+      "}"
+    ]
+  },
+
+  "cue_for": {
+    "prefix": ["cuefor"],
+    "description": "List comprehension",
+    "body": [
+      "_${1:items}: [...for ${2:item} in ${3:list} if ${4:condition} {",
+      "\t${2:item}",
+      "}]"
+    ]
+  },
+
+  "cue_list": {
+    "prefix": ["cuelist"],
+    "description": "List literal",
+    "body": [
+      "[${1:first}, ${2:second}]"
+    ]
+  },
+
+  "cue_embedded": {
+    "prefix": ["embed"],
+    "description": "Embed another struct into the current one",
+    "body": [
+      "\t${1:Common}: _${1:Common}",
+      "\t${2:field}: ${3:string}"
+    ]
+  },
+
+  "cue_constraint": {
+    "prefix": ["constraint"],
+    "description": "Value with a range constraint",
+    "body": [
+      "${1:count}: int & >=${2:0} & <=${3:100}"
+    ]
+  }
+}

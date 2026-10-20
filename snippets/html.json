@@ -44,11 +44,502 @@
 
   "script": {
     "prefix": "script",
-    "body": ["<script>", "  $1", "</script>"]
+    "body": [
+      "<script>",
+      "  $1",
+      "</script>"
+    ]
   },
 
   "div": {
     "prefix": "div",
-    "body": ["<div class=\"${1:container}\">", "  $2", "</div>"]
+    "body": [
+      "<div class=\"${1:container}\">",
+      "  $2",
+      "</div>"
+    ]
+  },
+
+  "document_skeleton": {
+    "prefix": ["doctype"],
+    "description": "Complete HTML5 document with head, header, main and footer",
+    "body": [
+      "<!DOCTYPE html>",
+      "<html lang=\"${1:en}\">",
+      "  <head>",
+      "    <meta charset=\"utf-8\" />",
+      "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />",
+      "    <title>${2:Page title}</title>",
+      "    <link rel=\"stylesheet\" href=\"/assets/app.css\" />",
+      "  </head>",
+      "  <body>",
+      "    <header class=\"site-header\">",
+      "      <a class=\"site-header__brand\" href=\"/\">Acme</a>",
+      "    </header>",
+      "",
+      "    <main id=\"main\">",
+      "      <h1>${3:Page heading}</h1>",
+      "    </main>",
+      "",
+      "    <footer class=\"site-footer\">",
+      "      <p>&copy; 2026 Acme Inc.</p>",
+      "    </footer>",
+      "",
+      "    <script type=\"module\" src=\"/assets/app.js\"></script>",
+      "  </body>",
+      "</html>"
+    ]
+  },
+
+  "seo_meta_tags": {
+    "prefix": ["metaseo"],
+    "description": "Open Graph, Twitter and canonical meta tags for the head",
+    "body": [
+      "<meta name=\"description\" content=\"${1:A short summary of the page.}\" />",
+      "<meta name=\"author\" content=\"Your Name\" />",
+      "",
+      "<meta property=\"og:type\" content=\"website\" />",
+      "<meta property=\"og:title\" content=\"${2:Page title}\" />",
+      "<meta property=\"og:description\" content=\"A short summary of the page.\" />",
+      "<meta property=\"og:url\" content=\"https://example.com/page\" />",
+      "<meta property=\"og:image\" content=\"https://example.com/preview.png\" />",
+      "",
+      "<meta name=\"twitter:card\" content=\"summary_large_image\" />",
+      "<meta name=\"twitter:title\" content=\"Page title\" />",
+      "<meta name=\"twitter:description\" content=\"A short summary of the page.\" />",
+      "",
+      "<link rel=\"canonical\" href=\"https://example.com/page\" />"
+    ]
+  },
+
+  "semantic_sections": {
+    "prefix": ["semantic"],
+    "description": "Semantic page structure using header, article, section and aside",
+    "body": [
+      "<header>",
+      "  <h1>Site title</h1>",
+      "</header>",
+      "",
+      "<nav aria-label=\"Main\">",
+      "  <ul>",
+      "    <li><a href=\"/\">Home</a></li>",
+      "    <li><a href=\"/docs\">Docs</a></li>",
+      "  </ul>",
+      "</nav>",
+      "",
+      "<main>",
+      "  <article>",
+      "    <header>",
+      "      <h2>Article title</h2>",
+      "      <p><time datetime=\"2026-01-31\">January 31, 2026</time></p>",
+      "    </header>",
+      "",
+      "    <section>",
+      "      <h3>Section heading</h3>",
+      "      <p>Paragraph text goes here.</p>",
+      "    </section>",
+      "",
+      "    <aside>",
+      "      <p>Related link</p>",
+      "    </aside>",
+      "",
+      "    <footer>",
+      "      <p>Copyright notice</p>",
+      "    </footer>",
+      "  </article>",
+      "</main>",
+      "",
+      "<footer>",
+      "  <p>Footer content</p>",
+      "</footer>"
+    ]
+  },
+
+  "navigation_bar": {
+    "prefix": ["navbar"],
+    "description": "Navigation bar with brand, links and an inline search form",
+    "body": [
+      "<nav class=\"navbar\" aria-label=\"Primary\">",
+      "  <a class=\"navbar__brand\" href=\"/\">Acme</a>",
+      "",
+      "  <ul class=\"navbar__links\">",
+      "    <li><a href=\"/products\">Products</a></li>",
+      "    <li><a href=\"/pricing\">Pricing</a></li>",
+      "    <li><a href=\"/docs\">Docs</a></li>",
+      "  </ul>",
+      "",
+      "  <form class=\"navbar__search\" role=\"search\" action=\"/search\" method=\"get\">",
+      "    <label class=\"visually-hidden\" for=\"site-search\">Search</label>",
+      "    <input id=\"site-search\" type=\"search\" name=\"q\" placeholder=\"Search\" />",
+      "    <button type=\"submit\">Search</button>",
+      "  </form>",
+      "</nav>"
+    ]
+  },
+
+  "breadcrumb_navigation": {
+    "prefix": ["breadcrumb"],
+    "description": "Breadcrumb trail marking the current page",
+    "body": [
+      "<nav class=\"breadcrumb\" aria-label=\"Breadcrumb\">",
+      "  <ol>",
+      "    <li><a href=\"/\">Home</a></li>",
+      "    <li><a href=\"/catalog\">Catalog</a></li>",
+      "    <li><a href=\"/catalog/widgets\">Widgets</a></li>",
+      "    <li aria-current=\"page\">Widget 42</li>",
+      "  </ol>",
+      "</nav>"
+    ]
+  },
+
+  "form_with_labels": {
+    "prefix": ["formfields"],
+    "description": "Form with labelled inputs, hints, select and textarea",
+    "body": [
+      "<form class=\"form\" action=\"${1:/signup}\" method=\"post\">",
+      "  <fieldset>",
+      "    <legend>Account details</legend>",
+      "",
+      "    <div class=\"field\">",
+      "      <label for=\"email\">Email address</label>",
+      "      <input id=\"email\" name=\"email\" type=\"email\" autocomplete=\"email\" required />",
+      "      <p class=\"field__hint\">We only use this to send receipts.</p>",
+      "    </div>",
+      "",
+      "    <div class=\"field\">",
+      "      <label for=\"password\">Password</label>",
+      "      <input id=\"password\" name=\"password\" type=\"password\" minlength=\"12\" required />",
+      "    </div>",
+      "",
+      "    <div class=\"field\">",
+      "      <label for=\"plan\">Plan</label>",
+      "      <select id=\"plan\" name=\"plan\">",
+      "        <option value=\"free\">Free</option>",
+      "        <option value=\"pro\" selected>Pro</option>",
+      "      </select>",
+      "    </div>",
+      "",
+      "    <div class=\"field\">",
+      "      <label for=\"notes\">Notes</label>",
+      "      <textarea id=\"notes\" name=\"notes\" rows=\"4\"></textarea>",
+      "    </div>",
+      "",
+      "    <button type=\"submit\">Create account</button>",
+      "  </fieldset>",
+      "</form>"
+    ]
+  },
+
+  "data_table": {
+    "prefix": ["dtable"],
+    "description": "Accessible data table with caption, headers and footer",
+    "body": [
+      "<table class=\"table\">",
+      "  <caption>Monthly revenue for 2026</caption>",
+      "  <thead>",
+      "    <tr>",
+      "      <th scope=\"col\">Month</th>",
+      "      <th scope=\"col\">Orders</th>",
+      "      <th scope=\"col\">Revenue</th>",
+      "    </tr>",
+      "  </thead>",
+      "  <tbody>",
+      "    <tr>",
+      "      <th scope=\"row\">January</th>",
+      "      <td>128</td>",
+      "      <td>\\$4,320</td>",
+      "    </tr>",
+      "    <tr>",
+      "      <th scope=\"row\">February</th>",
+      "      <td>143</td>",
+      "      <td>\\$5,010</td>",
+      "    </tr>",
+      "  </tbody>",
+      "  <tfoot>",
+      "    <tr>",
+      "      <th scope=\"row\">Total</th>",
+      "      <td>271</td>",
+      "      <td>\\$9,330</td>",
+      "    </tr>",
+      "  </tfoot>",
+      "</table>"
+    ]
+  },
+
+  "pagination": {
+    "prefix": ["pagination"],
+    "description": "Pagination links with the current page marked",
+    "body": [
+      "<nav class=\"pagination\" aria-label=\"Pagination\">",
+      "  <a class=\"pagination__link\" href=\"?page=1\" rel=\"prev\">Previous</a>",
+      "",
+      "  <ul class=\"pagination__pages\">",
+      "    <li><a href=\"?page=1\" aria-current=\"page\">1</a></li>",
+      "    <li><a href=\"?page=2\">2</a></li>",
+      "    <li><a href=\"?page=3\">3</a></li>",
+      "    <li><span aria-hidden=\"true\">\u2026</span></li>",
+      "    <li><a href=\"?page=12\">12</a></li>",
+      "  </ul>",
+      "",
+      "  <a class=\"pagination__link\" href=\"?page=2\" rel=\"next\">Next</a>",
+      "</nav>"
+    ]
+  },
+
+  "modal_dialog": {
+    "prefix": ["dialog"],
+    "description": "Native dialog element with cancel and confirm actions",
+    "body": [
+      "<dialog class=\"dialog\" id=\"confirm-dialog\">",
+      "  <form method=\"dialog\">",
+      "    <h2>Delete this project?</h2>",
+      "    <p>This action cannot be undone.</p>",
+      "    <menu>",
+      "      <button value=\"cancel\">Cancel</button>",
+      "      <button value=\"confirm\" class=\"dialog__danger\">Delete</button>",
+      "    </menu>",
+      "  </form>",
+      "</dialog>",
+      "",
+      "<script>",
+      "  const dialog = document.getElementById(\"confirm-dialog\");",
+      "  document.getElementById(\"delete-button\").addEventListener(\"click\", () => {",
+      "    dialog.showModal();",
+      "  });",
+      "</script>"
+    ]
+  },
+
+  "card_article": {
+    "prefix": ["hcard"],
+    "description": "Card article with a status badge and a footer row",
+    "body": [
+      "<article class=\"card\">",
+      "  <header class=\"card__header\">",
+      "    <h3 class=\"card__title\">Release 2.4</h3>",
+      "    <span class=\"badge\">stable</span>",
+      "  </header>",
+      "",
+      "  <p class=\"card__body\">Faster indexing and a rebuilt settings screen.</p>",
+      "",
+      "  <footer class=\"card__footer\">",
+      "    <time datetime=\"2026-02-14\">Feb 14, 2026</time>",
+      "    <a class=\"card__link\" href=\"/releases/2-4\">Read more</a>",
+      "  </footer>",
+      "</article>"
+    ]
+  },
+
+  "figure_with_caption": {
+    "prefix": ["figure"],
+    "description": "Figure with a lazy loaded image and a caption",
+    "body": [
+      "<figure class=\"figure\">",
+      "  <img",
+      "    src=\"/assets/dashboard.png\"",
+      "    alt=\"Dashboard showing the monthly revenue chart\"",
+      "    loading=\"lazy\"",
+      "    decoding=\"async\"",
+      "  />",
+      "  <figcaption>",
+      "    Monthly revenue, January through June 2026.",
+      "    <a href=\"/reports/revenue\">Download the full report</a>",
+      "  </figcaption>",
+      "</figure>"
+    ]
+  },
+
+  "definition_list": {
+    "prefix": ["deflist"],
+    "description": "Definition list of terms and their explanations",
+    "body": [
+      "<dl class=\"definitions\">",
+      "  <dt>Cache TTL</dt>",
+      "  <dd>How long a cached response stays valid, in seconds.</dd>",
+      "",
+      "  <dt>Retry budget</dt>",
+      "  <dd>Maximum number of retries before the request is failed.</dd>",
+      "",
+      "  <dt>Idempotency key</dt>",
+      "  <dd>A unique token that lets the server recognise a repeated request.</dd>",
+      "</dl>"
+    ]
+  },
+
+  "svg_placeholder": {
+    "prefix": ["svgph"],
+    "description": "Inline SVG placeholder used while an image loads",
+    "body": [
+      "<svg",
+      "  xmlns=\"http://www.w3.org/2000/svg\"",
+      "  class=\"placeholder\"",
+      "  viewBox=\"0 0 64 64\"",
+      "  width=\"64\"",
+      "  height=\"64\"",
+      "  role=\"img\"",
+      "  aria-label=\"Placeholder image\"",
+      ">",
+      "  <rect width=\"64\" height=\"64\" rx=\"8\" fill=\"#e5e7eb\" />",
+      "  <circle cx=\"22\" cy=\"22\" r=\"6\" fill=\"#9ca3af\" />",
+      "  <path d=\"M14 46l11-13 9 10 6-7 10 10z\" fill=\"#9ca3af\" />",
+      "</svg>"
+    ]
+  },
+
+  "responsive_image": {
+    "prefix": ["respimg"],
+    "description": "Picture element with modern formats and a sized fallback",
+    "body": [
+      "<picture class=\"responsive-image\">",
+      "  <source",
+      "    srcset=\"/assets/hero-480.avif 480w, /assets/hero-960.avif 960w\"",
+      "    sizes=\"(max-width: 600px) 100vw, 50vw\"",
+      "    type=\"image/avif\"",
+      "  />",
+      "  <source",
+      "    srcset=\"/assets/hero-480.webp 480w, /assets/hero-960.webp 960w\"",
+      "    sizes=\"(max-width: 600px) 100vw, 50vw\"",
+      "    type=\"image/webp\"",
+      "  />",
+      "  <img",
+      "    src=\"/assets/hero-960.jpg\"",
+      "    alt=\"A team reviewing the release checklist\"",
+      "    width=\"960\"",
+      "    height=\"540\"",
+      "    loading=\"lazy\"",
+      "    decoding=\"async\"",
+      "  />",
+      "</picture>"
+    ]
+  },
+
+  "module_script": {
+    "prefix": ["scriptmod"],
+    "description": "ES module script with imports and a small bootstrap",
+    "body": [
+      "<script type=\"module\" src=\"/assets/main.js\"></script>",
+      "",
+      "<script type=\"module\">",
+      "  import { createStore } from \"/assets/store.js\";",
+      "  import { formatDate } from \"/assets/format.js\";",
+      "",
+      "  const store = createStore({ userId: 42 });",
+      "  const lastSync = document.querySelector(\"#last-sync\");",
+      "",
+      "  if (lastSync) {",
+      "    lastSync.textContent = formatDate(new Date());",
+      "  }",
+      "",
+      "  store.hydrate();",
+      "</script>"
+    ]
+  },
+
+  "template_with_slots": {
+    "prefix": ["tmplslot"],
+    "description": "Template element with named slots and fallback content",
+    "body": [
+      "<template id=\"user-card-template\">",
+      "  <article class=\"card\">",
+      "    <h3 class=\"card__title\"><slot name=\"title\">Untitled</slot></h3>",
+      "    <p class=\"card__body\"><slot name=\"body\">No description provided.</slot></p>",
+      "    <slot name=\"actions\"></slot>",
+      "  </article>",
+      "</template>"
+    ]
+  },
+
+  "details_disclosure": {
+    "prefix": ["details"],
+    "description": "Collapsible details and summary block",
+    "body": [
+      "<details class=\"disclosure\" name=\"faq\">",
+      "  <summary class=\"disclosure__summary\">How do I reset my password?</summary>",
+      "  <div class=\"disclosure__body\">",
+      "    <p>Open the account settings page and choose <strong>Reset password</strong>.</p>",
+      "    <p>A reset link is emailed to you and stays valid for one hour.</p>",
+      "  </div>",
+      "</details>"
+    ]
+  },
+
+  "custom_element": {
+    "prefix": ["customel"],
+    "description": "Web component with shadow DOM and observed attributes",
+    "body": [
+      "<custom-counter label=\"Clicks\" value=\"0\"></custom-counter>",
+      "",
+      "<script type=\"module\">",
+      "  class CustomCounter extends HTMLElement {",
+      "    static observedAttributes = [\"value\"];",
+      "",
+      "    constructor() {",
+      "      super();",
+      "      this.attachShadow({ mode: \"open\" });",
+      "    }",
+      "",
+      "    connectedCallback() {",
+      "      this.render();",
+      "    }",
+      "",
+      "    attributeChangedCallback(name, oldValue, newValue) {",
+      "      if (name === \"value\") {",
+      "        this.render();",
+      "      }",
+      "    }",
+      "",
+      "    render() {",
+      "      const label = this.getAttribute(\"label\");",
+      "      const value = this.getAttribute(\"value\");",
+      "      this.shadowRoot.innerHTML = `<span>\\${label}: \\${value}</span>`;",
+      "    }",
+      "  }",
+      "",
+      "  customElements.define(\"custom-counter\", CustomCounter);",
+      "</script>"
+    ]
+  },
+
+  "progress_indicator": {
+    "prefix": ["progress"],
+    "description": "Accessible progress bar and meter for loading feedback",
+    "body": [
+      "<div class=\"progress\">",
+      "  <div",
+      "    class=\"progress__bar\"",
+      "    role=\"progressbar\"",
+      "    aria-valuenow=\"70\"",
+      "    aria-valuemin=\"0\"",
+      "    aria-valuemax=\"100\"",
+      "    aria-label=\"Upload progress\"",
+      "  ></div>",
+      "  <p class=\"progress__label\">Uploading 70%</p>",
+      "</div>",
+      "",
+      "<meter min=\"0\" max=\"100\" low=\"30\" high=\"70\" optimum=\"90\" value=\"72\">72%</meter>"
+    ]
+  },
+
+  "responsive_video": {
+    "prefix": ["videobox"],
+    "description": "Video player with multiple sources and a download fallback",
+    "body": [
+      "<figure class=\"video\">",
+      "  <video",
+      "    class=\"video__player\"",
+      "    controls",
+      "    preload=\"metadata\"",
+      "    poster=\"/assets/video-poster.jpg\"",
+      "    width=\"1280\"",
+      "    height=\"720\"",
+      "  >",
+      "    <source src=\"/assets/demo.webm\" type=\"video/webm\" />",
+      "    <source src=\"/assets/demo.mp4\" type=\"video/mp4\" />",
+      "    Your browser does not support embedded video.",
+      "    <a href=\"/assets/demo.mp4\">Download the video</a>",
+      "  </video>",
+      "  <figcaption>Product walkthrough, about four minutes.</figcaption>",
+      "</figure>"
+    ]
   }
 }

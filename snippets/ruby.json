@@ -1,0 +1,300 @@
+{
+  "rb_class": {
+    "prefix": ["klass"],
+    "description": "Class with keyword arguments and a to_s method",
+    "body": [
+      "class Order",
+      "  attr_reader :id, :total",
+      "",
+      "  def initialize(id:, total:)",
+      "    @id = id",
+      "    @total = total",
+      "  end",
+      "",
+      "  def to_s",
+      "    \"Order ##{@id} (#{@total})\"",
+      "  end",
+      "end"
+    ]
+  },
+
+  "rb_module": {
+    "prefix": ["modul"],
+    "description": "Module that adds a reporting method to a class",
+    "body": [
+      "module Reportable",
+      "  def report",
+      "    \"#{self.class.name}: #{summary}\"",
+      "  end",
+      "",
+      "  private",
+      "",
+      "  def summary",
+      "    'no summary'",
+      "  end",
+      "end"
+    ]
+  },
+
+  "rb_method_keyword_args": {
+    "prefix": ["meth", "kwargs"],
+    "description": "Method with keyword arguments and default values",
+    "body": [
+      "def find_order(id:, status: 'active', limit: 10)",
+      "  orders = OrderRepository.all(status: status)",
+      "",
+      "  orders.select { |order| order.id == id }.first(limit)",
+      "end"
+    ]
+  },
+
+  "rb_singleton_method": {
+    "prefix": ["singleton", "classmethod"],
+    "description": "Singleton class with a memoised instance",
+    "body": [
+      "class Configuration",
+      "  class << self",
+      "    attr_accessor :api_url",
+      "",
+      "    def instance",
+      "      @instance ||= new",
+      "    end",
+      "  end",
+      "end"
+    ]
+  },
+
+  "rb_attr_accessor": {
+    "prefix": ["attracc", "attrs"],
+    "description": "Declare public, read only and write only attributes",
+    "body": [
+      "class User",
+      "  attr_accessor :name, :email",
+      "  attr_reader :id",
+      "  attr_writer :password_digest",
+      "end"
+    ]
+  },
+
+  "rb_block": {
+    "prefix": ["block", "eachblock"],
+    "description": "Iterate with a block and build a hash of totals",
+    "body": [
+      "def total_by(orders)",
+      "  orders.each_with_object(Hash.new(0)) do |order, totals|",
+      "    totals[order.status] += order.total",
+      "  end",
+      "end"
+    ]
+  },
+
+  "rb_lambda": {
+    "prefix": ["lam", "lambda"],
+    "description": "Lambda and proc used as callables",
+    "body": [
+      "doubler = ->(value) { value * 2 }",
+      "apply = lambda { |a, b| a + b }",
+      "",
+      "numbers.map(&doubler)",
+      "numbers.map { |number| doubler.call(number) }"
+    ]
+  },
+
+  "rb_hash": {
+    "prefix": ["hashlit", "hash"],
+    "description": "Hash literal with nested options and a safe default",
+    "body": [
+      "config = {",
+      "  host: 'localhost',",
+      "  port: 5432,",
+      "  options: { timeout: 30, retries: 3 }",
+      "}",
+      "",
+      "timeout = config.fetch(:timeout, 10)"
+    ]
+  },
+
+  "rb_array": {
+    "prefix": ["arr", "array"],
+    "description": "Array with map, select and a sliced range",
+    "body": [
+      "ids = [1, 2, 3, 4, 5]",
+      "evens = ids.select(&:even?)",
+      "doubled = ids.map { |id| id * 2 }",
+      "batches = (1..10).each_slice(3).to_a"
+    ]
+  },
+
+  "rb_case_ternary": {
+    "prefix": ["casewhen", "branch"],
+    "description": "Case statement with a ternary and safe navigation",
+    "body": [
+      "def label_for(status)",
+      "  case status",
+      "  when :active then 'Active'",
+      "  when :pending then 'Pending review'",
+      "  when :archived, :deleted then 'Archived'",
+      "  else 'Unknown'",
+      "  end",
+      "end",
+      "",
+      "def display_name(user)",
+      "  user&.name || 'Anonymous'",
+      "end",
+      "",
+      "def size_label(count)",
+      "  count > 10 ? 'many' : 'few'",
+      "end"
+    ]
+  },
+
+  "rb_string_interpolation": {
+    "prefix": ["interp", "interpolation"],
+    "description": "Build strings with interpolation and formatting",
+    "body": [
+      "def greeting(user)",
+      "  \"Hello #{user.name}, you have #{user.orders.count} orders\"",
+      "end",
+      "",
+      "message = \"Order #{order.id} costs #{format('%.2f', order.total)}\""
+    ]
+  },
+
+  "rb_heredoc": {
+    "prefix": ["heredoc", "heres"],
+    "description": "Squiggly and dash heredocs for SQL and text blocks",
+    "body": [
+      "query = <<~SQL",
+      "  SELECT id, name",
+      "  FROM users",
+      "  WHERE status = 'active'",
+      "SQL",
+      "",
+      "body = <<-TEXT",
+      "  Dear customer,",
+      "  your order has shipped.",
+      "  TEXT"
+    ]
+  },
+
+  "rb_gsub": {
+    "prefix": ["gsub", "slug"],
+    "description": "Rewrite strings with gsub, tr and capitalize",
+    "body": [
+      "def slugify(text)",
+      "  text.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/\\\\A-|-\\\\z/, '')",
+      "end",
+      "",
+      "def humanise(text)",
+      "  text.tr('_', ' ').capitalize",
+      "end"
+    ]
+  },
+
+  "rb_read_file": {
+    "prefix": ["readfile", "filein"],
+    "description": "Read a file as one string or as a list of lines",
+    "body": [
+      "content = File.read('README.md')",
+      "lines = File.readlines('config.yml', chomp: true)",
+      "paragraphs = File.read('notes.md').split(\"\\\\n\\\\n\")",
+      "",
+      "lines.each_with_index { |line, index| puts \"#{index + 1}: #{line}\" }"
+    ]
+  },
+
+  "rb_write_file": {
+    "prefix": ["writefile", "fileout"],
+    "description": "Write a file and append a line to another one",
+    "body": [
+      "File.write('output/report.txt', report)",
+      "",
+      "File.open('output/log.txt', 'a') do |file|",
+      "  file.puts(\"processed #{count} rows\")",
+      "end"
+    ]
+  },
+
+  "rb_csv": {
+    "prefix": ["csvparse", "csv"],
+    "description": "Parse a CSV file with headers and iterate over rows",
+    "body": [
+      "require 'csv'",
+      "",
+      "rows = CSV.read('data/${1:orders.csv}', headers: true)",
+      "",
+      "rows.each do |row|",
+      "  puts \"#{row['id']}: #{row['total']}\"",
+      "end"
+    ]
+  },
+
+  "rb_json": {
+    "prefix": ["jsonparse", "json"],
+    "description": "Parse JSON into a hash and write it back pretty printed",
+    "body": [
+      "require 'json'",
+      "",
+      "payload = JSON.parse(File.read('data/user.json'), symbolize_names: true)",
+      "user = payload.fetch(:user)",
+      "",
+      "File.write('data/user.json', JSON.pretty_generate(user))"
+    ]
+  },
+
+  "rb_rescue_ensure": {
+    "prefix": ["rescue", "ensure"],
+    "description": "Method that rescues errors and always cleans up",
+    "body": [
+      "def fetch_report(url)",
+      "  response = Net::HTTP.get_response(URI.parse(url))",
+      "  raise \"Request failed: #{response.code}\" unless response.is_a?(Net::HTTPSuccess)",
+      "",
+      "  JSON.parse(response.body)",
+      "rescue JSON::ParserError => e",
+      "  warn \"Invalid JSON: #{e.message}\"",
+      "  nil",
+      "ensure",
+      "  puts 'request finished'",
+      "end"
+    ]
+  },
+
+  "rb_minitest": {
+    "prefix": ["minitest", "unittest"],
+    "description": "Minitest test case with an assertion and a raise check",
+    "body": [
+      "require 'minitest/autorun'",
+      "",
+      "class OrderTest < Minitest::Test",
+      "  def test_total_is_kept",
+      "    order = Order.new(id: 1, total: 25.0)",
+      "",
+      "    assert_equal 25.0, order.total",
+      "  end",
+      "",
+      "  def test_invalid_order_is_rejected",
+      "    assert_raises(ArgumentError) { Order.new(id: nil, total: 10) }",
+      "  end",
+      "end"
+    ]
+  },
+
+  "rb_rails_model": {
+    "prefix": ["model", "activerecord"],
+    "description": "ActiveRecord model with associations, validations and scope",
+    "body": [
+      "class Order < ApplicationRecord",
+      "  belongs_to :customer",
+      "  has_many :line_items, dependent: :destroy",
+      "",
+      "  validates :total, numericality: { greater_than_or_equal_to: 0 }",
+      "  scope :settled, -> { where.not(status: 'pending') }",
+      "",
+      "  def settled?",
+      "    status == 'settled'",
+      "  end",
+      "end"
+    ]
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "lisp_defun": {
+    "prefix": ["defun"],
+    "description": "Function definition",
+    "body": [
+      "(defun ${1:name} (${2:arguments})",
+      "  \"${3:Describe what the function does.}\"",
+      "  $0)"
+    ]
+  },
+
+  "lisp_defun_plain": {
+    "prefix": ["defunplain"],
+    "description": "Function definition without a docstring",
+    "body": [
+      "(defun ${1:name} (${2:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "lisp_defparameter": {
+    "prefix": ["defparameter"],
+    "description": "Special variable with a value",
+    "body": [
+      "(defparameter *${1:name}* ${2:value}"
+    ]
+  },
+
+  "lisp_defvar": {
+    "prefix": ["defvar"],
+    "description": "Special variable declaration",
+    "body": [
+      "(defvar *${1:name}* ${2:value}"
+    ]
+  },
+
+  "lisp_defmacro": {
+    "prefix": ["defmacro"],
+    "description": "Macro definition with the quasiquoted body",
+    "body": [
+      "(defmacro ${1:name} (${2:arguments})",
+      "  `(let ((result (${3:do-something} ,@${2:arguments})))",
+      "    result))"
+    ]
+  },
+
+  "lisp_defpackage": {
+    "prefix": ["defpackage"],
+    "description": "Package declaration with the exported symbols",
+    "body": [
+      "(defpackage ${1:my-package}",
+      "  (:use :cl)",
+      "  (:export :${2:main}))",
+      "",
+      "(in-package :${1:my-package})"
+    ]
+  },
+
+  "lisp_defstruct": {
+    "prefix": ["defstruct"],
+    "description": "Structure definition",
+    "body": [
+      "(defstruct (${1:name} (:constructor %make-${1:name}))",
+      "  (${2:field} :initarg :${2:field} :initform ${3:0} :accessor ${2:field}))"
+    ]
+  },
+
+  "lisp_let": {
+    "prefix": ["let"],
+    "description": "Let binding with the body",
+    "body": [
+      "(let ((${1:name} ${2:value}))",
+      "  $0)"
+    ]
+  },
+
+  "lisp_let_star": {
+    "prefix": ["let*"],
+    "description": "Let binding where the values can refer to each other",
+    "body": [
+      "(let* ((${1:name} ${2:value})",
+      "       (${3:other} ${1:name}))",
+      "  $0)"
+    ]
+  },
+
+  "lisp_cond": {
+    "prefix": ["cond"],
+    "description": "Cond expression with the fallback branch",
+    "body": [
+      "(cond ((${1:condition}) ${2:result})",
+      "      (t ${3:fallback}))"
+    ]
+  },
+
+  "lisp_when": {
+    "prefix": ["when"],
+    "description": "Conditional form without a fallback",
+    "body": [
+      "(when ${1:condition}",
+      "  $0)"
+    ]
+  },
+
+  "lisp_dolist": {
+    "prefix": ["dolist"],
+    "description": "Loop over the elements of a list",
+    "body": [
+      "(dolist (${1:item} ${2:list})",
+      "  $0)"
+    ]
+  },
+
+  "lisp_dotimes": {
+    "prefix": ["dotimes"],
+    "description": "Loop over a range of numbers",
+    "body": [
+      "(dotimes (${1:i} ${2:count})",
+      "  $0)"
+    ]
+  },
+
+  "lisp_lambda": {
+    "prefix": ["lambda"],
+    "description": "Anonymous function",
+    "body": [
+      "(lambda (${1:arguments})",
+      "  $0)"
+    ]
+  },
+
+  "lisp_comment": {
+    "prefix": ["lcomment"],
+    "description": "Block comment",
+    "body": [
+      ";;;; ${1:TODO}",
+      ";;;;"
+    ]
+  }
+}

@@ -1,0 +1,232 @@
+{
+  "solidity_contract": {
+    "prefix": ["contract"],
+    "description": "Contract with an owner, an event and a guarded function",
+    "body": [
+      "// SPDX-License-Identifier: ${1:MIT}",
+      "pragma solidity ^0.8.24;",
+      "",
+      "contract ${2:MyContract} {",
+      "    address public owner;",
+      "",
+      "    event ${3:Transfer}(address indexed from, address indexed to, uint256 amount);",
+      "",
+      "    modifier onlyOwner() {",
+      "        require(msg.sender == owner, \"caller is not the owner\");",
+      "        _;",
+      "    }",
+      "",
+      "    constructor() {",
+      "        owner = msg.sender;",
+      "    }",
+      "",
+      "    function ${4:doSomething}(uint256 ${5:value}) external onlyOwner {",
+      "        $0",
+      "    }",
+      "}"
+    ]
+  },
+
+  "solidity_interface": {
+    "prefix": ["interface"],
+    "description": "Interface declaring the external functions of a contract",
+    "body": [
+      "// SPDX-License-Identifier: ${1:MIT}",
+      "pragma solidity ^0.8.24;",
+      "",
+      "interface ${2:IMyInterface} {",
+      "    function ${3:doSomething}(uint256 ${4:value}) external returns (bool);",
+      "}"
+    ]
+  },
+
+  "solidity_library": {
+    "prefix": ["library"],
+    "description": "Library with a pure helper function",
+    "body": [
+      "// SPDX-License-Identifier: ${1:MIT}",
+      "pragma solidity ^0.8.24;",
+      "",
+      "library ${2:MyLibrary} {",
+      "    function ${3:double}(uint256 ${4:value}) internal pure returns (uint256) {",
+      "        return ${4:value} * 2;",
+      "    }",
+      "}"
+    ]
+  },
+
+  "solidity_constructor": {
+    "prefix": ["constructor"],
+    "description": "Constructor that initialises the state variables",
+    "body": [
+      "constructor(${1:uint256 initialValue}) {",
+      "    ${2:value} = ${1:initialValue};",
+      "}"
+    ]
+  },
+
+  "solidity_function": {
+    "prefix": ["function", "func"],
+    "description": "External function that returns a value",
+    "body": [
+      "function ${1:doSomething}(${2:uint256 value}) external returns (${3:bool}) {",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "solidity_view_function": {
+    "prefix": ["view"],
+    "description": "Read only function that does not modify the state",
+    "body": [
+      "function ${1:balanceOf}(address ${2:account}) external view returns (uint256) {",
+      "    return ${3:balances}[${2:account}];",
+      "}"
+    ]
+  },
+
+  "solidity_payable_function": {
+    "prefix": ["payable"],
+    "description": "Function that accepts ether",
+    "body": [
+      "function ${1:deposit}() external payable {",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "solidity_modifier": {
+    "prefix": ["modifier"],
+    "description": "Modifier that checks a condition before running the body",
+    "body": [
+      "modifier ${1:onlyOwner}() {",
+      "    require(msg.sender == ${2:owner}, \"caller is not the owner\");",
+      "    _;",
+      "}"
+    ]
+  },
+
+  "solidity_event": {
+    "prefix": ["event"],
+    "description": "Event declaration",
+    "body": [
+      "event ${1:Transfer}(address indexed from, address indexed to, uint256 amount);"
+    ]
+  },
+
+  "solidity_emit": {
+    "prefix": ["emit"],
+    "description": "Emit a previously declared event",
+    "body": [
+      "emit ${1:Transfer}(msg.sender, ${2:to}, ${3:amount});"
+    ]
+  },
+
+  "solidity_error": {
+    "prefix": ["error"],
+    "description": "Custom error declaration",
+    "body": [
+      "error ${1:Unauthorized}(address caller);"
+    ]
+  },
+
+  "solidity_revert_custom": {
+    "prefix": ["revert"],
+    "description": "Revert with a custom error",
+    "body": [
+      "revert ${1:Unauthorized}(msg.sender);"
+    ]
+  },
+
+  "solidity_require": {
+    "prefix": ["require"],
+    "description": "Require statement with a revert reason",
+    "body": [
+      "require(${1:condition}, \"${2:reason}\");"
+    ]
+  },
+
+  "solidity_mapping": {
+    "prefix": ["mapping"],
+    "description": "Mapping between two keys and a value",
+    "body": [
+      "mapping(address => uint256) public ${1:balances};"
+    ]
+  },
+
+  "solidity_struct": {
+    "prefix": ["struct"],
+    "description": "Struct with a couple of fields",
+    "body": [
+      "struct ${1:Order} {",
+      "    address ${2:buyer};",
+      "    uint256 ${3:amount};",
+      "}"
+    ]
+  },
+
+  "solidity_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a few states",
+    "body": [
+      "enum ${1:Status} {",
+      "    ${2:Pending},",
+      "    ${3:Active},",
+      "    ${4:Cancelled}",
+      "}"
+    ]
+  },
+
+  "solidity_for_loop": {
+    "prefix": ["for"],
+    "description": "For loop over a range",
+    "body": [
+      "for (uint256 ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++) {",
+      "    $0",
+      "}"
+    ]
+  },
+
+  "solidity_try_catch": {
+    "prefix": ["trycatch"],
+    "description": "External call wrapped in a try and catch block",
+    "body": [
+      "try ${1:token}.transfer(to, amount) {",
+      "    ${2:emit Success(to, amount);}",
+      "} catch {",
+      "    ${3:emit Failure(to, amount);}",
+      "}"
+    ]
+  },
+
+  "solidity_receive": {
+    "prefix": ["receive"],
+    "description": "Receive and fallback functions",
+    "body": [
+      "receive() external payable {",
+      "    $0",
+      "}",
+      "",
+      "fallback() external payable {",
+      "    $1",
+      "}"
+    ]
+  },
+
+  "solidity_using_for": {
+    "prefix": ["usingfor"],
+    "description": "Attach a library to a type with using for",
+    "body": [
+      "using ${1:MyLibrary} for ${2:uint256};"
+    ]
+  },
+
+  "solidity_pragma": {
+    "prefix": ["pragma"],
+    "description": "License identifier and compiler version pragma",
+    "body": [
+      "// SPDX-License-Identifier: ${1:MIT}",
+      "pragma solidity ^0.8.24;"
+    ]
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "liquid_output": {
+    "prefix": ["output"],
+    "description": "Print a value in the template",
+    "body": [
+      "{{ ${1:value} }}"
+    ]
+  },
+
+  "liquid_if": {
+    "prefix": ["if"],
+    "description": "Conditional block with an else branch",
+    "body": [
+      "{% if ${1:condition} %}",
+      "    ${2:content}",
+      "{% else %}",
+      "    ${3:content}",
+      "{% endif %}"
+    ]
+  },
+
+  "liquid_unless": {
+    "prefix": ["unless"],
+    "description": "Block rendered when the condition is false",
+    "body": [
+      "{% unless ${1:condition} %}",
+      "    ${2:content}",
+      "{% endunless %}"
+    ]
+  },
+
+  "liquid_for": {
+    "prefix": ["for"],
+    "description": "Loop over a collection",
+    "body": [
+      "{% for ${1:item} in ${2:collection} %}",
+      "    {{ ${1:item} }}",
+      "{% endfor %}"
+    ]
+  },
+
+  "liquid_forloop": {
+    "prefix": ["forloop"],
+    "description": "Loop using the forloop variable",
+    "body": [
+      "{% for ${1:item} in ${2:collection} %}",
+      "    {{ forloop.index }} / {{ forloop.length }}",
+      "{% endfor %}"
+    ]
+  },
+
+  "liquid_case": {
+    "prefix": ["case"],
+    "description": "Case block with a few branches",
+    "body": [
+      "{% case ${1:value} %}",
+      "{% when ${2:first} %}",
+      "    ${3:content}",
+      "{% when ${4:second} %}",
+      "    ${5:content}",
+      "{% else %}",
+      "    ${6:content}",
+      "{% endcase %}"
+    ]
+  },
+
+  "liquid_assign": {
+    "prefix": ["assign"],
+    "description": "Assign a value to a template variable",
+    "body": [
+      "{% assign ${1:name} = ${2:value} %}"
+    ]
+  },
+
+  "liquid_capture": {
+    "prefix": ["capture"],
+    "description": "Capture the output of a block into a variable",
+    "body": [
+      "{% capture ${1:name} %}",
+      "    ${2:content}",
+      "{% endcapture %}"
+    ]
+  },
+
+  "liquid_filter": {
+    "prefix": ["filter"],
+    "description": "Apply a filter to a value",
+    "body": [
+      "{{ ${1:value} | ${2:upcase} }}"
+    ]
+  },
+
+  "liquid_include": {
+    "prefix": ["include"],
+    "description": "Include another template",
+    "body": [
+      "{% include '${1:partial}' %}"
+    ]
+  },
+
+  "liquid_raw": {
+    "prefix": ["raw"],
+    "description": "Block rendered without interpreting the liquid tags",
+    "body": [
+      "{% raw %}",
+      "    ${1:content}",
+      "{% endraw %}"
+    ]
+  },
+
+  "liquid_comment": {
+    "prefix": ["lcomment"],
+    "description": "Liquid comment",
+    "body": [
+      "{% comment %} ${1:TODO} {% endcomment %}"
+    ]
+  }
+}

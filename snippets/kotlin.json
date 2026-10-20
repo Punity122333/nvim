@@ -1,0 +1,367 @@
+{
+  "data_class": {
+    "prefix": ["data"],
+    "description": "Data class with defaults and a copy based helper",
+    "body": [
+      "data class ${1:User}(",
+      "  val id: Long,",
+      "  val name: String,",
+      "  val email: String? = null,",
+      "  val roles: List<String> = emptyList(),",
+      ") {",
+      "  fun withRole(role: String): User = copy(roles = roles + role)",
+      "}"
+    ]
+  },
+
+  "sealed_class": {
+    "prefix": ["sealed"],
+    "description": "Sealed result type with a safe unwrap helper",
+    "body": [
+      "sealed interface LoadResult<out T> {",
+      "  data class Loaded<T>(val value: T) : LoadResult<T>",
+      "  data class Failed(val error: Throwable) : LoadResult<Nothing>",
+      "}",
+      "",
+      "fun <T> LoadResult<T>.valueOrNull(): T? = (this as? LoadResult.Loaded)?.value"
+    ]
+  },
+
+  "object_singleton": {
+    "prefix": ["object"],
+    "description": "Object singleton reading its configuration from the environment",
+    "body": [
+      "object ${1:AppConfig} {",
+      "  private const val DEFAULT_PORT = 8080",
+      "",
+      "  val port: Int = System.getenv(\"APP_PORT\")?.toIntOrNull() ?: DEFAULT_PORT",
+      "  val debug: Boolean = System.getenv(\"APP_DEBUG\") == \"true\"",
+      "",
+      "  fun baseUrl(): String = \"http://localhost:\\$port\"",
+      "}"
+    ]
+  },
+
+  "extension_function": {
+    "prefix": ["extfun"],
+    "description": "Extension functions on String and Int",
+    "body": [
+      "fun ${1:String}.titleCase(): String =",
+      "  split(' ')",
+      "    .filter { it.isNotEmpty() }",
+      "    .joinToString(\" \") { word -> word.replaceFirstChar { it.uppercase() } }",
+      "",
+      "fun Int.clampTo(min: Int, max: Int): Int = coerceIn(min, max)"
+    ]
+  },
+
+  "scope_functions": {
+    "prefix": ["scope"],
+    "description": "Chained scope functions over a list of employees",
+    "body": [
+      "data class Employee(val id: Long, val name: String, val team: String)",
+      "",
+      "fun summarizeTeam(employees: List<Employee>): String {",
+      "  val names = employees",
+      "    .map { it.name.trim() }",
+      "    .filter { it.isNotEmpty() }",
+      "    .sorted()",
+      "    .also { println(\"found \\${it.size} employees\") }",
+      "    .joinToString(\", \")",
+      "",
+      "  return names.ifEmpty { \"no employees\" }",
+      "}"
+    ]
+  },
+
+  "suspend_function": {
+    "prefix": ["suspend"],
+    "description": "Suspend function that loads data and composes a result",
+    "body": [
+      "import kotlinx.coroutines.delay",
+      "",
+      "suspend fun ${1:fetchUser}(id: Long): String {",
+      "  delay(200)",
+      "  return \"user-\\$id\"",
+      "}",
+      "",
+      "suspend fun loadDashboard(userId: Long): String {",
+      "  val user = fetchUser(userId)",
+      "  return \"dashboard for \\$user\"",
+      "}"
+    ]
+  },
+
+  "flow": {
+    "prefix": ["flow"],
+    "description": "Cold flow that emits search results one by one",
+    "body": [
+      "import kotlinx.coroutines.flow.Flow",
+      "import kotlinx.coroutines.flow.flow",
+      "",
+      "fun ${1:searchResults}(query: String): Flow<String> = flow {",
+      "  emit(\"searching for \\$query\")",
+      "  for (result in listOf(\"doc-1\", \"doc-2\", \"doc-3\")) {",
+      "    emit(result)",
+      "  }",
+      "  emit(\"done\")",
+      "}"
+    ]
+  },
+
+  "nullable_guard": {
+    "prefix": ["nullable"],
+    "description": "Null safe access with a fallback for missing nicknames",
+    "body": [
+      "data class Profile(val id: Long, val nickname: String?)",
+      "",
+      "fun ${1:displayName}(profile: Profile?): String {",
+      "  if (profile == null) {",
+      "    return \"anonymous\"",
+      "  }",
+      "  val nickname = profile.nickname",
+      "  return if (nickname.isNullOrBlank()) \"user-\\${profile.id}\" else nickname",
+      "}"
+    ]
+  },
+
+  "when_expression": {
+    "prefix": ["when"],
+    "description": "When expression mapping an enum to a label",
+    "body": [
+      "enum class OrderState { NEW, PAID, SHIPPED, CANCELLED }",
+      "",
+      "fun ${1:stateLabel}(state: OrderState): String = when (state) {",
+      "  OrderState.NEW -> \"Created\"",
+      "  OrderState.PAID -> \"Payment received\"",
+      "  OrderState.SHIPPED -> \"On the way\"",
+      "  OrderState.CANCELLED -> \"Cancelled\"",
+      "}"
+    ]
+  },
+
+  "companion_object": {
+    "prefix": ["companion"],
+    "description": "Companion object with constants and a factory method",
+    "body": [
+      "data class ApiConfig(",
+      "  val baseUrl: String,",
+      "  val timeoutMs: Long,",
+      ") {",
+      "  companion object {",
+      "    const val DEFAULT_TIMEOUT_MS = 30_000L",
+      "",
+      "    fun local(): ApiConfig = ApiConfig(\"http://localhost:8080\", DEFAULT_TIMEOUT_MS)",
+      "  }",
+      "}"
+    ]
+  },
+
+  "typealias": {
+    "prefix": ["typealias"],
+    "description": "Type aliases for a domain id and a map of users",
+    "body": [
+      "typealias ${1:UserId} = Long",
+      "typealias UserMap = Map<UserId, String>",
+      "",
+      "fun findEmail(users: UserMap, id: UserId): String? = users[id]"
+    ]
+  },
+
+  "generic_class": {
+    "prefix": ["generic"],
+    "description": "Generic container with a map function",
+    "body": [
+      "class ${1:Box}<T>(val value: T) {",
+      "  fun <R> map(transform: (T) -> R): Box<R> = Box(transform(value))",
+      "",
+      "  fun getOrElse(fallback: T): T = value",
+      "}",
+      "",
+      "fun firstBoxOf(items: List<Box<String>>): Box<String> = items.first()"
+    ]
+  },
+
+  "dsl_builder": {
+    "prefix": ["dsl"],
+    "description": "Small DSL builder using a lambda with receiver",
+    "body": [
+      "class HtmlBuilder {",
+      "  private val parts = mutableListOf<String>()",
+      "",
+      "  fun tag(name: String, block: HtmlBuilder.() -> Unit) {",
+      "    parts += \"<\\$name>\"",
+      "    block()",
+      "    parts += \"</\\$name>\"",
+      "  }",
+      "",
+      "  fun text(value: String) {",
+      "    parts += value",
+      "  }",
+      "",
+      "  override fun toString(): String = parts.joinToString(\"\")",
+      "}",
+      "",
+      "fun ${1:html}(init: HtmlBuilder.() -> Unit): String =",
+      "  HtmlBuilder().apply(init).toString()"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["test"],
+    "description": "Unit test using kotlin.test assertions",
+    "body": [
+      "import kotlin.test.Test",
+      "import kotlin.test.assertEquals",
+      "",
+      "data class Account(val id: Long, val name: String)",
+      "",
+      "class ${1:AccountServiceTest} {",
+      "  @Test",
+      "  fun `formats the account name`() {",
+      "    val account = Account(1, \"Ada Lovelace\")",
+      "",
+      "    assertEquals(\"Ada Lovelace\", formatName(account))",
+      "  }",
+      "}",
+      "",
+      "fun formatName(account: Account): String = account.name.trim()"
+    ]
+  },
+
+  "init_block": {
+    "prefix": ["init"],
+    "description": "Class with an init block and a secondary constructor",
+    "body": [
+      "class ${1:Config} private constructor(",
+      "  val host: String,",
+      "  val port: Int,",
+      ") {",
+      "  init {",
+      "    require(port in 1..65535) { \"port out of range: \\$port\" }",
+      "  }",
+      "",
+      "  constructor(host: String) : this(host, 8080)",
+      "",
+      "  fun url(): String = \"http://\\$host:\\$port\"",
+      "}"
+    ]
+  },
+
+  "class_delegation": {
+    "prefix": ["delegate"],
+    "description": "Interface delegation backed by another implementation",
+    "body": [
+      "interface Storage {",
+      "  fun read(key: String): String?",
+      "  fun write(key: String, value: String)",
+      "}",
+      "",
+      "class InMemoryStorage : Storage {",
+      "  private val values = mutableMapOf<String, String>()",
+      "",
+      "  override fun read(key: String): String? = values[key]",
+      "",
+      "  override fun write(key: String, value: String) {",
+      "    values[key] = value",
+      "  }",
+      "}",
+      "",
+      "class ${1:UserRepository}(private val storage: Storage) : Storage by storage {",
+      "  fun save(id: Long, name: String) = storage.write(\"user-\\$id\", name)",
+      "}"
+    ]
+  },
+
+  "operator_overload": {
+    "prefix": ["operator"],
+    "description": "Operator overloads for a small vector type",
+    "body": [
+      "data class Vector(val x: Double, val y: Double) {",
+      "  operator fun ${1:plus}(other: Vector): Vector = Vector(x + other.x, y + other.y)",
+      "  operator fun times(factor: Double): Vector = Vector(x * factor, y * factor)",
+      "  operator fun unaryMinus(): Vector = Vector(-x, -y)",
+      "}"
+    ]
+  },
+
+  "coroutine_launch": {
+    "prefix": ["launch"],
+    "description": "Coroutine launched on a scope with an IO dispatcher",
+    "body": [
+      "import kotlinx.coroutines.CoroutineScope",
+      "import kotlinx.coroutines.Dispatchers",
+      "import kotlinx.coroutines.launch",
+      "",
+      "fun CoroutineScope.${1:refreshFeed}() {",
+      "  launch(Dispatchers.IO) {",
+      "    val items = fetchLatest()",
+      "    println(\"loaded \\${items.size} items\")",
+      "  }",
+      "}",
+      "",
+      "suspend fun fetchLatest(): List<String> = listOf(\"item-1\", \"item-2\")"
+    ]
+  },
+
+  "retrofit_service": {
+    "prefix": ["retrofit"],
+    "description": "Retrofit service interface with GET, POST and path parameters",
+    "body": [
+      "import retrofit2.http.Body",
+      "import retrofit2.http.GET",
+      "import retrofit2.http.POST",
+      "import retrofit2.http.Path",
+      "import retrofit2.http.Query",
+      "",
+      "data class UserDto(",
+      "  val id: Long,",
+      "  val name: String,",
+      "  val email: String,",
+      ")",
+      "",
+      "interface ${1:UserApi} {",
+      "  @GET(\"users\")",
+      "  suspend fun list(@Query(\"page\") page: Int): List<UserDto>",
+      "",
+      "  @GET(\"users/{id}\")",
+      "  suspend fun byId(@Path(\"id\") id: Long): UserDto",
+      "",
+      "  @POST(\"users\")",
+      "  suspend fun create(@Body user: UserDto): UserDto",
+      "}"
+    ]
+  },
+
+  "room_dao": {
+    "prefix": ["dao"],
+    "description": "Room entity and DAO with a query and an upsert",
+    "body": [
+      "import androidx.room.Dao",
+      "import androidx.room.Entity",
+      "import androidx.room.Insert",
+      "import androidx.room.OnConflictStrategy",
+      "import androidx.room.PrimaryKey",
+      "import androidx.room.Query",
+      "",
+      "@Entity(tableName = \"users\")",
+      "data class UserEntity(",
+      "  @PrimaryKey val id: Long,",
+      "  val name: String,",
+      "  val email: String,",
+      ")",
+      "",
+      "@Dao",
+      "interface ${1:UserDao} {",
+      "  @Query(\"SELECT * FROM users ORDER BY name\")",
+      "  suspend fun all(): List<UserEntity>",
+      "",
+      "  @Query(\"SELECT * FROM users WHERE email = :email LIMIT 1\")",
+      "  suspend fun byEmail(email: String): UserEntity?",
+      "",
+      "  @Insert(onConflict = OnConflictStrategy.REPLACE)",
+      "  suspend fun upsert(user: UserEntity)",
+      "}"
+    ]
+  }
+}

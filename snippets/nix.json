@@ -1,0 +1,214 @@
+{
+  "nix_let": {
+    "prefix": ["let"],
+    "description": "Let binding whose body is the final expression",
+    "body": [
+      "let",
+      "  ${1:name} = ${2:value};",
+      "  ${3:other} = ${1:name};",
+      "in",
+      "${3:other}"
+    ]
+  },
+
+  "nix_rec": {
+    "prefix": ["rec"],
+    "description": "Recursive attribute set where the values can refer to each other",
+    "body": [
+      "rec {",
+      "  ${1:key} = \"${2:value}\";",
+      "  ${3:other} = \"${1:key}-suffix\";",
+      "}"
+    ]
+  },
+
+  "nix_with": {
+    "prefix": ["with"],
+    "description": "With expression bringing a library into scope",
+    "body": [
+      "with lib;",
+      "{",
+      "  ${1:inherit} (${2:pkgs}) ${3:hello};",
+      "}"
+    ]
+  },
+
+  "nix_function": {
+    "prefix": ["fn"],
+    "description": "Lambda function with a single argument",
+    "body": [
+      "${1:arg}: ${2:arg}"
+    ]
+  },
+
+  "nix_function_pattern": {
+    "prefix": ["fnpat"],
+    "description": "Lambda function matching an argument set",
+    "body": [
+      "{ ${1:field}, ${2:other} ? ${3:null} }:",
+      "${4:field}"
+    ]
+  },
+
+  "nix_derivation": {
+    "prefix": ["drv", "derivation"],
+    "description": "Package derivation built with stdenv.mkDerivation",
+    "body": [
+      "stdenv.mkDerivation rec {",
+      "  pname = \"${1:myapp}\";",
+      "  version = \"${2:1.0.0}\";",
+      "",
+      "  src = fetchurl {",
+      "    url = \"https://example.com/\\${pname}-\\${version}.tar.gz\";",
+      "    sha256 = \"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\";",
+      "  };",
+      "",
+      "  buildPhase = ''",
+      "    runHook preBuild",
+      "    make",
+      "    runHook postBuild",
+      "  '';",
+      "",
+      "  installPhase = ''",
+      "    install -Dm755 ${3:myapp} \\$out/bin/${1:myapp}",
+      "  '';",
+      "",
+      "  meta = with lib; {",
+      "    description = \"${1:myapp}\";",
+      "    license = licenses.mit;",
+      "  };",
+      "}"
+    ]
+  },
+
+  "nix_fetchurl": {
+    "prefix": ["fetchurl"],
+    "description": "fetchurl source with a fixed output hash",
+    "body": [
+      "fetchurl {",
+      "  url = \"https://example.com/${1:archive}.tar.gz\";",
+      "  sha256 = \"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\";",
+      "}"
+    ]
+  },
+
+  "nix_shell": {
+    "prefix": ["shell", "shellnix"],
+    "description": "Development shell entry point",
+    "body": [
+      "{ pkgs ? import <nixpkgs> { } }:",
+      "",
+      "pkgs.mkShell {",
+      "  buildInputs = with pkgs; [",
+      "    ${1:git}",
+      "    ${2:ripgrep}",
+      "  ];",
+      "",
+      "  shellHook = ''",
+      "    echo \"entering the dev shell\"",
+      "  '';",
+      "}"
+    ]
+  },
+
+  "nix_flake": {
+    "prefix": ["flake"],
+    "description": "Flake with development and package outputs",
+    "body": [
+      "{",
+      "  description = \"${1:My project}\";",
+      "",
+      "  inputs = {",
+      "    nixpkgs.url = \"github:NixOS/nixpkgs/nixos-unstable\";",
+      "  };",
+      "",
+      "  outputs = { self, nixpkgs }: {",
+      "    nixosConfigurations.${2:myhost} = nixpkgs.lib.nixosSystem {",
+      "      system = \"x86_64-linux\";",
+      "      modules = [",
+      "        ./configuration.nix",
+      "      ];",
+      "    };",
+      "",
+      "    packages.x86_64-linux.default = self.packages.x86_64-linux.${3:myapp};",
+      "  };",
+      "}"
+    ]
+  },
+
+  "nix_attrset": {
+    "prefix": ["attrs", "attrset"],
+    "description": "Attribute set with a few named entries",
+    "body": [
+      "{",
+      "  ${1:name} = ${2:value};",
+      "  ${3:other} = \"${1:name}\";",
+      "}"
+    ]
+  },
+
+  "nix_list": {
+    "prefix": ["list"],
+    "description": "List literal built from a few elements",
+    "body": [
+      "[",
+      "  ${1:first}",
+      "  ${2:second}",
+      "]"
+    ]
+  },
+
+  "nix_pattern_match": {
+    "prefix": ["match"],
+    "description": "Match expression over the members of a set",
+    "body": [
+      "match ${1:value} with",
+      "  { ${2:case1} }: ${3:result1};",
+      "  { ${4:case2} }: ${5:result2};",
+      "  _: ${6:fallback};"
+    ]
+  },
+
+  "nix_if": {
+    "prefix": ["if"],
+    "description": "Conditional expression",
+    "body": [
+      "if ${1:condition} then ${2:value1} else ${3:value2}"
+    ]
+  },
+
+  "nix_assert": {
+    "prefix": ["assert"],
+    "description": "Assertion that must hold for the expression to evaluate",
+    "body": [
+      "assert ${1:condition};",
+      "${2:expression}"
+    ]
+  },
+
+  "nix_import": {
+    "prefix": ["import"],
+    "description": "Import a nix expression from a file",
+    "body": [
+      "import ${1:./default.nix}"
+    ]
+  },
+
+  "nix_indented_string": {
+    "prefix": ["nixstr"],
+    "description": "Indented string literal that keeps its own newlines",
+    "body": [
+      "''",
+      "${1:content}",
+      "''"
+    ]
+  },
+
+  "nix_comment": {
+    "prefix": ["nixcomment"],
+    "description": "Single line comment",
+    "body": [
+      "# ${1:TODO}"
+    ]
+  }
+}

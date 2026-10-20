@@ -1,0 +1,183 @@
+{
+  "document_header": {
+    "prefix": ["header"],
+    "description": "File header with title, author, date and TODO keywords",
+    "body": [
+      "#+TITLE: ${1:Project Notes}",
+      "#+AUTHOR: ${2:Jane Doe}",
+      "#+DATE: ${3:2024-05-14}",
+      "#+TODO: TODO NEXT | DONE CANCELED"
+    ]
+  },
+
+  "heading": {
+    "prefix": ["heading"],
+    "description": "Top level heading with tags at the end of the line",
+    "body": ["* ${1:Architecture Overview} :project:internal:"]
+  },
+
+  "sub_heading": {
+    "prefix": ["subheading"],
+    "description": "Second level heading",
+    "body": ["** ${1:Data flow}"]
+  },
+
+  "todo_item": {
+    "prefix": ["todo"],
+    "description": "Headline with the TODO keyword",
+    "body": ["* TODO Add retry logic to the upload client"]
+  },
+
+  "done_item": {
+    "prefix": ["done"],
+    "description": "Completed headline with its state change log entry",
+    "body": [
+      "* DONE Fix the flaky parser test",
+      "  - State \"DONE\" from \"TODO\"       [2024-05-14 Tue 09:30]"
+    ]
+  },
+
+  "priority_cookie": {
+    "prefix": ["priority"],
+    "description": "Headline with a priority cookie",
+    "body": ["* TODO [#A] Restart the failing integration suite"]
+  },
+
+  "scheduled_item": {
+    "prefix": ["scheduled"],
+    "description": "Headline scheduled with a repeating weekly timestamp",
+    "body": ["* TODO Rotate the API keys SCHEDULED: <2024-05-14 Tue +1w>"]
+  },
+
+  "deadline": {
+    "prefix": ["deadline"],
+    "description": "Headline with a deadline timestamp",
+    "body": ["* TODO Submit the compliance report DEADLINE: <2024-05-20 Mon>"]
+  },
+
+  "property_drawer": {
+    "prefix": ["properties"],
+    "description": "Property drawer with custom properties",
+    "body": [
+      ":PROPERTIES:",
+      ":CUSTOM_ID: deploy-guide",
+      ":OWNER: platform-team",
+      ":END:"
+    ]
+  },
+
+  "source_block": {
+    "prefix": ["src"],
+    "description": "Source block with a language and highlighted code",
+    "body": [
+      "#+BEGIN_SRC python",
+      "import json",
+      "from pathlib import Path",
+      "",
+      "",
+      "def load_config(path: Path) -> dict:",
+      "    return json.loads(path.read_text())",
+      "",
+      "",
+      "config = load_config(Path(\"config.json\"))",
+      "print(config[\"retries\"])",
+      "#+END_SRC"
+    ]
+  },
+
+  "example_block": {
+    "prefix": ["example"],
+    "description": "Example block showing a session transcript",
+    "body": [
+      "#+BEGIN_EXAMPLE",
+      "\\$ pip install --editable .",
+      "Successfully installed project-0.4.2",
+      "#+END_EXAMPLE"
+    ]
+  },
+
+  "quote_block": {
+    "prefix": ["quote"],
+    "description": "Quote block with an attribution line",
+    "body": [
+      "#+BEGIN_QUOTE",
+      "The best way to predict the future is to invent it.",
+      "-- Alan Kay",
+      "#+END_QUOTE"
+    ]
+  },
+
+  "table": {
+    "prefix": ["table"],
+    "description": "Table with a separator row and a column formula",
+    "body": [
+      "| Name  | Value  |",
+      "|-------+-------|",
+      "| alpha | 1      |",
+      "| beta  | 2      |",
+      "",
+      "#+TBLFM: \\$2 = 2 * \\$1"
+    ]
+  },
+
+  "list": {
+    "prefix": ["olist"],
+    "description": "Unordered list of plain items",
+    "body": [
+      "- ${1:Collect the profiling data}",
+      "- ${2:Compare the two candidates}",
+      "- ${3:Write up the findings}"
+    ]
+  },
+
+  "checklist": {
+    "prefix": ["checklist"],
+    "description": "List of checkboxes with a done item",
+    "body": [
+      "- [ ] ${1:Write the migration plan}",
+      "- [X] ${2:Back up the production database}"
+    ]
+  },
+
+  "formula_block": {
+    "prefix": ["formula"],
+    "description": "LaTeX formula block with a label",
+    "body": [
+      "\\\\begin{equation}",
+      "  e^{i \\\\pi} + 1 = 0",
+      "  \\\\label{eq:euler}",
+      "\\\\end{equation}"
+    ]
+  },
+
+  "footnote": {
+    "prefix": ["footnote"],
+    "description": "Footnote reference with its definition",
+    "body": [
+      "The build cache is restored nightly[fn:cache].",
+      "",
+      "[fn:cache] See docs/ci.md for the retention policy."
+    ]
+  },
+
+  "hyperlink": {
+    "prefix": ["link"],
+    "description": "Org link with a description",
+    "body": ["[[https://example.com/docs][Project Documentation]]"]
+  },
+
+  "comment": {
+    "prefix": ["comment"],
+    "description": "Comment line that is ignored on export",
+    "body": ["# This comment is ignored when the file is exported"]
+  },
+
+  "capture_template": {
+    "prefix": ["capture"],
+    "description": "Capture template with author, title and region slots",
+    "body": [
+      "#+CAPTURE: Task for %a: %t",
+      "%i"
+    ]
+  }
+}

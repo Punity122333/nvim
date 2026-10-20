@@ -1,0 +1,167 @@
+{
+  "crystal_struct": {
+    "prefix": ["struct"],
+    "description": "Struct with getters and an initializer",
+    "body": [
+      "struct ${1:Point}",
+      "  getter ${2:x} : Int32",
+      "  getter ${3:y} : Int32",
+      "",
+      "  def initialize(@${2:x} : Int32, @${3:y} : Int32)",
+      "  end",
+      "end"
+    ]
+  },
+
+  "crystal_class": {
+    "prefix": ["class"],
+    "description": "Class with an initializer and a public method",
+    "body": [
+      "class ${1:Greeter}",
+      "  getter ${2:name} : String",
+      "",
+      "  def initialize(@${2:name} : String)",
+      "  end",
+      "",
+      "  def ${3:greet} : String",
+      "    \"Hello, #{@${2:name}}!\"",
+      "  end",
+      "end"
+    ]
+  },
+
+  "crystal_module": {
+    "prefix": ["module"],
+    "description": "Module with a constant and a function",
+    "body": [
+      "module ${1:Utils}",
+      "  ${2:VERSION} = \"${3:0.1.0}\"",
+      "",
+      "  def self.${4:slugify}(value : String) : String",
+      "    value.downcase.gsub(/[^a-z0-9]+/, \"-\")",
+      "  end",
+      "end"
+    ]
+  },
+
+  "crystal_method": {
+    "prefix": ["def"],
+    "description": "Method with typed parameters and a return type",
+    "body": [
+      "def ${1:add}(${2:a} : Int32, ${3:b} : Int32) : Int32",
+      "  ${2:a} + ${3:b}",
+      "end"
+    ]
+  },
+
+  "crystal_class_method": {
+    "prefix": ["defself"],
+    "description": "Class method defined with self",
+    "body": [
+      "def self.${1:build}(${2:config} : ${3:Config}) : ${4:Service}",
+      "  ${4:Service}.new(${2:config})",
+      "end"
+    ]
+  },
+
+  "crystal_property": {
+    "prefix": ["property"],
+    "description": "Property with a getter and a setter",
+    "body": [
+      "property ${1:name} : String"
+    ]
+  },
+
+  "crystal_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a couple of members",
+    "body": [
+      "enum ${1:Status}",
+      "  ${2:Pending}",
+      "  ${3:Active}",
+      "  ${4:Closed}",
+      "end"
+    ]
+  },
+
+  "crystal_macro": {
+    "prefix": ["macro"],
+    "description": "Macro that expands to a method definition",
+    "body": [
+      "macro ${1:delegate}(method)",
+      "  def {{method}}",
+      "    {{@type}}",
+      "  end",
+      "end"
+    ]
+  },
+
+  "crystal_begin_rescue": {
+    "prefix": ["beginrescue"],
+    "description": "Block rescuing from an exception",
+    "body": [
+      "begin",
+      "  ${1:risky_call}",
+      "rescue ex : ${2:Exception}",
+      "  puts ex.message",
+      "end"
+    ]
+  },
+
+  "crystal_select": {
+    "prefix": ["select"],
+    "description": "Select over several channels",
+    "body": [
+      "select",
+      "  when ${1:channel}.receive",
+      "    ${2:do_something}",
+      "  when timeout ${3:1.second}",
+      "    ${4:handle_timeout}",
+      "end"
+    ]
+  },
+
+  "crystal_nilable": {
+    "prefix": ["nilable"],
+    "description": "Union of a value and nil",
+    "body": [
+      "${1:String}?"
+    ]
+  },
+
+  "crystal_array_literal": {
+    "prefix": ["array"],
+    "description": "Array literal with typed elements",
+    "body": [
+      "[${1:first}, ${2:second}] of ${3:String}"
+    ]
+  },
+
+  "crystal_hash_literal": {
+    "prefix": ["hash"],
+    "description": "Hash literal with string keys",
+    "body": [
+      "{ \"${1:key}\" => ${2:value} }"
+    ]
+  },
+
+  "crystal_spec": {
+    "prefix": ["spec"],
+    "description": "Spec block describing the expected behaviour",
+    "body": [
+      "describe \"${1:MyClass}\" do",
+      "  it \"${2:does something}\" do",
+      "    ${3:expect(1 + 1).to eq(2)}",
+      "  end",
+      "end"
+    ]
+  },
+
+  "crystal_requires": {
+    "prefix": ["requires"],
+    "description": "Require block checking the dependencies",
+    "body": [
+      "require \"${1:base64}\""
+    ]
+  }
+}

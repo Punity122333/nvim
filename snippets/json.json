@@ -1,0 +1,406 @@
+{
+  "json_object": {
+    "prefix": ["jsonobj"],
+    "description": "Flat JSON object with common scalar fields",
+    "body": [
+      "{",
+      "  \"name\": \"${1:my_service}\",",
+      "  \"version\": \"1.0.0\",",
+      "  \"enabled\": true,",
+      "  \"timeout_ms\": 5000",
+      "}"
+    ]
+  },
+
+  "json_nested_object": {
+    "prefix": ["jsonnested"],
+    "description": "JSON object with nested child objects",
+    "body": [
+      "{",
+      "  \"server\": {",
+      "    \"host\": \"localhost\",",
+      "    \"port\": 8080,",
+      "    \"tls\": {",
+      "      \"enabled\": true,",
+      "      \"cert_file\": \"/etc/ssl/server.pem\"",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_object_with_array": {
+    "prefix": ["jsonwitharr"],
+    "description": "JSON object that holds an array of values",
+    "body": [
+      "{",
+      "  \"name\": \"${1:my_service}\",",
+      "  \"tags\": [",
+      "    \"api\",",
+      "    \"internal\"",
+      "  ],",
+      "  \"replicas\": 3",
+      "}"
+    ]
+  },
+
+  "json_array_of_objects": {
+    "prefix": ["jsonarrobs"],
+    "description": "JSON array whose items are objects",
+    "body": [
+      "[",
+      "  {",
+      "    \"id\": 1,",
+      "    \"name\": \"${1:first item}\"",
+      "  },",
+      "  {",
+      "    \"id\": 2,",
+      "    \"name\": \"second item\"",
+      "  }",
+      "]"
+    ]
+  },
+
+  "json_empty_containers": {
+    "prefix": ["jsonempty"],
+    "description": "Empty JSON object and empty JSON array",
+    "body": [
+      "{",
+      "  \"empty_object\": {},",
+      "  \"empty_array\": []",
+      "}"
+    ]
+  },
+
+  "json_string_value": {
+    "prefix": ["jsonstr"],
+    "description": "JSON object with a string value",
+    "body": [
+      "{",
+      "  \"greeting\": \"${1:hello world}\",",
+      "  \"locale\": \"en-US\"",
+      "}"
+    ]
+  },
+
+  "json_number_value": {
+    "prefix": ["jsonnum"],
+    "description": "JSON object with integer and float values",
+    "body": [
+      "{",
+      "  \"${1:retries}\": 3,",
+      "  \"backoff_ms\": 250,",
+      "  \"timeout_ratio\": 0.75",
+      "}"
+    ]
+  },
+
+  "json_boolean_value": {
+    "prefix": ["jsonbool"],
+    "description": "JSON object with boolean values",
+    "body": [
+      "{",
+      "  \"enabled\": true,",
+      "  \"read_only\": false,",
+      "  \"${1:feature_flag}\": true",
+      "}"
+    ]
+  },
+
+  "json_null_value": {
+    "prefix": ["jsonnull"],
+    "description": "JSON object with null values",
+    "body": [
+      "{",
+      "  \"parent_id\": null,",
+      "  \"deleted_at\": null,",
+      "  \"${1:metadata}\": null",
+      "}"
+    ]
+  },
+
+  "json_nested_arrays": {
+    "prefix": ["jsonarrarr"],
+    "description": "JSON object containing an array of arrays",
+    "body": [
+      "{",
+      "  \"matrix\": [",
+      "    [",
+      "      1,",
+      "      0",
+      "    ],",
+      "    [",
+      "      0,",
+      "      1",
+      "    ]",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "json_package": {
+    "prefix": ["jsonpkg"],
+    "description": "Node package.json manifest with scripts and dependencies",
+    "body": [
+      "{",
+      "  \"name\": \"${1:my-package}\",",
+      "  \"version\": \"0.1.0\",",
+      "  \"private\": true,",
+      "  \"type\": \"module\",",
+      "  \"description\": \"${2:Short package description}\",",
+      "  \"scripts\": {",
+      "    \"build\": \"tsc -p tsconfig.json\",",
+      "    \"test\": \"vitest run\",",
+      "    \"lint\": \"eslint src\"",
+      "  },",
+      "  \"dependencies\": {",
+      "    \"zod\": \"^3.23.8\"",
+      "  },",
+      "  \"engines\": {",
+      "    \"node\": \">=20\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_tsconfig": {
+    "prefix": ["jsontsconfig"],
+    "description": "TypeScript tsconfig.json compiler options",
+    "body": [
+      "{",
+      "  \"compilerOptions\": {",
+      "    \"target\": \"ES2022\",",
+      "    \"module\": \"ESNext\",",
+      "    \"moduleResolution\": \"bundler\",",
+      "    \"lib\": [",
+      "      \"ES2022\"",
+      "    ],",
+      "    \"strict\": true,",
+      "    \"outDir\": \"dist\",",
+      "    \"sourceMap\": true,",
+      "    \"esModuleInterop\": true,",
+      "    \"skipLibCheck\": true",
+      "  },",
+      "  \"include\": [",
+      "    \"src\"",
+      "  ],",
+      "  \"exclude\": [",
+      "    \"node_modules\",",
+      "    \"dist\"",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "json_github_workflow": {
+    "prefix": ["jsonworkflow"],
+    "description": "GitHub Actions CI workflow (YAML workflow file)",
+    "body": [
+      "name: ${1:CI}",
+      "on:",
+      "  push:",
+      "    branches:",
+      "      - main",
+      "  pull_request:",
+      "    branches:",
+      "      - main",
+      "jobs:",
+      "  build:",
+      "    runs-on: ubuntu-latest",
+      "    steps:",
+      "      - uses: actions/checkout@v4",
+      "      - uses: actions/setup-node@v4",
+      "        with:",
+      "          node-version: 20",
+      "          cache: npm",
+      "      - run: npm ci",
+      "      - run: npm run build",
+      "      - run: npm test"
+    ]
+  },
+
+  "json_composer": {
+    "prefix": ["jsoncomposer"],
+    "description": "PHP composer.json package manifest",
+    "body": [
+      "{",
+      "  \"name\": \"vendor/package\",",
+      "  \"description\": \"${1:Short package description}\",",
+      "  \"type\": \"library\",",
+      "  \"license\": \"MIT\",",
+      "  \"require\": {",
+      "    \"php\": \">=8.1\",",
+      "    \"monolog/monolog\": \"^3.5\"",
+      "  },",
+      "  \"autoload\": {",
+      "    \"psr-4\": {",
+      "      \"Vendor\\\\\\\\Package\\\\\\\\\": \"src/\"",
+      "    }",
+      "  },",
+      "  \"require-dev\": {",
+      "    \"phpunit/phpunit\": \"^10.5\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_babel": {
+    "prefix": ["jsonbabel"],
+    "description": "Babel configuration file with presets and plugins",
+    "body": [
+      "{",
+      "  \"presets\": [",
+      "    [",
+      "      \"@babel/preset-env\",",
+      "      {",
+      "        \"targets\": \"defaults and not IE 11\",",
+      "        \"bugfixes\": true",
+      "      }",
+      "    ],",
+      "    \"@babel/preset-typescript\"",
+      "  ],",
+      "  \"plugins\": [",
+      "    \"@babel/plugin-transform-runtime\"",
+      "  ]",
+      "}"
+    ]
+  },
+
+  "json_eslint": {
+    "prefix": ["jsoneslint"],
+    "description": "ESLint configuration with environments and rules",
+    "body": [
+      "{",
+      "  \"root\": true,",
+      "  \"env\": {",
+      "    \"browser\": true,",
+      "    \"es2022\": true,",
+      "    \"node\": true",
+      "  },",
+      "  \"extends\": [",
+      "    \"eslint:recommended\",",
+      "    \"plugin:prettier/recommended\"",
+      "  ],",
+      "  \"parserOptions\": {",
+      "    \"ecmaVersion\": \"latest\",",
+      "    \"sourceType\": \"module\"",
+      "  },",
+      "  \"rules\": {",
+      "    \"no-unused-vars\": \"warn\",",
+      "    \"no-console\": \"off\",",
+      "    \"quotes\": [",
+      "      \"error\",",
+      "      \"double\"",
+      "    ]",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_jest": {
+    "prefix": ["jsonjest"],
+    "description": "Jest configuration with coverage thresholds",
+    "body": [
+      "{",
+      "  \"testEnvironment\": \"node\",",
+      "  \"roots\": [",
+      "    \"<rootDir>/src\"",
+      "  ],",
+      "  \"moduleFileExtensions\": [",
+      "    \"js\",",
+      "    \"ts\",",
+      "    \"json\"",
+      "  ],",
+      "  \"collectCoverageFrom\": [",
+      "    \"src/**/*.ts\",",
+      "    \"!src/**/*.d.ts\"",
+      "  ],",
+      "  \"coverageThreshold\": {",
+      "    \"global\": {",
+      "      \"branches\": 80,",
+      "      \"functions\": 80,",
+      "      \"lines\": 80,",
+      "      \"statements\": 80",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_deep_config": {
+    "prefix": ["jsondeep"],
+    "description": "Deeply nested configuration object",
+    "body": [
+      "{",
+      "  \"app\": {",
+      "    \"name\": \"${1:dashboard}\",",
+      "    \"runtime\": {",
+      "      \"node\": \"20\",",
+      "      \"worker_threads\": 4",
+      "    },",
+      "    \"database\": {",
+      "      \"primary\": {",
+      "        \"host\": \"db.internal\",",
+      "        \"port\": 5432,",
+      "        \"pool\": {",
+      "          \"min\": 2,",
+      "          \"max\": 10",
+      "        }",
+      "      },",
+      "      \"replica\": {",
+      "        \"host\": \"db-replica.internal\",",
+      "        \"port\": 5432",
+      "      }",
+      "    }",
+      "  }",
+      "}"
+    ]
+  },
+
+  "json_records": {
+    "prefix": ["jsonrecords"],
+    "description": "JSON list of records with ids and fields",
+    "body": [
+      "[",
+      "  {",
+      "    \"user_id\": 1042,",
+      "    \"email\": \"ada@example.com\",",
+      "    \"role\": \"admin\"",
+      "  },",
+      "  {",
+      "    \"user_id\": 1077,",
+      "    \"email\": \"grace@example.com\",",
+      "    \"role\": \"editor\"",
+      "  }",
+      "]"
+    ]
+  },
+
+  "json_settings": {
+    "prefix": ["jsonsettings"],
+    "description": "JSON settings file for an editor or tool",
+    "body": [
+      "{",
+      "  \"editor\": {",
+      "    \"font_size\": 13,",
+      "    \"tab_size\": 2,",
+      "    \"format_on_save\": true,",
+      "    \"rulers\": [",
+      "      80,",
+      "      120",
+      "    ]",
+      "  },",
+      "  \"files\": {",
+      "    \"trim_trailing_whitespace\": true,",
+      "    \"insert_final_newline\": true,",
+      "    \"exclude\": [",
+      "      \"**/node_modules/**\"",
+      "    ]",
+      "  },",
+      "  \"telemetry\": {",
+      "    \"enable\": false",
+      "  }",
+      "}"
+    ]
+  }
+}

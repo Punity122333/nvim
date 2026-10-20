@@ -1,0 +1,103 @@
+{
+  "roc_function": {
+    "prefix": ["fn"],
+    "description": "Function with a type annotation",
+    "body": [
+      "${1:name} : ${2:Str} -> ${3:Str}",
+      "${1:name} = \\\\${4:value} -> ${4:value}"
+    ]
+  },
+
+  "roc_type_alias": {
+    "prefix": ["typealias"],
+    "description": "Type alias for an existing type",
+    "body": [
+      "${1:Name} = ${2:Str}"
+    ]
+  },
+
+  "roc_record": {
+    "prefix": ["record"],
+    "description": "Record type with a couple of fields",
+    "body": [
+      "${1:Config} = {",
+      "    ${2:name}: Str,",
+      "    ${3:count}: U32,",
+      "}"
+    ]
+  },
+
+  "roc_tag_union": {
+    "prefix": ["tagunion"],
+    "description": "Tag union with a few variants",
+    "body": [
+      "${1:Shape} = [",
+      "    ${2:Circle}(U64),",
+      "    ${3:Square}(U64),",
+      "    ${4:Empty},",
+      "]"
+    ]
+  },
+
+  "roc_main": {
+    "prefix": ["main"],
+    "description": "Main function returning an io result",
+    "body": [
+      "main = io.println \"${1:Hello, world!}\""
+    ]
+  },
+
+  "roc_case": {
+    "prefix": ["case"],
+    "description": "Case expression with a catch all branch",
+    "body": [
+      "when ${1:value} is",
+      "    ${2:Tag} -> ${3:result}",
+      "    _ -> ${4:fallback}"
+    ]
+  },
+
+  "roc_expect": {
+    "prefix": ["expect"],
+    "description": "Expect block asserting a value",
+    "body": [
+      "expect",
+      "    ${1:value} = ${2:42}"
+    ]
+  },
+
+  "roc_list": {
+    "prefix": ["list"],
+    "description": "List literal",
+    "body": [
+      "[${1:first}, ${2:second}]"
+    ]
+  },
+
+  "roc_dict": {
+    "prefix": ["dict"],
+    "description": "Dictionary literal with string keys",
+    "body": [
+      "{ ${1:\"key\"}: ${2:value} }"
+    ]
+  },
+
+  "roc_platform": {
+    "prefix": ["platform"],
+    "description": "Platform implementation requiring a host",
+    "body": [
+      "platform \"${1:host}\"",
+      "",
+      "${2:host} : {}",
+      "${2:host} = host {}"
+    ]
+  },
+
+  "roc_crashing": {
+    "prefix": ["crash"],
+    "description": "Crash the program with a message",
+    "body": [
+      "${1:crash} \"${2:something went wrong}\""
+    ]
+  }
+}

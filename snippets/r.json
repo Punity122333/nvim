@@ -1,0 +1,294 @@
+{
+  "r_function_default": {
+    "prefix": ["func"],
+    "description": "Function with a default argument and named parameters",
+    "body": [
+      "calculate_total <- function(prices, tax_rate = 0.2) {",
+      "  subtotal <- sum(prices)",
+      "  total <- subtotal * (1 + tax_rate)",
+      "",
+      "  return(round(total, 2))",
+      "}"
+    ]
+  },
+
+  "r_vectorised_function": {
+    "prefix": ["vecfun"],
+    "description": "Vectorised function that returns a numeric vector",
+    "body": [
+      "standardise <- function(values) {",
+      "  centre <- mean(values)",
+      "  spread <- sd(values)",
+      "",
+      "  vapply(values, function(x) {",
+      "    if (spread == 0) return(0)",
+      "    (x - centre) / spread",
+      "  }, numeric(1))",
+      "}"
+    ]
+  },
+
+  "r_tibble": {
+    "prefix": ["tibble", "df"],
+    "description": "Create a tibble with typed columns",
+    "body": [
+      "orders <- tibble(",
+      "  id = 1:5,",
+      "  customer = c(\"ada\", \"grace\", \"alan\", \"edsger\", \"barbara\"),",
+      "  amount = c(120, 340, 75, 210, 95),",
+      "  placed_at = as.Date(\"2024-01-01\") + 0:4",
+      ")"
+    ]
+  },
+
+  "r_ggplot_chart": {
+    "prefix": ["ggplot", "chart"],
+    "description": "Grouped bar chart with a minimal theme",
+    "body": [
+      "ggplot(sales, aes(x = month, y = revenue, fill = region)) +",
+      "  geom_col(position = \"dodge\", width = 0.7) +",
+      "  scale_y_continuous(labels = scales::comma) +",
+      "  labs(title = \"Revenue by month\", x = NULL, y = \"Revenue\") +",
+      "  theme_minimal()"
+    ]
+  },
+
+  "r_dplyr_pipeline": {
+    "prefix": ["dplyr", "pipeline"],
+    "description": "dplyr pipeline with group_by and summarise",
+    "body": [
+      "summary <- orders %>%",
+      "  filter(amount > 50) %>%",
+      "  group_by(customer) %>%",
+      "  summarise(total = sum(amount), n_orders = n(), .groups = \"drop\") %>%",
+      "  arrange(desc(total))"
+    ]
+  },
+
+  "r_csv_io": {
+    "prefix": ["csvio", "readcsv"],
+    "description": "Read a CSV file and write the result back out",
+    "body": [
+      "orders <- readr::read_csv(\"data/${1:orders.csv}\", na = c(\"\", \"NA\", \"null\"))",
+      "",
+      "readr::write_csv(summary, \"output/summary.csv\")"
+    ]
+  },
+
+  "r_for_loop": {
+    "prefix": ["forloop", "fori"],
+    "description": "Loop over rows by index and skip missing values",
+    "body": [
+      "for (index in seq_len(nrow(orders))) {",
+      "  order <- orders[index, ]",
+      "",
+      "  if (is.na(order\\$amount)) {",
+      "    message(\"Skipping order \", order\\$id)",
+      "    next",
+      "  }",
+      "",
+      "  message(\"Order \", order\\$id, \" is worth \", order\\$amount)",
+      "}"
+    ]
+  },
+
+  "r_if_else": {
+    "prefix": ["ifelse", "cond"],
+    "description": "Branching function that returns a label",
+    "body": [
+      "describe_value <- function(value) {",
+      "  if (is.na(value)) {",
+      "    return(\"missing\")",
+      "  } else if (value > 100) {",
+      "    \"large\"",
+      "  } else if (value > 0) {",
+      "    \"small\"",
+      "  } else {",
+      "    \"not positive\"",
+      "  }",
+      "}"
+    ]
+  },
+
+  "r_switch": {
+    "prefix": ["switch", "caselike"],
+    "description": "Map a status code to a human readable label",
+    "body": [
+      "status_label <- function(status) {",
+      "  switch(status,",
+      "    \"new\" = \"New order\",",
+      "    \"paid\" = \"Payment received\",",
+      "    \"shipped\" = \"On the way\",",
+      "    \"Unknown status\"",
+      "  )",
+      "}"
+    ]
+  },
+
+  "r_return_list": {
+    "prefix": ["retlist", "listret"],
+    "description": "Function that returns a list of summary values",
+    "body": [
+      "build_report <- function(df, label = \"report\") {",
+      "  list(",
+      "    label = label,",
+      "    rows = nrow(df),",
+      "    columns = names(df),",
+      "    generated_at = Sys.time()",
+      "  )",
+      "}"
+    ]
+  },
+
+  "r_purrr_map": {
+    "prefix": ["mapfun", "purrr"],
+    "description": "Map over a list of files and collect the row counts",
+    "body": [
+      "row_counts <- purrr::map(files, function(path) {",
+      "  df <- readr::read_csv(path, show_col_types = FALSE)",
+      "",
+      "  nrow(df)",
+      "})"
+    ]
+  },
+
+  "r_try_catch": {
+    "prefix": ["trycatch", "safecall"],
+    "description": "Handle errors with tryCatch and warn instead of failing",
+    "body": [
+      "safe_read_csv <- function(path) {",
+      "  tryCatch(",
+      "    readr::read_csv(path, show_col_types = FALSE),",
+      "    error = function(error) {",
+      "      warning(\"Could not read \", path, \": \", conditionMessage(error))",
+      "      NULL",
+      "    }",
+      "  )",
+      "}"
+    ]
+  },
+
+  "r_testthat_test": {
+    "prefix": ["testthat", "testcase"],
+    "description": "testthat unit test for a data frame function",
+    "body": [
+      "test_that(\"totals are summed per customer\", {",
+      "  orders <- data.frame(",
+      "    customer = c(\"ada\", \"ada\", \"grace\"),",
+      "    amount = c(10, 20, 30)",
+      "  )",
+      "",
+      "  result <- summarise_orders(orders)",
+      "",
+      "  expect_equal(nrow(result), 2)",
+      "  expect_equal(result\\$total[result\\$customer == \"ada\"], 30)",
+      "})"
+    ]
+  },
+
+  "r_roxygen_block": {
+    "prefix": ["roxygen", "docblock"],
+    "description": "Roxygen documentation block above an exported function",
+    "body": [
+      "#' Summarise order amounts per customer",
+      "#'",
+      "#' @param orders A data frame with `customer` and `amount` columns.",
+      "#' @return A data frame with one row per customer and the summed amount.",
+      "#' @export",
+      "summarise_orders <- function(orders) {",
+      "  orders",
+      "}"
+    ]
+  },
+
+  "r_package_header": {
+    "prefix": ["pkgdoc", "packagehdr"],
+    "description": "Roxygen package header with the package imports",
+    "body": [
+      "#' mytools: helpers for everyday data work",
+      "#'",
+      "#' @keywords internal",
+      "\"_PACKAGE\"",
+      "",
+      "#' @importFrom dplyr filter group_by summarise",
+      "NULL"
+    ]
+  },
+
+  "r_factor": {
+    "prefix": ["factor", "orderedfactor"],
+    "description": "Build an ordered factor from numeric survey scores",
+    "body": [
+      "satisfaction <- factor(",
+      "  survey\\$score,",
+      "  levels = c(1, 2, 3, 4, 5),",
+      "  labels = c(\"very low\", \"low\", \"medium\", \"high\", \"very high\"),",
+      "  ordered = TRUE",
+      ")"
+    ]
+  },
+
+  "r_string_handling": {
+    "prefix": ["strfun", "stringy"],
+    "description": "Extract emails with a regex and clean up free text",
+    "body": [
+      "extract_emails <- function(text) {",
+      "  stringr::str_extract_all(text, \"[\\\\\\\\w.]+@[\\\\\\\\w.]+\\\\\\\\.[A-Za-z]{2,}\")",
+      "}",
+      "",
+      "clean_title <- function(title) {",
+      "  title |>",
+      "    stringr::str_to_lower() |>",
+      "    stringr::str_replace_all(\"[^a-z0-9]+\", \" \") |>",
+      "    stringr::str_trim()",
+      "}"
+    ]
+  },
+
+  "r_date_handling": {
+    "prefix": ["datefn", "dates"],
+    "description": "Work with dates, periods and month offsets",
+    "body": [
+      "days_in_period <- function(start_date, end_date) {",
+      "  start <- as.Date(start_date)",
+      "  end <- as.Date(end_date)",
+      "",
+      "  as.numeric(difftime(end, start, units = \"days\"))",
+      "}",
+      "",
+      "add_months <- function(date, months = 1) {",
+      "  seq(as.Date(date), by = paste0(months, \" months\"), length.out = 2)[2]",
+      "}"
+    ]
+  },
+
+  "r_environment": {
+    "prefix": ["envsetup", "configenv"],
+    "description": "Keep configuration values in an environment",
+    "body": [
+      "config <- new.env(parent = emptyenv())",
+      "config\\$db_url <- \"postgres://localhost/app\"",
+      "config\\$timeout <- 30",
+      "",
+      "get_config <- function(key, default = NULL) {",
+      "  value <- config[[key]]",
+      "",
+      "  if (is.null(value)) default else value",
+      "}"
+    ]
+  },
+
+  "r_s3_method": {
+    "prefix": ["s3print", "printmethod"],
+    "description": "S3 print method for a custom model class",
+    "body": [
+      "#' @export",
+      "print.my_model <- function(x, ...) {",
+      "  cat(\"<my_model>\", length(coef(x)), \"coefficients\\\\n\")",
+      "  print(coef(x))",
+      "",
+      "  invisible(x)",
+      "}"
+    ]
+  }
+}

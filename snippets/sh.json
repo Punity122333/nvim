@@ -1,0 +1,337 @@
+{
+  "script_header": {
+    "prefix": ["shebang", "shb"],
+    "description": "Bash script header with shebang and a short description",
+    "body": [
+      "#!/usr/bin/env bash",
+      "#",
+      "# ${1:Describe what this script does}",
+      "#",
+      "# Author: ${2:your name}"
+    ]
+  },
+
+  "strict_mode": {
+    "prefix": ["strict", "setstrict"],
+    "description": "Strict mode: fail on errors, unset vars and safe IFS",
+    "body": [
+      "set -euo pipefail",
+      "IFS=\\$'\\\\n\\\\t'",
+      "shopt -s nullglob"
+    ]
+  },
+
+  "shell_function": {
+    "prefix": ["func", "fn"],
+    "description": "Function with local variables and a captured exit status",
+    "body": [
+      "${1:process_items}() {",
+      "  local input_file=\"\\$1\"",
+      "  local line_count=0",
+      "  local -a results=()",
+      "",
+      "  while IFS= read -r line; do",
+      "    results+=(\"\\$line\")",
+      "    line_count=\\$((line_count + 1))",
+      "  done < \"\\$input_file\"",
+      "",
+      "  printf '%s\\\\n' \"\\${results[@]}\"",
+      "  printf 'read %s lines\\\\n' \"\\$line_count\"",
+      "}"
+    ]
+  },
+
+  "function_usage": {
+    "prefix": ["funcusage", "usage"],
+    "description": "Function that prints a usage message when called wrongly",
+    "body": [
+      "${1:backup}() {",
+      "  local usage=\"Usage: \\$(basename \"\\$0\") <source-dir> <backup-dir>\"",
+      "",
+      "  if [ \"\\$#\" -ne 2 ]; then",
+      "    printf '%s\\\\n' \"\\$usage\" >&2",
+      "    return 1",
+      "  fi",
+      "",
+      "  local source_dir=\"\\$1\"",
+      "  local backup_dir=\"\\$2\"",
+      "",
+      "  printf 'Backing up %s to %s\\\\n' \"\\$source_dir\" \"\\$backup_dir\"",
+      "}"
+    ]
+  },
+
+  "argument_parser": {
+    "prefix": ["args", "argloop"],
+    "description": "Loop over the positional arguments and handle the options",
+    "body": [
+      "verbose=0",
+      "output_file=\"\"",
+      "",
+      "while [ \"\\$#\" -gt 0 ]; do",
+      "  case \"\\$1\" in",
+      "    -v|--verbose)",
+      "      verbose=1",
+      "      shift",
+      "      ;;",
+      "    -o|--output)",
+      "      output_file=\"\\$2\"",
+      "      shift 2",
+      "      ;;",
+      "    -h|--help)",
+      "      printf 'Usage: %s [-v] [-o FILE] [target...]\\\\n' \"\\$0\"",
+      "      exit 0",
+      "      ;;",
+      "    --)",
+      "      shift",
+      "      break",
+      "      ;;",
+      "    *)",
+      "      break",
+      "      ;;",
+      "  esac",
+      "done",
+      "",
+      "for target in \"\\$@\"; do",
+      "  printf 'target: %s\\\\n' \"\\$target\"",
+      "done"
+    ]
+  },
+
+  "cleanup_trap": {
+    "prefix": ["trap", "cleanup"],
+    "description": "Trap that cleans up temporary files and reports interrupts",
+    "body": [
+      "cleanup() {",
+      "  local exit_code=\\$?",
+      "  rm -f \"\\${tmp_dir:-}\"",
+      "  printf 'exited with status %s\\\\n' \"\\$exit_code\"",
+      "  exit \"\\$exit_code\"",
+      "}",
+      "",
+      "trap cleanup EXIT",
+      "trap 'printf \"Aborted\\\\n\" >&2; exit 130' INT TERM"
+    ]
+  },
+
+  "error_handler": {
+    "prefix": ["errhandler", "onerror"],
+    "description": "Run a command and report a readable error when it fails",
+    "body": [
+      "run_step() {",
+      "  local label=\"\\$1\"",
+      "  shift",
+      "",
+      "  local output",
+      "  if ! output=\\$(\"\\$@\" 2>&1); then",
+      "    printf 'ERROR: %s failed\\\\n%s\\\\n' \"\\$label\" \"\\$output\" >&2",
+      "    return 1",
+      "  fi",
+      "",
+      "  printf '%s\\\\n' \"\\$output\"",
+      "}"
+    ]
+  },
+
+  "read_file_loop": {
+    "prefix": ["readfile", "whilefile"],
+    "description": "Read a file line by line and skip commented lines",
+    "body": [
+      "while IFS= read -r line || [ -n \"\\$line\" ]; do",
+      "  case \"\\$line\" in",
+      "    \\\\#*) continue ;;",
+      "    \"\") continue ;;",
+      "  esac",
+      "",
+      "  printf '%s\\\\n' \"\\$line\"",
+      "done < \"\\${input_file}\""
+    ]
+  },
+
+  "heredoc": {
+    "prefix": ["heredoc", "heredocfg"],
+    "description": "Write a configuration file with a quoted here document",
+    "body": [
+      "cat <<'EOF' > \"\\${config_file}\"",
+      "server_name ${1:example.com};",
+      "root /var/www/html;",
+      "index index.php;",
+      "",
+      "location /api {",
+      "    proxy_pass http://127.0.0.1:8080;",
+      "}",
+      "EOF"
+    ]
+  },
+
+  "pipefail_pipeline": {
+    "prefix": ["pipefail", "pipeline"],
+    "description": "Enable pipefail and stream a backup over ssh",
+    "body": [
+      "set -o pipefail",
+      "",
+      "tar -czf - -C \"\\$source_dir\" . \\\\",
+      "  | ssh \"\\$deploy_host\" 'cat > /srv/backups/app.tar.gz'"
+    ]
+  },
+
+  "temp_file": {
+    "prefix": ["mktemp", "tmpfile"],
+    "description": "Create a temporary file and remove it when the script exits",
+    "body": [
+      "tmp_file=\\$(mktemp \"\\${TMPDIR:-/tmp}/myapp.XXXXXX\")",
+      "",
+      "cleanup() {",
+      "  rm -f \"\\$tmp_file\"",
+      "}",
+      "",
+      "trap cleanup EXIT INT TERM",
+      "",
+      "printf 'working in %s\\\\n' \"\\$tmp_file\""
+    ]
+  },
+
+  "bash_array": {
+    "prefix": ["array", "arr"],
+    "description": "Declare a bash array and loop over its elements",
+    "body": [
+      "files=(",
+      "  \"src/main.c\"",
+      "  \"src/util.c\"",
+      "  \"src/parser.c\"",
+      ")",
+      "",
+      "for file in \"\\${files[@]}\"; do",
+      "  printf 'Processing %s\\\\n' \"\\$file\"",
+      "done",
+      "",
+      "printf '%s\\\\n' \"\\${#files[@]} files\""
+    ]
+  },
+
+  "if_elif_else": {
+    "prefix": ["ifelif", "ifchain"],
+    "description": "Conditional chain that reacts on a status code",
+    "body": [
+      "if [ \"\\$status_code\" -eq 200 ]; then",
+      "  printf 'OK\\\\n'",
+      "elif [ \"\\$status_code\" -ge 400 ] && [ \"\\$status_code\" -lt 500 ]; then",
+      "  printf 'Client error: %s\\\\n' \"\\$status_code\"",
+      "else",
+      "  printf 'Unexpected status: %s\\\\n' \"\\$status_code\"",
+      "  exit 1",
+      "fi"
+    ]
+  },
+
+  "case_statement": {
+    "prefix": ["caseof", "caseblock"],
+    "description": "Case statement that dispatches on the first argument",
+    "body": [
+      "case \"\\${1:-}\" in",
+      "  start)",
+      "    printf 'Starting the service\\\\n'",
+      "    ;;",
+      "  stop)",
+      "    printf 'Stopping the service\\\\n'",
+      "    ;;",
+      "  restart)",
+      "    printf 'Restarting the service\\\\n'",
+      "    ;;",
+      "  status)",
+      "    printf 'Service is running\\\\n'",
+      "    ;;",
+      "  *)",
+      "    printf 'Usage: %s {start|stop|restart|status}\\\\n' \"\\$0\" >&2",
+      "    exit 1",
+      "    ;;",
+      "esac"
+    ]
+  },
+
+  "curl_request": {
+    "prefix": ["curl", "httppost"],
+    "description": "POST a JSON payload with curl and fail on HTTP errors",
+    "body": [
+      "curl --request POST \\\\",
+      "  --url \"\\$endpoint\" \\\\",
+      "  --header \"Authorization: Bearer \\$api_token\" \\\\",
+      "  --header \"Content-Type: application/json\" \\\\",
+      "  --data '{\"name\":\"example\"}' \\\\",
+      "  --fail-with-body \\\\",
+      "  --silent \\\\",
+      "  --show-error"
+    ]
+  },
+
+  "curl_json": {
+    "prefix": ["curljq", "jq"],
+    "description": "Fetch a JSON API and pretty print selected fields with jq",
+    "body": [
+      "curl -fsSL \"\\$api_url\" \\\\",
+      "  -H \"Accept: application/json\" \\\\",
+      "  | jq -r '.items[] | {id, name}' \\\\",
+      "  | tee \"\\${output_file}\""
+    ]
+  },
+
+  "ssh_command": {
+    "prefix": ["sshcmd", "ssh"],
+    "description": "Run a remote command over ssh with sane options",
+    "body": [
+      "ssh -t \\\\",
+      "  -o StrictHostKeyChecking=accept-new \\\\",
+      "  -o \"LogLevel=ERROR\" \\\\",
+      "  \"deploy@\\${host}\" \\\\",
+      "  'cd /srv/app && git pull --ff-only && systemctl restart app.service'"
+    ]
+  },
+
+  "tar_backup": {
+    "prefix": ["tarbackup", "backup"],
+    "description": "Create a timestamped tar.gz backup of a directory",
+    "body": [
+      "backup_dir=\"/var/backups/app\"",
+      "timestamp=\\$(date +%Y%m%d-%H%M%S)",
+      "archive=\"\\${backup_dir}/app-\\${timestamp}.tar.gz\"",
+      "",
+      "mkdir -p \"\\$backup_dir\"",
+      "",
+      "tar -czf \"\\$archive\" \\\\",
+      "  --exclude='*.log' \\\\",
+      "  --exclude='./cache' \\\\",
+      "  -C /srv/app .",
+      "",
+      "ls -lh \"\\$archive\""
+    ]
+  },
+
+  "find_delete": {
+    "prefix": ["finddel", "findrm"],
+    "description": "Find and delete old files matching a pattern",
+    "body": [
+      "find \"\\$target_dir\" \\\\",
+      "  -type f \\\\",
+      "  -name '*.tmp' \\\\",
+      "  -mtime +7 \\\\",
+      "  -print \\\\",
+      "  -delete"
+    ]
+  },
+
+  "log_function": {
+    "prefix": ["log", "logfn"],
+    "description": "Log a message with a timestamp and a level to a file",
+    "body": [
+      "log() {",
+      "  local level=\"\\$1\"",
+      "  local message=\"\\$2\"",
+      "  local timestamp",
+      "  timestamp=\\$(date '+%Y-%m-%d %H:%M:%S')",
+      "",
+      "  printf '[%s] %-5s %s\\\\n' \"\\$timestamp\" \"\\$level\" \"\\$message\" \\\\",
+      "    | tee -a \"\\${LOG_FILE:-/var/log/app.log}\"",
+      "}"
+    ]
+  }
+}

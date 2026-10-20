@@ -1,0 +1,335 @@
+{
+  "class_interface": {
+    "prefix": ["cls"],
+    "description": "Objective-C class interface with properties",
+    "body": [
+      "@interface ${1:UserProfile} : NSObject",
+      "",
+      "@property (nonatomic, copy) NSString *displayName;",
+      "@property (nonatomic, strong) NSNumber *identifier;",
+      "@property (nonatomic, weak) id delegate;",
+      "",
+      "- (void)refreshFromServer;",
+      "",
+      "@end"
+    ]
+  },
+
+  "class_implementation": {
+    "prefix": ["clsimpl"],
+    "description": "Objective-C class implementation with an instance method",
+    "body": [
+      "@implementation UserProfile",
+      "",
+      "- (instancetype)init {",
+      "  self = [super init];",
+      "  if (self) {",
+      "    _identifier = @0;",
+      "    _displayName = @\"anonymous\";",
+      "  }",
+      "  return self;",
+      "}",
+      "",
+      "- (void)refreshFromServer {",
+      "  NSLog(@\"refreshing profile %@\", self.displayName);",
+      "}",
+      "",
+      "@end"
+    ]
+  },
+
+  "property": {
+    "prefix": ["prop"],
+    "description": "Property declarations with strong, weak, copy and readonly",
+    "body": [
+      "@property (nonatomic, strong) NSString *title;",
+      "@property (nonatomic, copy) NSString *subtitle;",
+      "@property (nonatomic, weak) id delegate;",
+      "@property (nonatomic, assign) NSInteger tag;",
+      "@property (nonatomic, strong, readonly) NSDate *createdAt;"
+    ]
+  },
+
+  "class_method": {
+    "prefix": ["classmethod"],
+    "description": "Class method working on the class instead of an instance",
+    "body": [
+      "+ (NSString *)defaultProfileName {",
+      "  return @\"default\";",
+      "}",
+      "",
+      "+ (BOOL)isProfileValid:(UserProfile *)profile {",
+      "  return profile.displayName.length > 0;",
+      "}"
+    ]
+  },
+
+  "convenience_constructor": {
+    "prefix": ["initwith"],
+    "description": "Convenience constructor initialising several properties",
+    "body": [
+      "- (instancetype)initWithIdentifier:(NSNumber *)identifier",
+      "  displayName:(NSString *)displayName {",
+      "  self = [super init];",
+      "  if (self) {",
+      "    _identifier = identifier;",
+      "    _displayName = [displayName copy];",
+      "  }",
+      "  return self;",
+      "}"
+    ]
+  },
+
+  "protocol": {
+    "prefix": ["proto"],
+    "description": "Protocol with required and optional methods",
+    "body": [
+      "@protocol UserProfileRefreshing <NSObject>",
+      "",
+      "@required",
+      "- (void)reloadProfile;",
+      "",
+      "@optional",
+      "- (void)reloadProfileWithCompletion:(void (^)(BOOL success))completion;",
+      "",
+      "@end"
+    ]
+  },
+
+  "delegate_protocol": {
+    "prefix": ["delproto"],
+    "description": "Delegate protocol used by a table or a picker view",
+    "body": [
+      "@protocol UserProfileTableDelegate <NSObject>",
+      "",
+      "@optional",
+      "- (void)tableView:(UITableView *)tableView",
+      "  didSelectRowAtIndexPath:(NSIndexPath *)indexPath;",
+      "",
+      "- (void)tableView:(UITableView *)tableView",
+      "  willDisplayCell:(UITableViewCell *)cell",
+      "  forRowAtIndexPath:(NSIndexPath *)indexPath;",
+      "",
+      "@end"
+    ]
+  },
+
+  "category": {
+    "prefix": ["cat"],
+    "description": "Category declaration together with its implementation",
+    "body": [
+      "@interface UserProfile (Formatting)",
+      "",
+      "- (NSString *)debugDescription;",
+      "",
+      "@end",
+      "",
+      "@implementation UserProfile (Formatting)",
+      "",
+      "- (NSString *)debugDescription {",
+      "  return [NSString stringWithFormat:@\"<UserProfile %@ id=%@>\",",
+      "          self.displayName, self.identifier];",
+      "}",
+      "",
+      "@end"
+    ]
+  },
+
+  "class_extension": {
+    "prefix": ["clsext"],
+    "description": "Class extension adding private members to a class",
+    "body": [
+      "@interface UserProfile ()",
+      "",
+      "@property (nonatomic, strong) NSURLSession *session;",
+      "@property (nonatomic, assign) BOOL isLoading;",
+      "",
+      "- (void)performFetch;",
+      "",
+      "@end"
+    ]
+  },
+
+  "block": {
+    "prefix": ["block"],
+    "description": "Block literal, block property and a block callback",
+    "body": [
+      "@property (nonatomic, copy) void (^onStateChanged)(BOOL isValid);",
+      "",
+      "- (void)validateWithCompletion:(void (^)(BOOL valid, NSError *error))completion {",
+      "  BOOL valid = self.displayName.length > 0;",
+      "  if (completion != nil) {",
+      "    completion(valid, nil);",
+      "  }",
+      "}"
+    ]
+  },
+
+  "generics": {
+    "prefix": ["generics"],
+    "description": "Lightweight generics and a typedef of a generic type",
+    "body": [
+      "typedef NSArray<NSString *> *NSStringArray;",
+      "typedef NSDictionary<NSString *, id> *AttributesDictionary;",
+      "",
+      "@interface ResultCache<__covariant ValueType> : NSObject",
+      "",
+      "@property (nonatomic, strong) ValueType cachedValue;",
+      "",
+      "- (instancetype)initWithValue:(ValueType)value;",
+      "",
+      "@end"
+    ]
+  },
+
+  "nullability": {
+    "prefix": ["nullable"],
+    "description": "Nullability annotations on methods and properties",
+    "body": [
+      "- (nullable NSString *)cachedDisplayName;",
+      "- (nullable NSString *)displayNameForIdentifier:(nonnull NSNumber *)identifier;",
+      "",
+      "@property (nonatomic, copy, nullable) NSString *note;",
+      "@property (nonatomic, strong, null_resettable) NSMutableArray<NSString *> *tags;"
+    ]
+  },
+
+  "notification": {
+    "prefix": ["notif"],
+    "description": "Registering and handling a notification centre message",
+    "body": [
+      "- (void)registerForNotifications {",
+      "  NSNotificationCenter *center = [NSNotificationCenter defaultCenter];",
+      "  [center addObserver:self",
+      "      selector:@selector(handleUserUpdated:)",
+      "      name:@\"UserProfileDidUpdateNotification\"",
+      "      object:nil];",
+      "}",
+      "",
+      "- (void)handleUserUpdated:(NSNotification *)notification {",
+      "  [self refreshFromServer];",
+      "}"
+    ]
+  },
+
+  "key_value_observing": {
+    "prefix": ["kvo"],
+    "description": "Key value observing with a context and its removal",
+    "body": [
+      "static void *UserProfileContext = &UserProfileContext;",
+      "",
+      "[self addObserver:self",
+      "    forKeyPath:@\"status\"",
+      "    options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew",
+      "    context:&UserProfileContext];",
+      "",
+      "- (void)observeValueForKeyPath:(NSString *)keyPath",
+      "  ofObject:(id)object",
+      "  change:(NSDictionary<NSKeyValueChangeKey, id> *)change",
+      "  context:(void *)context {",
+      "  if (context == &UserProfileContext) {",
+      "    NSLog(@\"status changed to %@\", change[NSKeyValueChangeNewKey]);",
+      "    return;",
+      "  }",
+      "  [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];",
+      "}"
+    ]
+  },
+
+  "collection_literals": {
+    "prefix": ["literals"],
+    "description": "NSArray and NSDictionary literals with their mutable variants",
+    "body": [
+      "NSArray<NSString *> *names = @[@\"ada\", @\"grace\", @\"alan\"];",
+      "NSDictionary<NSString *, NSNumber *> *counts = @{@\"ada\": @42, @\"grace\": @7};",
+      "",
+      "NSMutableArray *items = [NSMutableArray arrayWithArray:names];",
+      "NSMutableDictionary *lookup = [NSMutableDictionary dictionaryWithDictionary:counts];"
+    ]
+  },
+
+  "grand_central_dispatch": {
+    "prefix": ["gcd"],
+    "description": "GCD dispatch on a custom queue and on the main queue",
+    "body": [
+      "dispatch_queue_t worker = dispatch_queue_create(\"com.example.upload\", DISPATCH_QUEUE_SERIAL);",
+      "",
+      "dispatch_async(worker, ^{",
+      "  NSData *payload = [self encodePayload];",
+      "  dispatch_async(dispatch_get_main_queue(), ^{",
+      "    [self applyPayload:payload];",
+      "  });",
+      "});",
+      "",
+      "dispatch_after(",
+      "  dispatch_time(DISPATCH_TIME_NOW, 500 * NSEC_PER_MSEC),",
+      "  dispatch_get_main_queue(), ^{",
+      "    [self hideProgressIndicator];",
+      "  });"
+    ]
+  },
+
+  "thread": {
+    "prefix": ["thread"],
+    "description": "Background thread created with NSThread",
+    "body": [
+      "NSThread *worker = [[NSThread alloc] initWithTarget:self",
+      "    selector:@selector(runBackgroundTask:)",
+      "    object:nil];",
+      "worker.name = @\"com.example.worker\";",
+      "worker.qualityOfService = NSQualityOfServiceUtility;",
+      "[worker start];"
+    ]
+  },
+
+  "autorelease_pool": {
+    "prefix": ["autorelease"],
+    "description": "Autorelease pool wrapping a block of temporary objects",
+    "body": [
+      "@autoreleasepool {",
+      "  NSMutableArray<NSString *> *collected = [NSMutableArray array];",
+      "  for (NSString *name in self.names) {",
+      "    [collected addObject:[name uppercaseString]];",
+      "  }",
+      "  [self finishWithNames:collected];",
+      "}"
+    ]
+  },
+
+  "singleton": {
+    "prefix": ["singleton"],
+    "description": "Thread safe singleton created with dispatch_once",
+    "body": [
+      "+ (instancetype)sharedManager {",
+      "  static SessionManager *shared = nil;",
+      "  static dispatch_once_t onceToken;",
+      "  dispatch_once(&onceToken, ^{",
+      "    shared = [[SessionManager alloc] init];",
+      "  });",
+      "  return shared;",
+      "}"
+    ]
+  },
+
+  "error_handling_block": {
+    "prefix": ["errblock"],
+    "description": "Error handling with an NSError pointer and a completion block",
+    "body": [
+      "- (BOOL)saveToDisk:(NSString *)path error:(NSError **)error {",
+      "  NSData *data = [self encodePayload];",
+      "  if (![data writeToFile:path options:NSDataWritingAtomic error:error]) {",
+      "    return NO;",
+      "  }",
+      "  return YES;",
+      "}",
+      "",
+      "[self saveToDisk:path completion:^(NSError *error) {",
+      "  if (error != nil) {",
+      "    [self presentError:error];",
+      "    return;",
+      "  }",
+      "  [self didSaveToDisk:path];",
+      "}];"
+    ]
+  }
+}

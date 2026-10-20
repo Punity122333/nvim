@@ -1,110 +1,135 @@
 {
   "lua_base": {
     "prefix": "lua",
+    "description": "Base Lua script",
     "body": [
       "-- Lua script",
       "",
       "local function main()",
-      "    $1",
+      "  $1",
       "end",
       "",
       "main()"
-    ],
-    "description": "Base Lua script"
+    ]
   },
 
   "lua_print": {
     "prefix": "pr",
-    "body": ["print(${1:v})"],
-    "description": "print"
+    "description": "print",
+    "body": ["print(${1:v})"]
   },
 
   "lua_printf_debug": {
     "prefix": "dbg",
-    "body": ["print(\"DEBUG: ${1:var} =\", vim.inspect(${1:var}))"],
-    "description": "Neovim debug print"
+    "description": "Neovim debug print",
+    "body": ["print(\"DEBUG: ${1:var} =\", vim.inspect(${1:var}))"]
   },
 
   "lua_safe_call": {
     "prefix": "pcall",
+    "description": "pcall wrapper",
     "body": [
       "local ok, result = pcall(function()",
-      "    $1",
+      "  $1",
       "end)",
       "",
       "if not ok then",
-      "    print(\"Error:\", result)",
+      "  print(\"Error:\", result)",
       "end"
-    ],
-    "description": "pcall wrapper"
+    ]
   },
 
   "lua_xpcall": {
     "prefix": "xpcall",
+    "description": "xpcall safety",
     "body": [
       "local function handler(err)",
-      "    print(\"Error:\", err)",
+      "  print(\"Error:\", err)",
       "end",
       "",
       "xpcall(function()",
-      "    $1",
+      "  $1",
       "end, handler)"
-    ],
-    "description": "xpcall safety"
+    ]
   },
 
   "lua_for_i": {
     "prefix": "fori",
-    "body": ["for i = ${1:1}, ${2:n} do", "    $3", "end"],
-    "description": "numeric loop"
+    "description": "numeric loop",
+    "body": [
+      "for i = ${1:1}, ${2:n} do",
+      "  $3",
+      "end"
+    ]
   },
 
   "lua_pairs": {
     "prefix": "forp",
-    "body": ["for ${1:k}, ${2:v} in pairs(${3:t}) do", "    $4", "end"],
-    "description": "pairs loop"
+    "description": "pairs loop",
+    "body": [
+      "for ${1:k}, ${2:v} in pairs(${3:t}) do",
+      "  $4",
+      "end"
+    ]
   },
 
   "lua_ipairs": {
     "prefix": "forip",
-    "body": ["for ${1:i}, ${2:v} in ipairs(${3:t}) do", "    $4", "end"],
-    "description": "ipairs loop"
+    "description": "ipairs loop",
+    "body": [
+      "for ${1:i}, ${2:v} in ipairs(${3:t}) do",
+      "  $4",
+      "end"
+    ]
   },
 
   "lua_func": {
     "prefix": "fn",
-    "body": ["local function ${1:name}(${2:args})", "    $3", "end"],
-    "description": "function"
+    "description": "function",
+    "body": [
+      "local function ${1:name}(${2:args})",
+      "  $3",
+      "end"
+    ]
   },
 
   "lua_lambda": {
     "prefix": "lam",
-    "body": ["local ${1:f} = function(${2:args})", "    return $3", "end"],
-    "description": "lambda-style function"
+    "description": "lambda-style function",
+    "body": [
+      "local ${1:f} = function(${2:args})",
+      "  return $3",
+      "end"
+    ]
   },
 
   "lua_table": {
     "prefix": "tbl",
-    "body": ["local ${1:t} = {", "    $2", "}"],
-    "description": "table"
+    "description": "table",
+    "body": [
+      "local ${1:t} = {",
+      "  $2",
+      "}"
+    ]
   },
 
   "lua_module": {
     "prefix": "mod",
+    "description": "module pattern",
     "body": [
       "local M = {}",
       "",
       "function M.${1:func}(${2:args})",
-      "    $3",
+      "  $3",
       "end",
       "",
       "return M"
-    ],
-    "description": "module pattern"
+    ]
   },
 
   "lua_metatable": {
     "prefix": "meta",
+    "description": "metatable boilerplate",
     "body": [
       "local t = {}",
       "local mt = {}",
@@ -112,123 +137,606 @@
       "mt.__index = mt",
       "",
       "setmetatable(t, mt)"
-    ],
-    "description": "metatable boilerplate"
+    ]
   },
 
   "lua_class": {
     "prefix": "class",
+    "description": "OOP-style class",
     "body": [
       "local ${1:Class} = {}",
       "${1:Class}.__index = ${1:Class}",
       "",
       "function ${1:Class}.new(${2:args})",
-      "    local self = setmetatable({}, ${1:Class})",
-      "    $3",
-      "    return self",
+      "  local self = setmetatable({}, ${1:Class})",
+      "  $3",
+      "  return self",
       "end"
-    ],
-    "description": "OOP-style class"
+    ]
   },
 
   "lua_coroutine": {
     "prefix": "co",
+    "description": "coroutine",
     "body": [
       "local co = coroutine.create(function()",
-      "    $1",
+      "  $1",
       "end)",
       "",
       "coroutine.resume(co)"
-    ],
-    "description": "coroutine"
+    ]
   },
 
   "lua_resume_yield": {
     "prefix": "yield",
-    "body": ["coroutine.yield(${1:value})"],
-    "description": "yield"
+    "description": "yield",
+    "body": ["coroutine.yield(${1:value})"]
   },
 
   "lua_require": {
     "prefix": "req",
-    "body": ["local ${1:mod} = require(\"${1:mod}\")"],
-    "description": "require"
+    "description": "require",
+    "body": ["local ${1:mod} = require(\"${1:mod}\")"]
   },
 
   "lua_local": {
     "prefix": "loc",
-    "body": ["local ${1:x} = ${2:v}"],
-    "description": "local var"
+    "description": "local var",
+    "body": ["local ${1:x} = ${2:v}"]
   },
 
   "lua_map": {
     "prefix": "map",
+    "description": "map function",
     "body": [
       "local function map(tbl, f)",
-      "    local out = {}",
-      "    for i, v in ipairs(tbl) do",
-      "        out[i] = f(v)",
-      "    end",
-      "    return out",
+      "  local out = {}",
+      "  for i, v in ipairs(tbl) do",
+      "    out[i] = f(v)",
+      "  end",
+      "  return out",
       "end"
-    ],
-    "description": "map function"
+    ]
   },
 
   "lua_filter": {
     "prefix": "filter",
+    "description": "filter function",
     "body": [
       "local function filter(tbl, f)",
-      "    local out = {}",
-      "    for _, v in ipairs(tbl) do",
-      "        if f(v) then",
-      "            table.insert(out, v)",
-      "        end",
+      "  local out = {}",
+      "  for _, v in ipairs(tbl) do",
+      "    if f(v) then",
+      "      table.insert(out, v)",
       "    end",
-      "    return out",
+      "  end",
+      "  return out",
       "end"
-    ],
-    "description": "filter function"
+    ]
   },
 
   "lua_reduce": {
     "prefix": "reduce",
+    "description": "reduce function",
     "body": [
       "local function reduce(tbl, f, acc)",
-      "    for _, v in ipairs(tbl) do",
-      "        acc = f(acc, v)",
-      "    end",
-      "    return acc",
+      "  for _, v in ipairs(tbl) do",
+      "    acc = f(acc, v)",
+      "  end",
+      "  return acc",
       "end"
-    ],
-    "description": "reduce function"
+    ]
   },
 
   "lua_nvim_map": {
     "prefix": "mapkey",
+    "description": "Neovim keymap",
     "body": [
       "vim.keymap.set(${1:\"n\"}, ${2:\"<leader>x\"}, function()",
-      "    $3",
+      "  $3",
       "end)"
-    ],
-    "description": "Neovim keymap"
+    ]
   },
 
   "lua_autocmd": {
     "prefix": "autocmd",
+    "description": "autocmd",
     "body": [
       "vim.api.nvim_create_autocmd(\"${1:Event}\", {",
-      "    callback = function()",
-      "        $2",
-      "    end",
+      "  callback = function()",
+      "    $2",
+      "  end",
       "})"
-    ],
-    "description": "autocmd"
+    ]
   },
 
   "lua_timer": {
     "prefix": "timer",
-    "body": ["vim.defer_fn(function()", "    $1", "end, ${2:1000})"],
-    "description": "async timer"
+    "description": "async timer",
+    "body": [
+      "vim.defer_fn(function()",
+      "  $1",
+      "end, ${2:1000})"
+    ]
+  },
+
+  "lua_module_table": {
+    "prefix": ["module"],
+    "description": "Module table with private helpers and a public constructor",
+    "body": [
+      "local M = {}",
+      "",
+      "local function normalize(name)",
+      "  return name:lower():gsub('%s+', '_')",
+      "end",
+      "",
+      "function M.create(name)",
+      "  return {",
+      "    name = normalize(name),",
+      "    created_at = os.time(),",
+      "  }",
+      "end",
+      "",
+      "return M"
+    ]
+  },
+
+  "lua_closure": {
+    "prefix": ["closure"],
+    "description": "Closure that captures and mutates an upvalue counter",
+    "body": [
+      "local function make_counter(start)",
+      "  local count = start or 0",
+      "  return function(step)",
+      "    count = count + (step or 1)",
+      "    return count",
+      "  end",
+      "end",
+      "",
+      "local next_value = make_counter(10)",
+      "print(next_value())",
+      "print(next_value(5))"
+    ]
+  },
+
+  "lua_iterator": {
+    "prefix": ["iter"],
+    "description": "Stateless iterator over a list with a for-in loop",
+    "body": [
+      "local function each(tbl)",
+      "  local index = 0",
+      "  return function()",
+      "    index = index + 1",
+      "    return tbl[index]",
+      "  end",
+      "end",
+      "",
+      "for value in each({ 'alpha', 'beta', 'gamma' }) do",
+      "  print(value)",
+      "end"
+    ]
+  },
+
+  "lua_varargs": {
+    "prefix": ["vararg"],
+    "description": "Function using varargs, select and table.concat",
+    "body": [
+      "local function join(separator, ...)",
+      "  local parts = { ... }",
+      "  return table.concat(parts, separator)",
+      "end",
+      "",
+      "local function count_args(...)",
+      "  return select('#', ...)",
+      "end",
+      "",
+      "local function first_of(...)",
+      "  local head = select(1, ...)",
+      "  return head",
+      "end",
+      "",
+      "print(join(', ', 'a', 'b', 'c'))",
+      "print(count_args(1, 2, 3))",
+      "print(first_of('head', 'tail'))"
+    ]
+  },
+
+  "lua_string_format": {
+    "prefix": ["strfmt"],
+    "description": "Formatting strings with string.format and padding",
+    "body": [
+      "local template = '%s scored %d points (%.1f%%)'",
+      "local summary = string.format(template, 'Ada', 42, 99.5)",
+      "",
+      "local padded = string.format('[%6s]', 'ok')",
+      "local identifier = string.format('user_%04d', 7)",
+      "",
+      "print(summary)",
+      "print(padded)",
+      "print(identifier)"
+    ]
+  },
+
+  "lua_safe_call_2": {
+    "prefix": ["safecall"],
+    "description": "pcall wrapper that returns nil plus the error message",
+    "body": [
+      "local function try(fn, ...)",
+      "  local ok, result = pcall(fn, ...)",
+      "  if not ok then",
+      "    return nil, result",
+      "  end",
+      "  return result",
+      "end",
+      "",
+      "local value, err = try(function()",
+      "  error('missing configuration')",
+      "end)",
+      "",
+      "if value == nil then",
+      "  print('failed: ' .. tostring(err))",
+      "end"
+    ]
+  },
+
+  "lua_coroutine_2": {
+    "prefix": ["coroutine"],
+    "description": "Coroutine producer consumed with coroutine.resume",
+    "body": [
+      "local producer = coroutine.create(function()",
+      "  for _, name in ipairs({ 'alpha', 'beta', 'gamma' }) do",
+      "    coroutine.yield(name)",
+      "  end",
+      "end)",
+      "",
+      "while true do",
+      "  local ok, value = coroutine.resume(producer)",
+      "  if not ok or value == nil then",
+      "    break",
+      "  end",
+      "  print(value)",
+      "end"
+    ]
+  },
+
+  "lua_memoize": {
+    "prefix": ["memoize"],
+    "description": "Memoize a single argument function with a cache table",
+    "body": [
+      "local function memoize(fn)",
+      "  local cache = {}",
+      "  return function(key)",
+      "    if cache[key] == nil then",
+      "      cache[key] = fn(key)",
+      "    end",
+      "    return cache[key]",
+      "  end",
+      "end",
+      "",
+      "local fetch_user = memoize(function(id)",
+      "  print('cache miss for ' .. id)",
+      "  return { id = id, name = 'user-' .. id }",
+      "end)",
+      "",
+      "print(fetch_user('42').name)",
+      "print(fetch_user('42').name)"
+    ]
+  },
+
+  "lua_json": {
+    "prefix": ["json"],
+    "description": "Minimal JSON-ish encoder plus a flat object decoder",
+    "body": [
+      "local function encode(value)",
+      "  if type(value) == 'table' then",
+      "    local parts = {}",
+      "    for key, item in pairs(value) do",
+      "      parts[#parts + 1] = encode(key) .. ':' .. encode(item)",
+      "    end",
+      "    return '{' .. table.concat(parts, ',') .. '}'",
+      "  elseif type(value) == 'string' then",
+      "    return '\"' .. value .. '\"'",
+      "  end",
+      "  return tostring(value)",
+      "end",
+      "",
+      "local function decode(text)",
+      "  local obj = {}",
+      "  for key, value in text:gmatch('\"(%w+)\":\"([^\"]*)\"') do",
+      "    obj[key] = value",
+      "  end",
+      "  return obj",
+      "end",
+      "",
+      "print(encode({ name = 'ada', score = 10 }))",
+      "print(decode('{\"name\":\"ada\",\"score\":\"10\"}').name)"
+    ]
+  },
+
+  "lua_read_file": {
+    "prefix": ["readfile"],
+    "description": "Read a text file into a list of lines",
+    "body": [
+      "local function read_lines(path)",
+      "  local handle = io.open(path, 'r')",
+      "  if not handle then",
+      "    return nil, 'cannot open ' .. path",
+      "  end",
+      "",
+      "  local lines = {}",
+      "  for line in handle:lines() do",
+      "    lines[#lines + 1] = line",
+      "  end",
+      "  handle:close()",
+      "",
+      "  return lines",
+      "end",
+      "",
+      "local lines, err = read_lines('config.txt')",
+      "if not lines then",
+      "  print(err)",
+      "end"
+    ]
+  },
+
+  "lua_write_file": {
+    "prefix": ["writefile"],
+    "description": "Write a list of lines to a text file",
+    "body": [
+      "local function write_lines(path, lines)",
+      "  local handle, err = io.open(path, 'w')",
+      "  if not handle then",
+      "    return nil, err",
+      "  end",
+      "",
+      "  for _, line in ipairs(lines) do",
+      "    handle:write(line, '\\\\n')",
+      "  end",
+      "  handle:close()",
+      "",
+      "  return true",
+      "end",
+      "",
+      "local ok, err = write_lines('report.txt', { 'first line', 'second line' })",
+      "if not ok then",
+      "  print(err)",
+      "end"
+    ]
+  },
+
+  "lua_split": {
+    "prefix": ["split"],
+    "description": "Split a string into a list on a separator character",
+    "body": [
+      "local function split(text, separator)",
+      "  local parts = {}",
+      "  local pattern = string.format('([^%s]+)', separator)",
+      "  for part in text:gmatch(pattern) do",
+      "    parts[#parts + 1] = part",
+      "  end",
+      "  return parts",
+      "end",
+      "",
+      "local chunks = split('alpha,beta,gamma', ',')",
+      "print(table.concat(chunks, ' | '))"
+    ]
+  },
+
+  "lua_collection_helpers": {
+    "prefix": ["colhelp"],
+    "description": "map, filter and reduce helpers for lists",
+    "body": [
+      "local function map(tbl, fn)",
+      "  local out = {}",
+      "  for index, value in ipairs(tbl) do",
+      "    out[index] = fn(value)",
+      "  end",
+      "  return out",
+      "end",
+      "",
+      "local function filter(tbl, predicate)",
+      "  local out = {}",
+      "  for _, value in ipairs(tbl) do",
+      "    if predicate(value) then",
+      "      out[#out + 1] = value",
+      "    end",
+      "  end",
+      "  return out",
+      "end",
+      "",
+      "local function reduce(tbl, fn, initial)",
+      "  local acc = initial",
+      "  for _, value in ipairs(tbl) do",
+      "    acc = fn(acc, value)",
+      "  end",
+      "  return acc",
+      "end"
+    ]
+  },
+
+  "lua_sort_comparator": {
+    "prefix": ["sortcmp"],
+    "description": "Sort a list with table.sort and a custom comparator",
+    "body": [
+      "local function sort_by_key(items, key)",
+      "  table.sort(items, function(a, b)",
+      "    return a[key] < b[key]",
+      "  end)",
+      "  return items",
+      "end",
+      "",
+      "local function sort_by_score(items)",
+      "  table.sort(items, function(a, b)",
+      "    if a.score == b.score then",
+      "      return a.name < b.name",
+      "    end",
+      "    return a.score > b.score",
+      "  end)",
+      "  return items",
+      "end",
+      "",
+      "local players = { { name = 'ada', score = 10 }, { name = 'lin', score = 10 } }",
+      "print(sort_by_score(players)[1].name)"
+    ]
+  },
+
+  "lua_deep_copy": {
+    "prefix": ["deepcopy"],
+    "description": "Recursive table copy that keeps the metatable",
+    "body": [
+      "local function deepcopy(value, seen)",
+      "  if type(value) ~= 'table' then",
+      "    return value",
+      "  end",
+      "",
+      "  seen = seen or {}",
+      "  if seen[value] then",
+      "    return seen[value]",
+      "  end",
+      "",
+      "  local copy = {}",
+      "  seen[value] = copy",
+      "  for key, item in pairs(value) do",
+      "    copy[deepcopy(key, seen)] = deepcopy(item, seen)",
+      "  end",
+      "",
+      "  return setmetatable(copy, getmetatable(value))",
+      "end",
+      "",
+      "local original = { name = 'ada', tags = { 'a', 'b' } }",
+      "local cloned = deepcopy(original)",
+      "cloned.tags[1] = 'changed'",
+      "print(original.tags[1])"
+    ]
+  },
+
+  "lua_random": {
+    "prefix": ["randnum"],
+    "description": "Random helpers for numbers, picking and shuffling",
+    "body": [
+      "math.randomseed(os.time())",
+      "",
+      "local function random_int(minimum, maximum)",
+      "  return math.random(minimum, maximum)",
+      "end",
+      "",
+      "local function pick(list)",
+      "  return #list > 0 and list[random_int(1, #list)] or nil",
+      "end",
+      "",
+      "local function shuffled(list)",
+      "  local copy = {}",
+      "  for index = 1, #list do",
+      "    copy[index] = list[index]",
+      "  end",
+      "  for index = #copy, 2, -1 do",
+      "    local other = random_int(1, index)",
+      "    copy[index], copy[other] = copy[other], copy[index]",
+      "  end",
+      "  return copy",
+      "end",
+      "",
+      "print(random_int(1, 6))",
+      "print(pick({ 'red', 'green', 'blue' }))"
+    ]
+  },
+
+  "lua_oop_class": {
+    "prefix": ["oop"],
+    "description": "Class with a metatable, __index and a validating __newindex",
+    "body": [
+      "local Account = {}",
+      "Account.__index = Account",
+      "",
+      "function Account.new(owner, balance)",
+      "  return setmetatable({ owner = owner, balance = balance or 0 }, Account)",
+      "end",
+      "",
+      "function Account:deposit(amount)",
+      "  if amount <= 0 then",
+      "    error('deposit amount must be positive')",
+      "  end",
+      "  self.balance = self.balance + amount",
+      "  return self.balance",
+      "end",
+      "",
+      "Account.__newindex = function(self, key, value)",
+      "  if key ~= 'balance' then",
+      "    error('unknown account field: ' .. key)",
+      "  end",
+      "  rawset(self, key, value)",
+      "end",
+      "",
+      "local account = Account.new('ada', 100)",
+      "print(account:deposit(50))"
+    ]
+  },
+
+  "lua_unit_test": {
+    "prefix": ["unittest"],
+    "description": "Busted style unit test with describe, it and assertions",
+    "body": [
+      "local Account = require('${1:account}')",
+      "",
+      "describe('${2:Account}', function()",
+      "  it('credits the balance', function()",
+      "    local account = Account.new('ada', 100)",
+      "    account:deposit(50)",
+      "    assert.are.same(150, account.balance)",
+      "  end)",
+      "",
+      "  it('rejects a negative deposit', function()",
+      "    local account = Account.new('ada', 100)",
+      "    assert.has_error(function()",
+      "      account:deposit(-10)",
+      "    end)",
+      "  end)",
+      "end)"
+    ]
+  },
+
+  "lua_require_path": {
+    "prefix": ["reqpath"],
+    "description": "Extend package.path and require modules from the project",
+    "body": [
+      "package.path = package.path .. ';./?.lua'",
+      "package.path = package.path .. ';./?/init.lua'",
+      "",
+      "local helpers = require('${1:helpers}')",
+      "local settings = require('config.settings')",
+      "",
+      "print(helpers.slugify(settings.title))"
+    ]
+  },
+
+  "lua_logger": {
+    "prefix": ["logger"],
+    "description": "Small leveled logger writing to stderr",
+    "body": [
+      "local levels = { debug = 1, info = 2, warn = 3, error = 4 }",
+      "",
+      "local logger = {}",
+      "logger.level = 'info'",
+      "",
+      "function logger.log(level, message, ...)",
+      "  local threshold = levels[logger.level] or levels.info",
+      "  if (levels[level] or levels.info) < threshold then",
+      "    return",
+      "  end",
+      "",
+      "  local text = select('#', ...) > 0 and string.format(message, ...) or message",
+      "  io.stderr:write(string.format('[%s] %s %s\\\\n', os.date('%H:%M:%S'), level:upper(), text))",
+      "end",
+      "",
+      "function logger.info(message, ...)",
+      "  logger.log('info', message, ...)",
+      "end",
+      "",
+      "function logger.error(message, ...)",
+      "  logger.log('error', message, ...)",
+      "end",
+      "",
+      "logger.info('started with %d workers', 4)"
+    ]
   }
 }

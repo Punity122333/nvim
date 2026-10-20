@@ -1,0 +1,113 @@
+{
+  "prisma_model": {
+    "prefix": ["model"],
+    "description": "Prisma model with the id and a couple of fields",
+    "body": [
+      "model ${1:User} {",
+      "  id    Int     @id @default(autoincrement())",
+      "  email String  @unique",
+      "  name  String?",
+      "",
+      "  createdAt DateTime @default(now())",
+      "}"
+    ]
+  },
+
+  "prisma_field": {
+    "prefix": ["field"],
+    "description": "Field with a type and an optional marker",
+    "body": [
+      "${1:name} ${2:String}${3:?}"
+    ]
+  },
+
+  "prisma_id_field": {
+    "prefix": ["idfield"],
+    "description": "Primary key field",
+    "body": [
+      "id ${1:String} @id @default(uuid())"
+    ]
+  },
+
+  "prisma_relation": {
+    "prefix": ["relation"],
+    "description": "Relation to another model",
+    "body": [
+      "${1:userId} String",
+      "${2:user}   User   @relation(fields: [${1:userId}], references: [id])"
+    ]
+  },
+
+  "prisma_many_to_many": {
+    "prefix": ["manytomany"],
+    "description": "Many to many relation between two models",
+    "body": [
+      "${1:tags} ${2:Tag}[]"
+    ]
+  },
+
+  "prisma_one_to_one": {
+    "prefix": ["onetoone"],
+    "description": "One to one relation between two models",
+    "body": [
+      "${1:profile} ${2:Profile}?"
+    ]
+  },
+
+  "prisma_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a few values",
+    "body": [
+      "enum ${1:Role} {",
+      "  ${2:USER}",
+      "  ${3:ADMIN}",
+      "}"
+    ]
+  },
+
+  "prisma_datasource": {
+    "prefix": ["datasource"],
+    "description": "Datasource block pointing at the database url",
+    "body": [
+      "datasource ${1:db} {",
+      "  provider = \"${2:postgresql}\"",
+      "  url      = env(\"${3:DATABASE_URL}\")",
+      "}"
+    ]
+  },
+
+  "prisma_generator": {
+    "prefix": ["generator"],
+    "description": "Generator block with the output of the client",
+    "body": [
+      "generator ${1:client} {",
+      "  provider = \"${2:prisma-client-js}\"",
+      "  output   = \"${3:../generated/prisma}\"",
+      "}"
+    ]
+  },
+
+  "prisma_index": {
+    "prefix": ["index"],
+    "description": "Index on a couple of fields",
+    "body": [
+      "@@index([${1:field}, ${2:other}])"
+    ]
+  },
+
+  "prisma_unique": {
+    "prefix": ["unique"],
+    "description": "Unique constraint on a couple of fields",
+    "body": [
+      "@@unique([${1:first}, ${2:second}])"
+    ]
+  },
+
+  "prisma_json_field": {
+    "prefix": ["jsonfield"],
+    "description": "Field storing a json document",
+    "body": [
+      "${1:metadata} Json${2:?}"
+    ]
+  }
+}

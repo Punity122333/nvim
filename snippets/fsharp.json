@@ -1,0 +1,274 @@
+{
+  "module_declaration": {
+    "prefix": ["moddecl"],
+    "description": "Module with a private store and lookup helpers",
+    "body": [
+      "module ${1:Inventory}",
+      "",
+      "let private storage = System.Collections.Generic.Dictionary<string, int>()",
+      "",
+      "let add item quantity =",
+      "  storage[item] <- quantity",
+      "",
+      "let tryFind item =",
+      "  match storage.TryGetValue item with",
+      "  | true, value -> Some value",
+      "  | _ -> None"
+    ]
+  },
+
+  "let_binding": {
+    "prefix": ["letbind"],
+    "description": "Constant binding plus a mutable binding updated by a function",
+    "body": [
+      "let ${1:maxRetries} = 3",
+      "",
+      "let mutable ${2:requestCount} = 0",
+      "",
+      "let ${3:recordRequest} path =",
+      "  requestCount <- requestCount + 1",
+      "  printfn \"request %d: %s\" requestCount path"
+    ]
+  },
+
+  "function_definition": {
+    "prefix": ["func"],
+    "description": "Function with guards on its arguments",
+    "body": [
+      "let ${1:describe} name age =",
+      "  if age < 0 then",
+      "    invalidArg \"age\" \"Age cannot be negative\"",
+      "  elif age < 18 then",
+      "    \\$\"{name} is a minor\"",
+      "  else",
+      "    \\$\"{name} is an adult\""
+    ]
+  },
+
+  "type_definition": {
+    "prefix": ["typedef"],
+    "description": "Type abbreviations used as domain specific names",
+    "body": [
+      "type ${1:UserId} = int",
+      "",
+      "type ${2:Email} = string",
+      "",
+      "let sendEmail (address: Email) subject body =",
+      "  printfn \"Sending %s to %s\" subject address"
+    ]
+  },
+
+  "record_type": {
+    "prefix": ["record"],
+    "description": "Record type and a copy with an updated field",
+    "body": [
+      "type ${1:Person} = {",
+      "  Name: string",
+      "  Age: int",
+      "  Email: string option",
+      "}",
+      "",
+      "let ${2:birthday} person =",
+      "  { person with Age = person.Age + 1 }"
+    ]
+  },
+
+  "discriminated_union": {
+    "prefix": ["dunion"],
+    "description": "Discriminated union with simple and tuple cases",
+    "body": [
+      "type ${1:Shape} =",
+      "  | Circle of float",
+      "  | Rectangle of float * float",
+      "  | Point"
+    ]
+  },
+
+  "discriminated_union_fields": {
+    "prefix": ["dufield"],
+    "description": "Discriminated union whose cases carry named fields",
+    "body": [
+      "type ${1:Payment} =",
+      "  | Cash of amount: decimal",
+      "  | Card of number: string * amount: decimal",
+      "  | BankTransfer of iban: string * amount: decimal"
+    ]
+  },
+
+  "class_definition": {
+    "prefix": ["classdef"],
+    "description": "Class with a primary constructor and mutable state",
+    "body": [
+      "type ${1:BankAccount}(owner: string, initialBalance: decimal) =",
+      "  let mutable balance = initialBalance",
+      "",
+      "  member this.Owner = owner",
+      "  member this.Balance = balance",
+      "",
+      "  member this.Deposit(amount: decimal) =",
+      "    balance <- balance + amount",
+      "",
+      "  member this.Withdraw(amount: decimal) =",
+      "    if amount > balance then",
+      "      invalidArg \"amount\" \"Insufficient funds\"",
+      "    balance <- balance - amount"
+    ]
+  },
+
+  "interface_definition": {
+    "prefix": ["iface"],
+    "description": "Interface with an implementation of the member",
+    "body": [
+      "type ${1:INotifier} =",
+      "  abstract Notify: message: string -> unit",
+      "",
+      "type ConsoleNotifier() =",
+      "  interface INotifier with",
+      "    member this.Notify(message) = printfn \"notify: %s\" message"
+    ]
+  },
+
+  "async_workflow": {
+    "prefix": ["async"],
+    "description": "Asynchronous workflow with let bind and do bind",
+    "body": [
+      "let ${1:process} (items: int list) =",
+      "  async {",
+      "    let! doubled = async { return items |> List.map (fun x -> x * 2) }",
+      "    do! Async.Sleep 100",
+      "    return doubled",
+      "  }"
+    ]
+  },
+
+  "task_workflow": {
+    "prefix": ["task"],
+    "description": "Task computation expression with await and delay",
+    "body": [
+      "open System.Threading.Tasks",
+      "",
+      "let ${1:process} (items: int list) =",
+      "  task {",
+      "    let! doubled = Task.FromResult(items |> List.map (fun x -> x * 2))",
+      "    do! Task.Delay 100",
+      "    return doubled",
+      "  }"
+    ]
+  },
+
+  "pattern_match": {
+    "prefix": ["pmatch"],
+    "description": "Match expression over the cases of a union",
+    "body": [
+      "let ${1:describe} shape =",
+      "  match shape with",
+      "  | Circle r -> sprintf \"Circle %g\" r",
+      "  | Rectangle (w, h) -> sprintf \"Rectangle %gx%g\" w h",
+      "  | Point -> \"Point\""
+    ]
+  },
+
+  "list_comprehension": {
+    "prefix": ["listcomp"],
+    "description": "List comprehension with an if filter",
+    "body": [
+      "let ${1:evenSquares} (numbers: int list) =",
+      "  [ n * n",
+      "    for n in numbers",
+      "    if n % 2 = 0 ]"
+    ]
+  },
+
+  "pipeline": {
+    "prefix": ["pipe"],
+    "description": "Pipeline of list transformations",
+    "body": [
+      "let ${1:activeNames} (customers: Customer list) =",
+      "  customers",
+      "  |> List.filter (fun customer -> customer.IsActive)",
+      "  |> List.map (fun customer -> customer.Name)",
+      "  |> List.sort"
+    ]
+  },
+
+  "sequence_expression": {
+    "prefix": ["seqexpr"],
+    "description": "Sequence expression yielding lazily evaluated values",
+    "body": [
+      "let ${1:squares} (numbers: int list) =",
+      "  seq {",
+      "    for n in numbers do",
+      "      yield n * n",
+      "  }"
+    ]
+  },
+
+  "active_pattern": {
+    "prefix": ["activepat"],
+    "description": "Multi case active pattern and its use in a match",
+    "body": [
+      "let (|Positive|Negative|Zero|) value =",
+      "  if value > 0 then Positive",
+      "  elif value < 0 then Negative",
+      "  else Zero",
+      "",
+      "let ${1:classify} value =",
+      "  match value with",
+      "  | Positive -> \"positive\"",
+      "  | Negative -> \"negative\"",
+      "  | Zero -> \"zero\""
+    ]
+  },
+
+  "option_handling": {
+    "prefix": ["option"],
+    "description": "Pattern match and default value on an option",
+    "body": [
+      "let ${1:displayName} (person: Person) =",
+      "  match person.Email with",
+      "  | Some address -> address",
+      "  | None -> person.Name",
+      "",
+      "let ${2:displayNameOr} ~default (person: Person) =",
+      "  Option.defaultValue person.Email default"
+    ]
+  },
+
+  "result_handling": {
+    "prefix": ["result"],
+    "description": "Turn a TryParse call into a result value",
+    "body": [
+      "let ${1:parsePort} (text: string) =",
+      "  match Int32.TryParse text with",
+      "  | true, value -> Ok value",
+      "  | false, _ -> Error \"Not a valid port number\""
+    ]
+  },
+
+  "generic_function": {
+    "prefix": ["generic"],
+    "description": "Generic function working on any element type",
+    "body": [
+      "let ${1:firstOrDefault} (fallback: 'T) (items: 'T list) =",
+      "  match items with",
+      "  | [] -> fallback",
+      "  | head :: _ -> head"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["test"],
+    "description": "Expecto test cases for a list function",
+    "body": [
+      "open Expecto",
+      "",
+      "testCase \"map doubles every element\" <| fun _ ->",
+      "  let actual = [1; 2; 3] |> List.map (fun x -> x * 2)",
+      "  Expect.equal actual [2; 4; 6] \"doubling the list\"",
+      "",
+      "testCase \"map on an empty list\" <| fun _ ->",
+      "  let actual = List.map (fun x -> x + 1) []",
+      "  Expect.equal actual [] \"empty list stays empty\""
+    ]
+  }
+}

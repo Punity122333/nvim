@@ -1,0 +1,145 @@
+{
+  "nginx_server": {
+    "prefix": ["server"],
+    "description": "Server block listening on a port",
+    "body": [
+      "server {",
+      "    listen ${1:80};",
+      "    server_name ${2:example.com};",
+      "",
+      "    root /var/www/${2:example.com};",
+      "    index index.html;",
+      "",
+      "    location / {",
+      "        try_files \\$uri \\$uri/ =404;",
+      "    }",
+      "}"
+    ]
+  },
+
+  "nginx_location": {
+    "prefix": ["location"],
+    "description": "Location block matched by prefix",
+    "body": [
+      "location ${1:/api} {",
+      "    ${2:proxy_pass http://127.0.0.1:8080;}",
+      "}"
+    ]
+  },
+
+  "nginx_proxy_pass": {
+    "prefix": ["proxypass"],
+    "description": "Reverse proxy to an upstream server",
+    "body": [
+      "proxy_pass ${1:http://127.0.0.1:8080};",
+      "proxy_set_header Host \\$host;",
+      "proxy_set_header X-Real-IP \\$remote_addr;",
+      "proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;"
+    ]
+  },
+
+  "nginx_upstream": {
+    "prefix": ["upstream"],
+    "description": "Upstream block with several servers",
+    "body": [
+      "upstream ${1:backend} {",
+      "    server ${2:127.0.0.1}:${3:8080};",
+      "    server ${4:127.0.0.1}:${5:8081};",
+      "}"
+    ]
+  },
+
+  "nginx_http_block": {
+    "prefix": ["http"],
+    "description": "Http block with the common settings",
+    "body": [
+      "http {",
+      "    include /etc/nginx/mime.types;",
+      "    default_type application/octet-stream;",
+      "",
+      "    sendfile on;",
+      "    keepalive_timeout ${1:65};",
+      "",
+      "    ${2:server { listen 80; }}",
+      "}"
+    ]
+  },
+
+  "nginx_rewrite": {
+    "prefix": ["rewrite"],
+    "description": "Rewrite rule with a redirect",
+    "body": [
+      "rewrite ^/${1:old}/(.*)\\$ ${2:/new/\\$1} redirect;"
+    ]
+  },
+
+  "nginx_static": {
+    "prefix": ["static"],
+    "description": "Serve the static files of a folder",
+    "body": [
+      "location /${1:static}/ {",
+      "    alias /var/www/${1:static}/;",
+      "    expires ${2:7d};",
+      "    access_log off;",
+      "}"
+    ]
+  },
+
+  "nginx_ssl_server": {
+    "prefix": ["sslserver"],
+    "description": "Server block serving https traffic",
+    "body": [
+      "server {",
+      "    listen 443 ssl;",
+      "    http2 on;",
+      "    server_name ${1:example.com};",
+      "",
+      "    ssl_certificate     ${2:/etc/letsencrypt/live/example.com/fullchain.pem};",
+      "    ssl_certificate_key ${2:/etc/letsencrypt/live/example.com/privkey.pem};",
+      "",
+      "    location / {",
+      "        $0",
+      "    }",
+      "}"
+    ]
+  },
+
+  "nginx_map": {
+    "prefix": ["map"],
+    "description": "Map block rewriting one value into another",
+    "body": [
+      "map \\$http_user_agent \\$mobile {",
+      "    default 0;",
+      "    \"~*Android|iPhone\" 1;",
+      "}"
+    ]
+  },
+
+  "nginx_log_format": {
+    "prefix": ["logformat"],
+    "description": "Custom log format",
+    "body": [
+      "log_format ${1:custom} '\\$remote_addr - \\$remote_user [\\$time_local] \"\\$request\" \\$status \\$body_bytes_sent';",
+      "access_log /var/log/nginx/${1:custom}.log ${1:custom};"
+    ]
+  },
+
+  "nginx_include": {
+    "prefix": ["include"],
+    "description": "Include another configuration file",
+    "body": [
+      "include ${1:/etc/nginx/conf.d/*.conf};"
+    ]
+  },
+
+  "nginx_error_page": {
+    "prefix": ["errorpage"],
+    "description": "Custom error page",
+    "body": [
+      "error_page ${1:404} = /${2:404}.html;",
+      "location = /${2:404}.html {",
+      "    internal;",
+      "}"
+    ]
+  }
+}

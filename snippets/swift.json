@@ -1,0 +1,298 @@
+{
+  "swift_struct": {
+    "prefix": ["struct"],
+    "description": "Value type struct with a method",
+    "body": [
+      "struct ${1:Point} {",
+      "  var x: Double",
+      "  var y: Double",
+      "",
+      "  func distance(to other: Point) -> Double {",
+      "    let dx = x - other.x",
+      "    let dy = y - other.y",
+      "    return (dx * dx + dy * dy).squareRoot()",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_class": {
+    "prefix": ["class"],
+    "description": "Reference type class with an initializer",
+    "body": [
+      "class ${1:NetworkClient} {",
+      "  private let session: URLSession",
+      "  private(set) var requestCount = 0",
+      "",
+      "  init(session: URLSession = .shared) {",
+      "    self.session = session",
+      "  }",
+      "",
+      "  func reset() {",
+      "    requestCount = 0",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_protocol": {
+    "prefix": ["protocol"],
+    "description": "Protocol with requirements and a throwing method",
+    "body": [
+      "protocol ${1:Downloadable} {",
+      "  var identifier: String { get }",
+      "  var sizeInBytes: Int { get }",
+      "",
+      "  func download(to url: URL) async throws",
+      "}"
+    ]
+  },
+
+  "swift_extension": {
+    "prefix": ["extension"],
+    "description": "Extend a type with a computed property",
+    "body": [
+      "extension ${1:String} {",
+      "  var trimmedNonEmpty: String? {",
+      "    let value = trimmingCharacters(in: .whitespacesAndNewlines)",
+      "    return value.isEmpty ? nil : value",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_protocol_extension": {
+    "prefix": ["protoext"],
+    "description": "Default implementation shared by all protocol conformers",
+    "body": [
+      "extension ${1:Downloadable} {",
+      "  var megabytes: Double {",
+      "    Double(sizeInBytes) / 1_048_576",
+      "  }",
+      "",
+      "  func isLargeFile(limit: Int = 100_000_000) -> Bool {",
+      "    sizeInBytes > limit",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_generic_function": {
+    "prefix": ["funcgen"],
+    "description": "Generic function mapping a sequence with a transform",
+    "body": [
+      "func ${1:map}<T, U>(_ items: [T], transform: (T) throws -> U) rethrows -> [U] {",
+      "  var result: [U] = []",
+      "  for item in items {",
+      "    result.append(try transform(item))",
+      "  }",
+      "  return result",
+      "}"
+    ]
+  },
+
+  "swift_closure": {
+    "prefix": ["closure"],
+    "description": "Escaping closure stored in a typed constant",
+    "body": [
+      "let ${1:fetchData}: (String) async throws -> Data = { url in",
+      "  let (data, response) = try await URLSession.shared.data(from: URL(string: url)!)",
+      "  guard let http = response as? HTTPURLResponse, 200 ..< 300 ~= http.statusCode else {",
+      "    throw URLError(.badServerResponse)",
+      "  }",
+      "  return data",
+      "}"
+    ]
+  },
+
+  "swift_enum_associated": {
+    "prefix": ["enum"],
+    "description": "Enum with associated values and a computed flag",
+    "body": [
+      "enum ${1:LoadState} {",
+      "  case idle",
+      "  case loading(progress: Double)",
+      "  case loaded(items: [String])",
+      "  case failed(reason: String)",
+      "",
+      "  var isBusy: Bool {",
+      "    if case .loading = self {",
+      "      return true",
+      "    }",
+      "    return false",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_computed_property": {
+    "prefix": ["compprop"],
+    "description": "Read only computed property built from stored ones",
+    "body": [
+      "var ${1:displayName}: String {",
+      "  let parts = [firstName, lastName].filter { !\\$0.isEmpty }",
+      "  return parts.joined(separator: \" \")",
+      "}"
+    ]
+  },
+
+  "swift_property_observer": {
+    "prefix": ["propobs"],
+    "description": "Stored property with willSet and didSet observers",
+    "body": [
+      "var ${1:title}: String = \"\" {",
+      "  willSet {",
+      "    print(\"changing title from \\\\(title) to \\\\(newValue)\")",
+      "  }",
+      "  didSet {",
+      "    print(\"title is now \\\\(title)\")",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_guard_let": {
+    "prefix": ["guard"],
+    "description": "Guard clause that unwraps an optional or throws",
+    "body": [
+      "guard let ${1:user} = currentUser else {",
+      "  throw AppError.unauthorized",
+      "}",
+      "",
+      "let userId = user.id"
+    ]
+  },
+
+  "swift_if_let": {
+    "prefix": ["iflet"],
+    "description": "Optional binding with the if let shorthand",
+    "body": [
+      "if let ${1:token} = auth.token {",
+      "  print(\"using token \\\\(token)\")",
+      "}"
+    ]
+  },
+
+  "swift_do_catch": {
+    "prefix": ["trycatch"],
+    "description": "Do catch block with typed and generic error clauses",
+    "body": [
+      "do {",
+      "  let profile = try client.fetchProfile()",
+      "  print(\"profile: \\\\(profile.name)\")",
+      "} catch let error as NetworkError {",
+      "  print(\"network failure: \\\\(error)\")",
+      "} catch {",
+      "  print(\"unexpected error: \\\\(error)\")",
+      "}"
+    ]
+  },
+
+  "swift_throwing_function": {
+    "prefix": ["throwsfunc"],
+    "description": "Function that throws and decodes a payload",
+    "body": [
+      "func ${1:loadUser}(_ id: Int) throws -> User {",
+      "  guard let url = URL(string: \"https://api.example.com/users/\\\\(id)\") else {",
+      "    throw AppError.badURL",
+      "  }",
+      "",
+      "  let data = try Data(contentsOf: url)",
+      "  return try JSONDecoder().decode(User.self, from: data)",
+      "}"
+    ]
+  },
+
+  "swift_async_function": {
+    "prefix": ["asyncfunc"],
+    "description": "Async throwing function that talks to a REST API",
+    "body": [
+      "func ${1:fetchUsers}(page: Int = 1) async throws -> [User] {",
+      "  let url = URL(string: \"https://api.example.com/users?page=\\\\(page)\")!",
+      "  let (data, _) = try await URLSession.shared.data(from: url)",
+      "  return try JSONDecoder().decode([User].self, from: data)",
+      "}"
+    ]
+  },
+
+  "swift_task": {
+    "prefix": ["task"],
+    "description": "Detached Task running async work and updating state",
+    "body": [
+      "Task { [weak self] in",
+      "  guard let self else { return }",
+      "",
+      "  do {",
+      "    let users = try await self.api.fetchUsers()",
+      "    self.users = users",
+      "  } catch {",
+      "    self.errorMessage = error.localizedDescription",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swift_actor": {
+    "prefix": ["actor"],
+    "description": "Actor with isolated mutable state",
+    "body": [
+      "actor ${1:UserStore} {",
+      "  private var users: [User] = []",
+      "",
+      "  func add(_ user: User) {",
+      "    users.append(user)",
+      "  }",
+      "",
+      "  func all() -> [User] {",
+      "    users",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swiftui_view": {
+    "prefix": ["view"],
+    "description": "SwiftUI view built from a stack of subviews",
+    "body": [
+      "struct ${1:ProfileView}: View {",
+      "  let user: User",
+      "",
+      "  var body: some View {",
+      "    VStack(alignment: .leading, spacing: 8) {",
+      "      Text(user.name)",
+      "        .font(.title2)",
+      "        .bold()",
+      "      Text(user.email)",
+      "        .foregroundStyle(.secondary)",
+      "    }",
+      "    .padding()",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swiftui_view_modifier": {
+    "prefix": ["viewmod"],
+    "description": "ViewModifier that adds a reusable card style",
+    "body": [
+      "struct ${1:CardStyle}: ViewModifier {",
+      "  func body(content: Content) -> some View {",
+      "    content",
+      "      .padding(12)",
+      "      .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))",
+      "      .shadow(radius: 2)",
+      "  }",
+      "}"
+    ]
+  },
+
+  "swiftui_preview": {
+    "prefix": ["preview"],
+    "description": "SwiftUI preview macro for a view",
+    "body": [
+      "#Preview {",
+      "  ${1:ProfileView}(user: .preview)",
+      "}"
+    ]
+  }
+}

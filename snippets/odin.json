@@ -1,0 +1,148 @@
+{
+  "odin_procedure": {
+    "prefix": ["proc"],
+    "description": "Procedure with typed parameters and a return value",
+    "body": [
+      "${1:name} :: proc(${2:a}: int, ${3:b}: int) -> int {",
+      "\treturn ${2:a} + ${3:b}",
+      "}"
+    ]
+  },
+
+  "odin_procedure_no_return": {
+    "prefix": ["procvoid"],
+    "description": "Procedure without a return value",
+    "body": [
+      "${1:name} :: proc(${2:value}: int) {",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "odin_struct": {
+    "prefix": ["struct"],
+    "description": "Struct with a couple of fields",
+    "body": [
+      "${1:Name} :: struct {",
+      "\t${2:x}: int,",
+      "\t${3:y}: int,",
+      "}"
+    ]
+  },
+
+  "odin_union": {
+    "prefix": ["union"],
+    "description": "Union of a few alternative types",
+    "body": [
+      "${1:Value} :: union {",
+      "\tint,",
+      "\tstring,",
+      "\t[]u8,",
+      "}"
+    ]
+  },
+
+  "odin_enum": {
+    "prefix": ["enum"],
+    "description": "Enum with a few states",
+    "body": [
+      "${1:State} :: enum {",
+      "\t${2:Pending},",
+      "\t${3:Active},",
+      "\t${4:Closed},",
+      "}"
+    ]
+  },
+
+  "odin_switch": {
+    "prefix": ["switch"],
+    "description": "Switch over an enum value",
+    "body": [
+      "switch ${1:value} {",
+      "case .${2:Pending}:",
+      "\t$0",
+      "case .${3:Active}:",
+      "\t// do something",
+      "}",
+      ""
+    ]
+  },
+
+  "odin_for_loop": {
+    "prefix": ["for"],
+    "description": "For loop over a range",
+    "body": [
+      "for ${1:i} in 0..<${2:10} {",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "odin_for_in": {
+    "prefix": ["forin"],
+    "description": "For loop iterating over a collection",
+    "body": [
+      "for ${1:item}, ${2:index} in ${3:collection} {",
+      "\t$0",
+      "}"
+    ]
+  },
+
+  "odin_map": {
+    "prefix": ["map"],
+    "description": "Map declaration and insertion",
+    "body": [
+      "${1:counts} := make(map[string]int)",
+      "${1:counts}[\"${2:key}\"] = ${3:value}"
+    ]
+  },
+
+  "odin_dynamic_array": {
+    "prefix": ["darray"],
+    "description": "Dynamic array that is appended to",
+    "body": [
+      "${1:items}: [dynamic]${2:int}",
+      "${3:append}(&${1:items}, ${4:value})"
+    ]
+  },
+
+  "odin_error": {
+    "prefix": ["odinerr"],
+    "description": "Procedure returning an optional value and an error",
+    "body": [
+      "${1:find} :: proc(${2:key}: string) -> (value: int, err: ${3:FindError}) {",
+      "\t${4:return 0, .NotFound}",
+      "}"
+    ]
+  },
+
+  "odin_defer": {
+    "prefix": ["defer"],
+    "description": "Deferred cleanup at the end of the scope",
+    "body": [
+      "defer ${1:free_all}(&${2:allocator})"
+    ]
+  },
+
+  "odin_proc_literal": {
+    "prefix": ["proclit"],
+    "description": "Inline procedure literal",
+    "body": [
+      "proc(${1:value}: int) -> int {",
+      "\treturn ${1:value} * 2",
+      "}"
+    ]
+  },
+
+  "odin_package_comment": {
+    "prefix": ["odinpkg"],
+    "description": "Package documentation block",
+    "body": [
+      "package ${1:mypackage}",
+      "",
+      "// -- @section ${2:Overview}",
+      "//",
+      "// ${3:Describe the package here.}"
+    ]
+  }
+}

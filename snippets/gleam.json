@@ -1,0 +1,145 @@
+{
+  "gleam_function": {
+    "prefix": ["fn"],
+    "description": "Public function with typed arguments",
+    "body": [
+      "pub fn ${1:add}(${2:a}: ${3:Int}, ${3:b}: ${3:Int}) -> ${3:Int} {",
+      "  ${2:a} + ${3:b}",
+      "}"
+    ]
+  },
+
+  "gleam_private_function": {
+    "prefix": ["fnpriv"],
+    "description": "Private function",
+    "body": [
+      "fn ${1:helper}(${2:value}: ${3:String}) -> ${3:String} {",
+      "  ${2:value}",
+      "}"
+    ]
+  },
+
+  "gleam_type_alias": {
+    "prefix": ["typealias"],
+    "description": "Type alias for an existing type",
+    "body": [
+      "pub type ${1:Name} =",
+      "  ${2:Int}"
+    ]
+  },
+
+  "gleam_custom_type": {
+    "prefix": ["type"],
+    "description": "Custom type with a couple of constructors",
+    "body": [
+      "pub type ${1:Shape} {",
+      "  ${2:Circle(Float)}",
+      "  ${3:Rectangle(Float, Float)}",
+      "}"
+    ]
+  },
+
+  "gleam_case": {
+    "prefix": ["case"],
+    "description": "Case expression with a catch all branch",
+    "body": [
+      "case ${1:value} {",
+      "  ${2:Pattern} -> ${3:result}",
+      "  _ -> ${4:fallback}",
+      "}"
+    ]
+  },
+
+  "gleam_main": {
+    "prefix": ["main"],
+    "description": "Program entry point",
+    "body": [
+      "pub fn main() {",
+      "  ${1:io.println(\"Hello\")}",
+      "}"
+    ]
+  },
+
+  "gleam_let": {
+    "prefix": ["let"],
+    "description": "Let binding inside a function body",
+    "body": [
+      "let ${1:name} = ${2:value}",
+      "${1:name}"
+    ]
+  },
+
+  "gleam_list": {
+    "prefix": ["list"],
+    "description": "List literal",
+    "body": [
+      "[${1:first}, ${2:second}]"
+    ]
+  },
+
+  "gleam_tuple": {
+    "prefix": ["tuple"],
+    "description": "Tuple value",
+    "body": [
+      "#(${1:first}, ${2:second})"
+    ]
+  },
+
+  "gleam_result": {
+    "prefix": ["result"],
+    "description": "Result with an ok and an error variant",
+    "body": [
+      "Result(${1:value}, ${2:error})"
+    ]
+  },
+
+  "gleam_option": {
+    "prefix": ["option"],
+    "description": "Optional value",
+    "body": [
+      "${1:None}"
+    ]
+  },
+
+  "gleam_use": {
+    "prefix": ["use"],
+    "description": "Use expression capturing the result of a callback",
+    "body": [
+      "use ${1:value} <- ${2:result.try}(${3:do_something})",
+      "${1:value}"
+    ]
+  },
+
+  "gleam_todo": {
+    "prefix": ["todo"],
+    "description": "Placeholder that panics at runtime",
+    "body": [
+      "todo as \"${1:implement this}\""
+    ]
+  },
+
+  "gleam_panic": {
+    "prefix": ["panic"],
+    "description": "Panic with a message",
+    "body": [
+      "panic as \"${1:something went wrong}\""
+    ]
+  },
+
+  "gleam_test": {
+    "prefix": ["test"],
+    "description": "Test module with a single test case",
+    "body": [
+      "import gleeunit",
+      "import gleeunit/should",
+      "",
+      "pub fn main() {",
+      "  gleeunit.main()",
+      "}",
+      "",
+      "pub fn ${1:add}_test() {",
+      "  ${2:1} |> should.equal(${3:1})",
+      "}"
+    ]
+  }
+}

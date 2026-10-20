@@ -1,0 +1,253 @@
+{
+  "func_def": {
+    "prefix": ["func"],
+    "description": "Define a typed function and return its result",
+    "body": [
+      "function ${1:compute_total}(values::Vector{Float64})",
+      "  total = sum(values)",
+      "  return total",
+      "end"
+    ]
+  },
+
+  "docstring_fn": {
+    "prefix": ["docfn"],
+    "description": "Function with a docstring and a usage signature",
+    "body": [
+      "\"\"\"",
+      "    ${1:scale_value}(x, factor)",
+      "",
+      "Scale `x` by `factor`.",
+      "\"\"\"",
+      "function ${1:scale_value}(x, factor)",
+      "  return x * factor",
+      "end"
+    ]
+  },
+
+  "mutable_struct": {
+    "prefix": ["mstruct"],
+    "description": "Mutable struct with typed fields",
+    "body": [
+      "mutable struct ${1:Counter}",
+      "  count::Int",
+      "  label::String",
+      "end",
+      "",
+      "counter = ${1:Counter}(0, \"items\")",
+      "counter.count += 1"
+    ]
+  },
+
+  "parametric_struct": {
+    "prefix": ["pstruct"],
+    "description": "Parametric struct and a method that unwraps it",
+    "body": [
+      "struct ${1:Wrapper}{T}",
+      "  value::T",
+      "end",
+      "",
+      "unwrap(w::${1:Wrapper}{T}) where {T} = w.value"
+    ]
+  },
+
+  "abstract_type": {
+    "prefix": ["abstype"],
+    "description": "Abstract type with a concrete subtype",
+    "body": [
+      "abstract type ${1:Shape} end",
+      "",
+      "struct ${2:Circle} <: ${1:Shape}",
+      "  radius::Float64",
+      "end",
+      "",
+      "area(c::${2:Circle}) = pi * c.radius^2"
+    ]
+  },
+
+  "multi_dispatch": {
+    "prefix": ["dispatch"],
+    "description": "Multiple dispatch methods for one function name",
+    "body": [
+      "${1:describe}(x::Int) = \"integer: \\$x\"",
+      "${1:describe}(x::Float64) = \"float: \\$x\"",
+      "${1:describe}(x::AbstractString) = \"string: \\$x\""
+    ]
+  },
+
+  "macro_def": {
+    "prefix": ["macdef"],
+    "description": "Macro that times the execution of its argument",
+    "body": [
+      "macro ${1:timed}(expr)",
+      "  quote",
+      "    start = time()",
+      "    result = \\$(esc(expr))",
+      "    println(\"elapsed: \", time() - start, \"s\")",
+      "    result",
+      "  end",
+      "end"
+    ]
+  },
+
+  "comprehension": {
+    "prefix": ["compre"],
+    "description": "Build a list with a comprehension and sum it",
+    "body": [
+      "${1:squares} = [x^2 for x in 1:10]",
+      "",
+      "${2:total} = sum(${1:squares})"
+    ]
+  },
+
+  "broadcast": {
+    "prefix": ["bcast"],
+    "description": "Broadcast an operation over a whole collection",
+    "body": [
+      "${1:scaled} = ${2:[1, 2, 3]} .* ${3:2}",
+      "",
+      "sum(${1:scaled})"
+    ]
+  },
+
+  "generator": {
+    "prefix": ["gen"],
+    "description": "Lazy generator expression and collecting it",
+    "body": [
+      "${1:gen} = (x^2 for x in 1:10 if iseven(x))",
+      "",
+      "collect(${1:gen})"
+    ]
+  },
+
+  "dict": {
+    "prefix": ["dict"],
+    "description": "Count occurrences in a dictionary",
+    "body": [
+      "${1:counts} = Dict{String, Int}()",
+      "",
+      "${1:counts}[\"apple\"] = get(${1:counts}, \"apple\", 0) + 1"
+    ]
+  },
+
+  "keyword_args": {
+    "prefix": ["kwargs"],
+    "description": "Function with optional keyword arguments",
+    "body": [
+      "function ${1:fetch_data}(url::String; retries::Int = 3, timeout::Float64 = 30.0)",
+      "  for attempt in 1:retries",
+      "    response = download(url, timeout = timeout)",
+      "    return response",
+      "  end",
+      "  error(\"request failed after \\$retries attempts\")",
+      "end"
+    ]
+  },
+
+  "do_block": {
+    "prefix": ["doblock"],
+    "description": "Use a do block to work with an opened file",
+    "body": [
+      "open(\"${1:data.csv}\") do io",
+      "  for line in eachline(io)",
+      "    println(line)",
+      "  end",
+      "end"
+    ]
+  },
+
+  "unit_test": {
+    "prefix": ["test"],
+    "description": "Test set with the Test standard library",
+    "body": [
+      "using Test",
+      "",
+      "@testset \"${1:describe the behaviour}\" begin",
+      "  result = ${2:my_function}(1, 2)",
+      "  @test result == ${3:3}",
+      "end"
+    ]
+  },
+
+  "try_catch": {
+    "prefix": ["trycatch"],
+    "description": "Try catch block that rethrows unexpected errors",
+    "body": [
+      "try",
+      "  result = ${1:risky_call()}",
+      "catch err",
+      "  if err isa BoundsError",
+      "    rethrow()",
+      "  else",
+      "    @warn \"operation failed\" exception = err",
+      "    result = nothing",
+      "  end",
+      "end"
+    ]
+  },
+
+  "log_macro": {
+    "prefix": ["logm"],
+    "description": "Logging macro that wraps the info level",
+    "body": [
+      "using Logging",
+      "",
+      "macro ${1:logmsg}(message)",
+      "  quote",
+      "    @info \\$(esc(message))",
+      "  end",
+      "end"
+    ]
+  },
+
+  "read_file": {
+    "prefix": ["readfile"],
+    "description": "Read a file as a string and as a list of lines",
+    "body": [
+      "${1:content} = read(${2:path/to/file.txt}, String)",
+      "",
+      "lines = readlines(${2:path/to/file.txt})"
+    ]
+  },
+
+  "read_csv": {
+    "prefix": ["readcsv"],
+    "description": "Read a CSV file into a DataFrame and select a column",
+    "body": [
+      "using CSV, DataFrames",
+      "",
+      "df = CSV.read(${1:data.csv}, DataFrame)",
+      "df[!, :${2:column}]"
+    ]
+  },
+
+  "module_def": {
+    "prefix": ["jmodule"],
+    "description": "Julia module with an exported function",
+    "body": [
+      "module ${1:MyModule}",
+      "",
+      "export ${2:public_function}",
+      "",
+      "function ${2:public_function}(x::Int)",
+      "  x + 1",
+      "end",
+      "",
+      "end"
+    ]
+  },
+
+  "closure": {
+    "prefix": ["closure"],
+    "description": "Function that returns a closure over its argument",
+    "body": [
+      "function ${1:make_adder}(base::Int)",
+      "  return function (x::Int)",
+      "    base + x",
+      "  end",
+      "end",
+      "",
+      "add_five = ${1:make_adder}(5)"
+    ]
+  }
+}
