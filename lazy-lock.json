@@ -105,6 +105,7 @@
   "otter.nvim": { "branch": "main", "commit": "6f05811621460eca983bf2cd877e63c59a40720e" },
   "outline.nvim": { "branch": "main", "commit": "d8e48fe265fa9c33364809bf9cf32a1f032a8ac1" },
   "overseer.nvim": { "branch": "master", "commit": "a93d9f6d6defdac4bcd6d2c8ba988650e42e0a0e" },
+  "pdfreader.nvim": { "branch": "main", "commit": "f8c067648b0c0d332a8d241111787a6b4d7ba061" },
   "persistence.nvim": { "branch": "main", "commit": "b20b2a7887bd39c1a356980b45e03250f3dce49c" },
   "plenary.nvim": { "branch": "master", "commit": "74b06c6c75e4eeb3108ec01852001636d85a932b" },
   "rainbow-fast.nvim": { "branch": "main", "commit": "e7c6d5d77b36b0279c70ad0ee32ef2965f53ed88" },

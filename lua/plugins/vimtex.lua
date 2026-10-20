@@ -35,5 +35,19 @@ return {
         -- Disable the default ]] insert mapping (causes input lag due to
         -- the two-character wait). We remap its action to <C-=> in tex.lua.
         vim.g.vimtex_mappings_disable = { i = { ']]' } }
+
+        -- PDF viewer: zathura. It is linked against libsynctex, so forward
+        -- search (\ll jumps to the right page) and inverse search (clicking in
+        -- zathura jumps back to the source line) both work. The
+        -- 'zathura_simple' variant needs no xdotool; install xdotool and use
+        -- 'zathura' instead to reuse a single window instance.
+        vim.g.vimtex_view_method = "zathura_simple"
+
+        -- latexmk (from texlive, already installed) reruns bibtex/aux as
+        -- needed, which plain pdflatex does not. Fall back to texmf if it
+        -- ever goes missing.
+        if vim.fn.executable("latexmk") == 1 then
+            vim.g.vimtex_compiler_method = "latexmk"
+        end
     end,
 }

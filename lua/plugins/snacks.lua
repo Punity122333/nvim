@@ -102,6 +102,26 @@ return {
 		image = {
 			enabled = true,
 			math = { enabled = false },
+			-- "pdf" is dropped on purpose: pdfreader.nvim owns .pdf buffers
+			-- (paging, text mode, bookmarks, TOC), and snacks.image would
+			-- otherwise hijack the same buffer via its own BufReadCmd.
+			formats = {
+				"png",
+				"jpg",
+				"jpeg",
+				"gif",
+				"bmp",
+				"webp",
+				"tiff",
+				"heic",
+				"avif",
+				"mp4",
+				"mov",
+				"avi",
+				"mkv",
+				"webm",
+				"icns",
+			},
 		},
 	},
 	keys = {
@@ -112,6 +132,14 @@ return {
 				Snacks.explorer()
 			end,
 			desc = "Toggle Explorer",
+		},
+
+		{
+			"<leader>i",
+			function()
+				Snacks.image.hover()
+			end,
+			desc = "Image Hover",
 		},
 	},
 }
