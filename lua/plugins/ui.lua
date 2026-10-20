@@ -1,60 +1,18 @@
+-- NOTE: this file used to hold a second `folke/tokyonight.nvim`,
+-- `folke/which-key.nvim`, `MeanderingProgrammer/render-markdown.nvim` and
+-- `yetone/avante.nvim` spec. Because lazy.nvim imports `lua/plugins/*.lua`
+-- in alphabetical order and the *last* fragment wins for `opts`/`config`,
+-- those duplicates silently replaced the real definitions:
+--   * tokyonight  -> ui.lua's 4-line `on_highlights` won, so ~30 lines of
+--                    colour customisation in colorscheme.lua were dead
+--   * avante      -> ui.lua's `config` won, so avante.lua's `config` was dead
+--   * which-key   -> which-key.lua's `delay` won, ui.lua's won on `init`
+-- Each of those now lives in exactly one place.
 return {
 	{
 		"LazyVim/LazyVim",
 		opts = {
 			colorscheme = "tokyonight",
 		},
-	},
-	{
-		"folke/tokyonight.nvim",
-		opts = {
-			transparent = false,
-			on_highlights = function(hl)
-				hl.SignColumn = { bg = "none" }
-				hl.LineNr = { bg = "none" }
-				hl.StatusLine = { bg = "none" }
-				hl.EndOfBuffer = { bg = "none" }
-			end,
-		},
-	},
-
-	{
-		"folke/which-key.nvim",
-		lazy = false,
-		init = function()
-			vim.o.timeoutlen = 130
-			vim.o.ttimeoutlen = 10
-		end,
-		opts = {
-			delay = 130,
-			notify = false,
-			win = {
-				height = { min = 4, max = 25 },
-			},
-			spec = {
-				{ "<leader>gh", group = "Git Hunks" },
-			},
-		},
-	},
-	{
-		"MeanderingProgrammer/render-markdown.nvim",
-		opts = {
-			exclude = {
-				file_types = { "Avante", "AvanteInput" },
-			},
-		},
-	},
-
-	{
-		"yetone/avante.nvim",
-		config = function(_, opts)
-			require("avante").setup(opts)
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "Avante", "AvanteInput" },
-				callback = function(ev)
-					vim.treesitter.stop(ev.buf)
-				end,
-			})
-		end,
 	},
 }

@@ -43,11 +43,13 @@ vim.cmd([[
   cnoreabbrev <expr> Wqa getcmdtype() == ":" && getcmdline() == "Wqa" ? "WQA" : "Wqa"
 ]])
 
-local telescope = require("telescope")
-
-telescope.load_extension("emoji")
-
-vim.keymap.set("n", "<leader>se", telescope.extensions.emoji.emoji, { desc = "Search Emojis" })
+-- NOTE: the telescope emoji extension used to be loaded here. Because
+-- `allaman/emoji.nvim` was only loaded for markdown/text buffers,
+-- `telescope.load_extension("emoji")` raised "extension doesn't exist"
+-- in every other buffer -- and since it was not wrapped in pcall, the
+-- error aborted the rest of this file, so every mapping below it was
+-- silently dropped. The extension and the `<leader>se` mapping are now
+-- owned by `lua/plugins/emoji.lua` (which loads eagerly).
 
 local _scroll_ts = 0
 local _move_ts = 0
@@ -211,5 +213,32 @@ end, { silent = true, desc = "Next todo comment" })
 vim.keymap.set("n", "[o", function()
 	jump_todo("prev")
 end, { silent = true, desc = "Prev todo comment" })
+
+-- Compile & run the current C++ file.
+--
+-- The command is built so that the binary is produced next to the source
+-- file and executed with a relative `./<name>` path; the terminal therefore
+-- runs with `cwd` set to the directory of the buffer, which keeps the
+-- relative path valid even when the file lives outside of nvim's cwd.
+vim.keymap.set("n", "<leader>cr", function()
+	if vim.bo.filetype ~= "cpp" then
+		vim.notify("Compile & Run only works for C++ files", vim.log.levels.WARN)
+		return
+	end
+
+	vim.cmd("w")
+
+	local current_file = vim.fn.expand("%:p")
+	local file_dir = vim.fn.fnamemodify(current_file, ":h")
+	local output_binary = vim.fn.fnamemodify(current_file, ":t:r")
+
+	Snacks.terminal.open(
+		"g++ -O3 -std=c++20 -Wall " .. current_file .. " -o " .. output_binary .. " && ./" .. output_binary,
+		{
+			cwd = file_dir,
+			win = { position = "right", width = 0.25 },
+		}
+	)
+end, { desc = "Compile and Run CP File" })
 
 

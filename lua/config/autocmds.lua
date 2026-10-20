@@ -1,6 +1,7 @@
 local COLOR_LINE_NUMBER = "#565f89"
 local COLOR_NONE = "none"
 require("config.clauseclose")
+require("config.react_indent").setup()
 vim.api.nvim_set_hl(0, "SignColumn", { bg = COLOR_NONE })
 vim.api.nvim_set_hl(0, "LineNr", { fg = COLOR_LINE_NUMBER, bg = COLOR_NONE })
 vim.api.nvim_set_hl(0, "EndOfBuffer", { fg = COLOR_NONE, bg = COLOR_NONE })
@@ -29,11 +30,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.api.nvim_create_autocmd("CursorHold", {
 			buffer = args.buf,
 			callback = function()
+				if vim.fn.mode() ~= "n" then
+					return
+				end
 				if codeaction_timers[args.buf] then
 					vim.fn.timer_stop(codeaction_timers[args.buf])
+					codeaction_timers[args.buf] = nil
 				end
 
 				codeaction_timers[args.buf] = vim.fn.timer_start(300, function()
+					codeaction_timers[args.buf] = nil
+					if vim.fn.mode() ~= "n" then
+						return
+					end
+					if not vim.api.nvim_buf_is_valid(args.buf) then
+						return
+					end
 					local params = vim.lsp.util.make_range_params(nil, "utf-16")
 
 					params.context = { diagnostics = vim.diagnostic.get(args.buf, { lnum = vim.fn.line(".") - 1 }) }
@@ -45,6 +57,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 						function(err, result, ctx, config) end
 					)
 				end)
+			end,
+		})
+		vim.api.nvim_create_autocmd("BufDelete", {
+			buffer = args.buf,
+			once = true,
+			callback = function()
+				if codeaction_timers[args.buf] then
+					pcall(vim.fn.timer_stop, codeaction_timers[args.buf])
+					codeaction_timers[args.buf] = nil
+				end
 			end,
 		})
 	end,
@@ -95,10 +117,18 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "c", "cpp" },
-	callback = function()
-		vim.opt_local.cindent = false
-		vim.opt_local.smartindent = true
+	pattern = { "c", "cpp", "h", "hpp" },
+	callback = function(args)
+		vim.bo[args.buf].cindent = false
+		vim.bo[args.buf].smartindent = false
+		vim.bo[args.buf].autoindent = true
+		-- Hybrid C/C++ indent (treesitter + cindent fallback); ensure
+		-- indentexpr is set even if LazyVim's set_default was skipped
+		-- (it only sets unset options).
+		local iexpr = vim.bo[args.buf].indentexpr
+		if iexpr == nil or iexpr == "" then
+			vim.bo[args.buf].indentexpr = "v:lua.require'config.cpp_indent'.indentexpr()"
+		end
 	end,
 })
 
@@ -120,23 +150,31 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 local snacks_refresh_group = vim.api.nvim_create_augroup("SnacksExplorerRefresh", { clear = true })
+local snacks_refresh_timer = nil
 vim.api.nvim_create_autocmd("DiagnosticChanged", {
 	group = snacks_refresh_group,
 	callback = function()
-		if refresh_timer then
-			vim.fn.timer_stop(refresh_timer)
+		if snacks_refresh_timer then
+			vim.fn.timer_stop(snacks_refresh_timer)
+			snacks_refresh_timer = nil
 		end
 
-		refresh_timer = vim.fn.timer_start(500, function()
-			local snacks = package.loaded["snacks"]
-			if not snacks then
-				return
-			end
+		snacks_refresh_timer = vim.fn.timer_start(800, function()
+			snacks_refresh_timer = nil
+			vim.schedule(function()
+				local snacks = package.loaded["snacks"]
+				if not snacks then
+					return
+				end
 
-			local explorers = snacks.picker.get({ source = "explorer" })
-			for _, picker in ipairs(explorers) do
-				picker:find()
-			end
+				local explorers = snacks.picker.get({ source = "explorer" })
+				if #explorers == 0 then
+					return
+				end
+				for _, picker in ipairs(explorers) do
+					picker:find()
+				end
+			end)
 		end)
 	end,
 })
@@ -150,10 +188,18 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
 	callback = function(args)
-		local ok, parser = pcall(vim.treesitter.get_parser, args.buf)
-		if ok and parser then
-			parser:parse(true)
+		if vim.api.nvim_buf_line_count(args.buf) > 5000 then
+			return
 		end
+		vim.schedule(function()
+			if not vim.api.nvim_buf_is_valid(args.buf) then
+				return
+			end
+			local ok, parser = pcall(vim.treesitter.get_parser, args.buf)
+			if ok and parser then
+				pcall(parser.parse, parser, true)
+			end
+		end)
 	end,
 })
 
@@ -279,8 +325,14 @@ vim.api.nvim_create_autocmd("FileType", {
 			and not bufname:find("avante")
 			and not bufname:find("grug%-far")
 		then
-			local keys = vim.api.nvim_replace_termcodes("a<Esc>", true, false, true)
-			vim.api.nvim_feedkeys(keys, "n", false)
+			local buf = vim.api.nvim_get_current_buf()
+			vim.schedule(function()
+				if not vim.api.nvim_buf_is_valid(buf) then
+					return
+				end
+				local keys = vim.api.nvim_replace_termcodes("a<Esc>", true, false, true)
+				vim.api.nvim_feedkeys(keys, "n", false)
+			end)
 		end
 	end,
 })
@@ -340,14 +392,6 @@ vim.diagnostic.config({
 	},
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-	callback = function(args)
-		local ok, parser = pcall(vim.treesitter.get_parser, args.buf)
-		if ok and parser then
-			parser:parse()
-		end
-	end,
-})
 vim.api.nvim_create_autocmd("User", {
 	pattern = "MarksSetupComplete",
 	once = true,
@@ -362,7 +406,9 @@ vim.api.nvim_create_autocmd("User", {
 })
 vim.api.nvim_create_autocmd("FocusGained", {
 	callback = function()
-		collectgarbage("collect")
+		vim.defer_fn(function()
+			collectgarbage("collect")
+		end, 1000)
 	end,
 })
 
@@ -376,24 +422,36 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_clear_autocmds({ event = "WinScrolled" })
 vim.api.nvim_set_hl(0, "CursorBoldChar", { bold = true })
 local ns = vim.api.nvim_create_namespace("cursor_bold_char")
+local _cb_buf = nil
+local _cb_row = nil
+local _cb_col = nil
 
 local function highlight_cursor_char()
 	local bufnr = vim.api.nvim_get_current_buf()
 	local pos = vim.api.nvim_win_get_cursor(0)
 	local row, col = pos[1] - 1, pos[2]
 
-	vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+	if bufnr == _cb_buf and row == _cb_row and col == _cb_col then
+		return
+	end
+	_cb_buf = bufnr
+	_cb_row = row
+	_cb_col = col
 
 	local line_content = vim.api.nvim_buf_get_lines(bufnr, row, row + 1, false)[1] or ""
 	local line_len = #line_content
 
-	if line_len > 0 and col < line_len then
-		vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
-			end_col = col + 1,
-			hl_group = "CursorBoldChar",
-			strict = false,
-		})
+	if line_len == 0 or line_len > 1000 or col >= line_len then
+		vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+		return
 	end
+
+	vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+	vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
+		end_col = col + 1,
+		hl_group = "CursorBoldChar",
+		strict = false,
+	})
 end
 
 vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {

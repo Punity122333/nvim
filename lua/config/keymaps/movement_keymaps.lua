@@ -1,5 +1,9 @@
 -- Movement Keymaps
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
+--
+-- NOTE: `<C-h>`/`<C-j>`/`<C-k>`/`<C-l>` (move between windows) used to be
+-- mapped here *and* in `plugin_keymaps.lua`, and `smart-splits.nvim` maps
+-- them as well. They are now owned by `smart-splits.nvim` only (see
+-- `lua/plugins/smart-splits.lua`), which does the same thing.
 --
 -- local function read_until_cr()
 -- 	local out = ""

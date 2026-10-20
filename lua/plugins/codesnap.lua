@@ -128,262 +128,62 @@ return {
 		config = function(_, opts)
 			require("codesnap").setup(opts)
 
-			local gen_module = require("codesnap.module")
 			local cfg_module = require("codesnap.config")
 			local static = require("codesnap.static")
-			local modal = require("codesnap.modal")
+			local gen_module = require("codesnap.module")
 
-			local function get_config()
-				local ok, config = pcall(cfg_module.get_config)
-				if not ok or not config then
-					vim.notify("CodeSnap: " .. tostring(config), vim.log.levels.WARN)
-					return nil
-				end
-				return config
-			end
+			-- NOTE: this used to re-implement the whole generator pipeline:
+			-- the config was serialised to a fixed /tmp path and the Rust
+			-- module was re-`require`d from a worker thread after scanning
+			-- `package.cpath` for an entry ending in `generator.so`.
+			-- `codesnap.module` registers its *libs directory* on
+			-- `package.cpath` (as a `?` pattern), never the library file,
+			-- so that lookup could never succeed and every CodeSnap command
+			-- failed with "generator library not found in package.cpath".
+			-- Upstream already loads the generator, so use it directly.
 
-			local function clipboard_cmd(path)
-				local is_wayland = vim.env.WAYLAND_DISPLAY ~= nil and vim.env.WAYLAND_DISPLAY ~= ""
-				if is_wayland then
-					return "wl-copy --type image/png < " .. vim.fn.shellescape(path)
-				else
-					return "xclip -selection clipboard -t image/png -i " .. vim.fn.shellescape(path)
-				end
-			end
-
-			local function find_gen_lib_path()
-				for entry in package.cpath:gmatch("[^;]+") do
-					if
-						entry:match("generator%.so$")
-						or entry:match("generator%.dylib$")
-						or entry:match("generator%.dll$")
-					then
-						return entry
+			-- `:CodeSnapSave` upstream requires the target path as an
+			-- argument; prompt for it instead.
+			vim.api.nvim_create_user_command("CodeSnapSave", function()
+				vim.ui.input({ prompt = "Save snapshot to: ", default = vim.fn.expand("~/Pictures/codesnap.png") }, function(p)
+					if not p or p == "" then
+						return
 					end
-				end
-				return nil
-			end
-
-			local function write_config(config, path)
-				local f, err = io.open(path, "w")
-				if not f then
-					return false, err
-				end
-				f:write("return " .. vim.inspect(config))
-				f:close()
-				return true
-			end
-
-			local function gen_async(config, out_path, on_done, on_err)
-				gen_module.load_generator()
-
-				local lib_path = find_gen_lib_path()
-				if not lib_path then
-					on_err("generator library not found in package.cpath")
-					return
-				end
-
-				local cfg_path = "/tmp/codesnap_config.lua"
-				local ok, io_err = write_config(config, cfg_path)
-				if not ok then
-					on_err("failed to serialise config: " .. tostring(io_err))
-					return
-				end
-
-				local work = vim.uv.new_work(function(l_path, c_path, o_path)
-					package.cpath = package.cpath .. ";" .. l_path
-
-					local r1, gen = pcall(require, "generator")
-					if not r1 then
-						return "load:" .. tostring(gen)
-					end
-
-					local r2, cfg = pcall(dofile, c_path)
-					if not r2 then
-						return "config:" .. tostring(cfg)
-					end
-
-					local r3, err = pcall(gen.save, o_path, cfg)
-					if not r3 then
-						return "save:" .. tostring(err)
-					end
-
-					return ""
-				end, function(result)
-					vim.schedule(function()
-						if result == "" then
-							on_done(out_path)
-						else
-							on_err(result)
-						end
-					end)
+					require("codesnap").save(p)
 				end)
-
-				work:queue(lib_path, cfg_path, out_path)
-			end
-
-			local function gen_async_ascii(config, on_done, on_err)
-				gen_module.load_generator()
-
-				local lib_path = find_gen_lib_path()
-				if not lib_path then
-					on_err("generator library not found in package.cpath")
-					return
-				end
-
-				local cfg_path = "/tmp/codesnap_ascii_config.lua"
-				local ok, io_err = write_config(config, cfg_path)
-				if not ok then
-					on_err("failed to serialise config: " .. tostring(io_err))
-					return
-				end
-
-				local work = vim.uv.new_work(function(l_path, c_path)
-					package.cpath = package.cpath .. ";" .. l_path
-					local r1, gen = pcall(require, "generator")
-					if not r1 then
-						return "load:" .. tostring(gen)
-					end
-					local r2, cfg = pcall(dofile, c_path)
-					if not r2 then
-						return "config:" .. tostring(cfg)
-					end
-					local r3, err = pcall(gen.copy_ascii, cfg)
-					if not r3 then
-						return "ascii:" .. tostring(err)
-					end
-					return ""
-				end, function(result)
-					vim.schedule(function()
-						if result == "" then
-							on_done()
-						else
-							on_err(result)
-						end
-					end)
-				end)
-
-				work:queue(lib_path, cfg_path)
-			end
-
-			local function snap_copy(config)
-				local tmp = "/tmp/codesnap_clipboard.png"
-				local cmd = clipboard_cmd(tmp)
-				vim.notify("CodeSnap: generating…", vim.log.levels.INFO)
-				gen_async(config, tmp, function(out)
-					vim.fn.jobstart(cmd, { detach = true })
-					vim.cmd("delmarks <>")
-					vim.notify("Snapshot copied to clipboard", vim.log.levels.INFO)
-				end, function(err)
-					vim.notify("CodeSnap: " .. err, vim.log.levels.ERROR)
-				end)
-			end
-
-			local function snap_save(config, path)
-				local function do_save(p)
-					p = vim.fn.expand(p)
-					vim.notify("CodeSnap: generating…", vim.log.levels.INFO)
-					gen_async(config, p, function(out)
-						vim.cmd("delmarks <>")
-						vim.notify("Snapshot saved to " .. out, vim.log.levels.INFO)
-					end, function(err)
-						vim.notify("CodeSnap: " .. err, vim.log.levels.ERROR)
-					end)
-				end
-
-				if path and path ~= "" then
-					do_save(path)
-				else
-					local default = vim.fn.expand("~/Pictures/codesnap.png")
-					vim.ui.input({ prompt = "Save snapshot to: ", default = default }, function(p)
-						if not p or p == "" then
-							vim.notify("CodeSnap: save cancelled", vim.log.levels.INFO)
-							return
-						end
-						do_save(p)
-					end)
-				end
-			end
-
-			pcall(vim.api.nvim_del_user_command, "CodeSnap")
-			vim.api.nvim_create_user_command("CodeSnap", function()
-				local config = get_config()
-				if config then
-					snap_copy(config)
-				end
-			end, { range = "%" })
-
-			pcall(vim.api.nvim_del_user_command, "CodeSnapSave")
-			vim.api.nvim_create_user_command("CodeSnapSave", function(args)
-				local config = get_config()
-				if config then
-					snap_save(config, args.args)
-				end
 			end, { nargs = "*", range = "%" })
 
-			pcall(vim.api.nvim_del_user_command, "CodeSnapASCII")
-			vim.api.nvim_create_user_command("CodeSnapASCII", function()
-				local config = get_config()
-				if not config then
-					return
-				end
-				vim.notify("CodeSnap: generating ASCII…", vim.log.levels.INFO)
-				gen_async_ascii(config, function()
-					vim.cmd("delmarks <>")
-					vim.notify("ASCII snapshot copied to clipboard", vim.log.levels.INFO)
-				end, function(err)
-					vim.notify("CodeSnap ASCII: " .. err, vim.log.levels.ERROR)
-				end)
-			end, { range = "%" })
-
-			pcall(vim.api.nvim_del_user_command, "CodeSnapHighlight")
-			vim.api.nvim_create_user_command("CodeSnapHighlight", function()
-				local config = get_config()
-				if not config then
-					return
-				end
-				local text = config.content.content
-				local filetype = vim.bo.filetype
-
-				modal.pop_modal(text, filetype, function(selection)
-					if not selection then
-						vim.notify("CodeSnap: highlight cancelled", vim.log.levels.INFO)
-						return
-					end
-					local lines = vim.split(text, "\n", { plain = true })
-					local s, e = selection[1], selection[2]
-					if s < 1 or e > #lines or s > e then
-						vim.notify("CodeSnap: invalid selection range", vim.log.levels.ERROR)
-						return
-					end
-					config.content.highlight_lines = { { s, e, static.config.highlight_color } }
-					snap_copy(config)
-				end)
-			end, { range = "%" })
-
-			pcall(vim.api.nvim_del_user_command, "CodeSnapHighlightSave")
+			-- Upstream ships `CodeSnapHighlightSave` as a no-op. Implement it:
+			-- highlight the whole buffer and write the snapshot to a file.
 			vim.api.nvim_create_user_command("CodeSnapHighlightSave", function(args)
-				local config = get_config()
-				if not config then
+				local path = args.args
+				if not path or path == "" then
+					path = vim.fn.expand("~/Pictures/codesnap.png")
+				end
+
+				local ok, config = pcall(cfg_module.get_config)
+				if not ok or not config or not config.content then
+					vim.notify("CodeSnap: " .. tostring(config), vim.log.levels.ERROR)
 					return
 				end
-				local text = config.content.content
-				local filetype = vim.bo.filetype
 
-				modal.pop_modal(text, filetype, function(selection)
-					if not selection then
-						vim.notify("CodeSnap: save cancelled", vim.log.levels.INFO)
-						return
-					end
-					local lines = vim.split(text, "\n", { plain = true })
-					local s, e = selection[1], selection[2]
-					if s < 1 or e > #lines or s > e then
-						vim.notify("CodeSnap: invalid selection range", vim.log.levels.ERROR)
-						return
-					end
-					config.content.highlight_lines = { { s, e, static.config.highlight_color } }
-					snap_save(config, args.args)
-				end)
+				local lines = vim.split(config.content.content, "\n", { plain = true })
+				config.content.highlight_lines = { { 1, #lines, static.config.highlight_color } }
+
+				local generator = gen_module.generator
+				if not generator then
+					vim.notify("CodeSnap: generator not loaded", vim.log.levels.ERROR)
+					return
+				end
+
+				local saved, err = pcall(generator.save, path, config)
+				if not saved then
+					vim.notify("CodeSnap: " .. tostring(err), vim.log.levels.ERROR)
+					return
+				end
+
+				vim.cmd("delmarks <>")
+				vim.notify("Snapshot saved to " .. path, vim.log.levels.INFO)
 			end, { nargs = "*", range = "%" })
 		end,
 	},

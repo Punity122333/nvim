@@ -1,7 +1,10 @@
-
 return {
   {
     "hedyhli/outline.nvim",
+    -- `:Outline` is bound in `lua/config/keymaps/movement_keymaps.lua`
+    -- (`<leader>O`). Without a `cmd` trigger the plugin was never loaded
+    -- and the command did not exist.
+    cmd = "Outline",
     opts = {
       providers = {
         priority = { "lsp", "markdown" }, -- removed treesitter
@@ -16,4 +19,3 @@ return {
     },
   },
 }
-

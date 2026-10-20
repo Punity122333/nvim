@@ -12,4 +12,4 @@ return {
 			})
 		end,
 	},
-ffd}
+}

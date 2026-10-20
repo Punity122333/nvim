@@ -51,6 +51,11 @@ return {
 				hl.TelescopeResultsNormal = SOLID_BG
 				hl.TelescopePreviewNormal = SOLID_BG
 				hl.BufferLineSeparator = { fg = NIGHT_BG, bg = NIGHT_BG }
+				-- Keep the chrome on the page background.
+				hl.SignColumn = { bg = "none" }
+				hl.LineNr = { bg = "none" }
+				hl.StatusLine = { bg = "none" }
+				hl.EndOfBuffer = { bg = "none" }
 			end,
 		},
 	},

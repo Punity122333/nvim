@@ -4,9 +4,9 @@ return {
 	cmd = "LazyDev",
 	opts = {
 		library = {
-		  { path = "${3rd}/luvit-meta/library", words = { "vim%.uv" } },
-		  { path = "${3rd}/love2d/library", words = { "love" } },
-		  { path = "${3rd}/busted/library", words = { "describe" } },
+		  -- NOTE: the "${3rd}" placeholders are not expanded by lazydev
+		  -- (it only ever appears in the README), so those three entries
+		  -- pointed at literal, non-existent directories.
 		  "LazyVim",
 		},
 		enabled = function(root_dir)

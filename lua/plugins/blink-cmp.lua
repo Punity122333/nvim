@@ -1,11 +1,14 @@
-local project = require "lazyvim.plugins.extras.util.project"
-
 return {
 	{
 		"saghen/blink.cmp",
 		dependencies = {
 			"rafamadriz/friendly-snippets",
-			"saghen/blink.compat", -- Required for external sources
+			{
+				"saghen/blink.compat",
+				opts = {
+					impersonate_nvim_cmp = true,
+				},
+			},
 		},
 		lazy = false,
 
@@ -16,6 +19,32 @@ return {
 					_engine = require("snippet_engine")
 				end
 				return _engine
+			end
+
+			local function engine_session()
+				return engine().get_session()
+			end
+
+			local function engine_can_jump(direction)
+				local sess = engine_session()
+				if not sess then
+					return false
+				end
+
+				local indices = sess.indices or {}
+				for i, idx in ipairs(indices) do
+					if idx == sess.current then
+						if direction > 0 then
+							return i < #indices
+						end
+						if direction < 0 then
+							return i > 1
+						end
+						return true
+					end
+				end
+
+				return false
 			end
 
 			local _ts_capable = {}
@@ -285,6 +314,17 @@ return {
 					expand = function(snippet)
 						engine().expand(snippet)
 					end,
+
+					active = function(filter)
+						if filter and filter.direction then
+							return engine_can_jump(filter.direction)
+						end
+						return engine_session() ~= nil
+					end,
+
+					jump = function(direction)
+						return engine().jump(direction)
+					end,
 				},
 
 				completion = {
@@ -379,14 +419,11 @@ return {
 
 					["<Tab>"] = {
 						function()
-							local e = engine()
-
-							if e.active(1) then
-								e.jump(1)
-								return true
+							if not engine_can_jump(1) then
+								return false
 							end
 
-							return false
+							return engine().jump(1)
 						end,
 
 						"snippet_forward",
@@ -395,14 +432,11 @@ return {
 
 					["<S-Tab>"] = {
 						function()
-							local e = engine()
-
-							if e.active(-1) then
-								e.jump(-1)
-								return true
+							if not engine_can_jump(-1) then
+								return false
 							end
 
-							return false
+							return engine().jump(-1)
 						end,
 
 						"snippet_backward",
@@ -411,23 +445,18 @@ return {
 				},
 
 				sources = {
-					-- Added 'otter' to the default list items
 					default = {
 						"snippets",
 						"lsp",
 						"path",
 						"buffer",
-						"otter",
+						-- NOTE: "otter" was removed. otter.nvim does not
+						-- register an nvim-cmp source, so the blink.compat
+						-- bridge could never resolve it and the provider
+						-- was permanently disabled.
 					},
 
 					providers = {
-						-- Configured otter through the blink.compat provider bridge
-						otter = {
-							name = "otter",
-							module = "blink.compat.source",
-							score_offset = 100,
-						},
-
 						lsp = {
 							name = "lsp",
 							enabled = true,
@@ -439,6 +468,14 @@ return {
 								local count = #items
 
 								if count == 0 then
+									return items
+								end
+
+								local pos = vim.api.nvim_win_get_cursor(0)
+								local line = vim.api.nvim_get_current_line()
+								local state = get_paren_state(line, pos[2])
+
+								if not state then
 									return items
 								end
 
@@ -480,14 +517,6 @@ return {
 								end
 
 								if not candidates then
-									return items
-								end
-
-								local pos = vim.api.nvim_win_get_cursor(0)
-								local line = vim.api.nvim_get_current_line()
-								local state = get_paren_state(line, pos[2])
-
-								if not state then
 									return items
 								end
 
@@ -550,55 +579,10 @@ return {
 		end,
 	},
 
-	{
-		"jmbuhr/otter.nvim",
-		ft = { "html", "htmldjango" },
-
-		opts = {
-			lsp = {
-				hover = {
-					border = "rounded",
-				},
-
-				diagnostic_update_events = {
-					"BufWritePost",
-					"InsertLeave",
-				},
-			},
-
-			buffers = {
-				-- otter's synthetic js buffer doesn't need to hit disk
-				write_to_disk = false,
-			},
-
-			handle_leading_whitespace = true,
-		},
-
-		config = function(_, opts)
-			require("otter").setup(opts)
-
-			vim.api.nvim_create_autocmd("FileType", {
-				group = vim.api.nvim_create_augroup(
-					"otter_embedded_js",
-					{ clear = true }
-				),
-
-				pattern = {
-					"html",
-					"htmldjango",
-				},
-
-				callback = function()
-					-- languages, completion, diagnostics
-					require("otter").activate(
-						{ "javascript" },
-						true,
-						true
-					)
-				end,
-			})
-		end,
-	},
+	-- NOTE: `jmbuhr/otter.nvim` used to be configured here as well, but
+	-- `lua/plugins/otter.lua` is imported later (alphabetically) and
+	-- therefore won, leaving this copy dead. Otter is configured in one
+	-- place only now: `lua/plugins/otter.lua`.
 }
 
 

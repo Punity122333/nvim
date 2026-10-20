@@ -1,3 +1,20 @@
+-- LSP setup.
+--
+-- IMPORTANT: this spec deliberately does NOT define a `config` function.
+-- In lazy.nvim a user `config` *replaces* the one from LazyVim, and
+-- LazyVim's nvim-lspconfig `config` is what wires up:
+--   * mason-lspconfig (`ensure_installed` + `automatic_enable`)
+--   * `vim.lsp.config("*", servers["*"])`  (global capabilities)
+--   * LazyVim's default LSP keymaps (gd, gr, gI, gy, gD, gK, <c-k>,
+--     <leader>cr, <leader>cA, <leader>co, <leader>cc, ]] , [[ , ...)
+--   * the LSP formatter registration, inlay hints and folding
+-- Overriding it silently killed all of the above, so everything here is
+-- expressed as `opts.servers` entries only.
+--
+-- The diagnostic debounce lives in `init` (which runs *in addition to*
+-- LazyVim's `config`) so that it cannot replace it.
+local OFFSET_ENCODING = "utf-16"
+
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -8,7 +25,72 @@ return {
 		dependencies = {
 			"mason.nvim",
 		},
+		-- Collapse the diagnostic flood.
+		--  * lua_ls publishes diagnostics for the whole workspace on every
+		--    keystroke, so its pushes are collapsed into a single callback
+		--    800ms after the last one.
+		--  * every other server is debounced by 'updatetime'.
+		init = function()
+			-- Turn off LSP semantic tokens for every client.
+			--
+			-- The `capabilities.textDocument.semanticTokens = vim.NIL` in
+			-- `servers["*"]` (see below) only stops the *server* from
+			-- offering the feature. This stops *Neovim* from asking for the
+			-- tokens and from applying the highlights, which is what
+			-- actually removes the semantic colouring. Both halves are
+			-- needed:
+			--  * client side: no request, no extmarks, no redraw churn
+			--  * server side: the server does not do the work at all
+			vim.lsp.semantic_tokens.enable(false)
+
+			local orig = vim.lsp.handlers["textDocument/publishDiagnostics"]
+			if not orig then
+				return
+			end
+
+			local lua_ls_timer = nil
+			local timers = {}
+
+			vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, cfg)
+				local client = ctx and ctx.client_id and vim.lsp.get_client_by_id(ctx.client_id)
+				local is_lua_ls = client and client.name == "lua_ls"
+
+				if is_lua_ls then
+					if lua_ls_timer then
+						lua_ls_timer:stop()
+					end
+					lua_ls_timer = vim.defer_fn(function()
+						lua_ls_timer = nil
+						orig(err, result, ctx, cfg)
+					end, 800)
+					return
+				end
+
+				if not result then
+					return orig(err, result, ctx, cfg)
+				end
+
+				local bufnr = vim.uri_to_bufnr(result.uri)
+				local key = bufnr .. "_" .. (ctx.client_id or 0)
+				if timers[key] then
+					timers[key]:stop()
+				end
+				timers[key] = vim.defer_fn(function()
+					timers[key] = nil
+					orig(err, result, ctx, cfg)
+				end, vim.o.updatetime)
+			end
+		end,
 		opts = {
+			-- Inlay hints are disabled for every language.
+			-- LazyVim enables them by default (`inlay_hints.enabled = true`)
+			-- and registers a `textDocument/inlayHint` handler that turns
+			-- them on for every buffer. Setting `enabled = false` here
+			-- stops that handler from ever being registered, so no server
+			-- can request hints.
+			inlay_hints = {
+				enabled = false,
+			},
 			diagnostics = {
 				update_in_insert = false,
 				underline = true,
@@ -23,7 +105,58 @@ return {
 				},
 			},
 			servers = {
+				-- Global settings.
+				--
+				-- `config/autocmds.lua` forces `client.offset_encoding` to
+				-- utf-16 for every client, so utf-16 has to be advertised
+				-- first: the server picks the first encoding it supports
+				-- out of `capabilities.general.positionEncodings` and
+				-- reports it back, and that is what ends up in
+				-- `client.offset_encoding`.
+				["*"] = {
+					capabilities = {
+						general = {
+							positionEncodings = { OFFSET_ENCODING, "utf-8" },
+						},
+						-- Semantic tokens are off.
+						--
+						-- These capabilities are merged *over* the defaults
+						-- from `vim.lsp.protocol.make_client_capabilities()`,
+						-- so the entry below replaces the whole
+						-- `textDocument.semanticTokens` table.
+						--
+						-- `vim.NIL` is encoded as JSON `null`, which every
+						-- server reads as "the client does not support
+						-- semantic tokens". `false` must NOT be used here:
+						-- rust-analyzer (serde) aborts the whole session with
+						-- "invalid type: boolean `false`, expected struct
+						-- SemanticTokensClientCapabilities".
+						textDocument = {
+							semanticTokens = vim.NIL,
+						},
+					},
+				},
+
+				-- ── explicitly disabled ────────────────────────────────
+				-- The python/R extras enable a competing server by
+				-- default. Pin them off so the servers below are the
+				-- only ones that run. `enabled = false` also excludes them
+				-- from mason-lspconfig's `automatic_enable`.
+				--
+				-- NOTE: the typescript extras (biome / oxc / tsc) are not
+				-- enabled any more, so the entries for them are gone. The
+				-- deprecated `tsserver` / `ts_ls` aliases stay disabled.
+				tsserver = { enabled = false },
+				ts_ls = { enabled = false },
+				ruff = { enabled = false },
+				ruff_lsp = { enabled = false },
+				pyright = { enabled = false },
+				r_language_server = { enabled = false },
+
+				-- ── typescript ─────────────────────────────────────────
 				vtsls = {
+					enabled = true,
+					mason = false,
 					filetypes = {
 						"javascript",
 						"javascriptreact",
@@ -51,9 +184,14 @@ return {
 						},
 					},
 				},
+
+				-- ── python ─────────────────────────────────────────────
+				-- NOTE: the custom `cmd` pointed at
+				-- `~/.local/bin/basedpyright-langserver`, which does not
+				-- exist, so Python had no LSP at all. Let mason install
+				-- it and use nvim-lspconfig's default command.
 				basedpyright = {
-					mason = false,
-					cmd = { "~/.local/bin/basedpyright-langserver", "--stdio" },
+					enabled = true,
 					settings = {
 						basedpyright = {
 							analysis = {
@@ -69,32 +207,45 @@ return {
 						},
 					},
 				},
-				marksman = {
-					filetypes = { "markdown", "markdown.mdx" },
-					root_dir = function(fname)
-						local util = require("lspconfig.util")
-						return util.root_pattern(".git", ".marksman.toml", "README.md")(fname) or vim.fn.getcwd()
-					end,
-				},
-				asm_lsp = {
-					cmd = { "asm-lsp" },
-					filetypes = { "asm", "s", "S", "nasm" },
-					root_dir = function()
-						return vim.fn.getcwd()
-					end,
-					settings = {
-						["asm-lsp"] = {
-							assembler = "nasm",
-							instruction_set = "x86",
-							default_diagnostics = false,
-						},
-					},
+
+				-- ── lua ───────────────────────────────────────────────
+				lua_ls = {
+					enabled = true,
+					mason = false,
 					on_attach = function(client, bufnr)
 						client.server_capabilities.diagnosticProvider = false
-						vim.diagnostic.enable(false, { bufnr = bufnr })
+						client.server_capabilities.documentSymbolProvider = true
+						if vim.api.nvim_buf_line_count(bufnr) > 2000 then
+							client.server_capabilities.semanticTokensProvider = nil
+						end
 					end,
+					settings = {
+						Lua = {
+							runtime = { version = "LuaJIT" },
+							diagnostics = {
+								globals = { "vim" },
+								disable = { "lowercase-global", "undefined-global", "missing-fields" },
+								-- Delay workspace-wide recheck by 5s after the last change.
+								workspaceDelay = 5000,
+							},
+							checkThirdParty = false,
+							workspace = {
+								checkThirdParty = false,
+								library = { vim.env.VIMRUNTIME },
+								ignoreDir = { "**/node_modules", "**/lazy", "**/.git", "**/packer_compiled.lua" },
+								libraryStatus = "None",
+								maxPreload = 2000,
+								preloadFileSize = 5000,
+							},
+							telemetry = { enable = false },
+						},
+					},
 				},
+
+				-- ── c / c++ ───────────────────────────────────────────
 				clangd = {
+					enabled = true,
+					mason = false,
 					cmd = {
 						"clangd",
 						"--background-index",
@@ -113,68 +264,53 @@ return {
 					end,
 				},
 
-				lua_ls = {
-					on_attach = function(client, bufnr)
-						client.server_capabilities.diagnosticProvider = false
-						client.server_capabilities.documentSymbolProvider = true
+				-- ── assembly ───────────────────────────────────────────
+				asm_lsp = {
+					enabled = true,
+					filetypes = { "asm", "s", "S", "nasm" },
+					-- NOTE: since Neovim 0.11 `root_dir` is called with
+					-- `(bufnr, callback)` and has to invoke the callback.
+					-- A function that only *returns* the root leaves the
+					-- client hanging and it never starts.
+					root_dir = function(_, callback)
+						callback(vim.fn.getcwd())
 					end,
 					settings = {
-						Lua = {
-							runtime = { version = "LuaJIT" },
-							diagnostics = {
-								globals = { "vim" },
-								disable = { "lowercase-global", "undefined-global", "missing-fields" },
-								-- Delay workspace-wide recheck by 3s after last change.
-								-- Prevents spam-publishing diagnostics for every file on each keystroke.
-								workspaceDelay = 5000,
-							},
-							checkThirdParty = false,
-							workspace = {
-								checkThirdParty = false,
-								library = { vim.env.VIMRUNTIME },
-								ignoreDir = { "**/node_modules", "**/lazy", "**/.git", "**/packer_compiled.lua" },
-								libraryStatus = "None",
-								maxPreload = 2000,
-								preloadFileSize = 5000,
-							},
-							telemetry = { enable = false },
+						["asm-lsp"] = {
+							assembler = "nasm",
+							instruction_set = "x86",
+							default_diagnostics = false,
 						},
 					},
 				},
-				omnisharp = {
+
+				-- ── arduino ────────────────────────────────────────────
+				arduino_language_server = {
+					enabled = true,
+					mason = false,
 					cmd = {
-						"omnisharp",
-						"--languageserver",
-						"--hostPID",
-						tostring(vim.fn.getpid()),
+						"arduino-language-server",
+						"-clangd",
+						"clangd",
+						"-cli",
+						"arduino-cli",
+						"-cli-config",
+						vim.fn.expand("~/.arduino15/arduino-cli.yaml"),
+						"-fqbn",
+						"arduino:avr:uno",
 					},
+				},
+
+				-- ── c# / vb ────────────────────────────────────────────
+				omnisharp = {
+					enabled = true,
 					filetypes = { "cs", "vb" },
 					single_file_support = true,
-					root_dir = function(fname)
+					root_dir = function(bufnr, callback)
 						local util = require("lspconfig.util")
-						local root = util.root_pattern("*.sln", "*.csproj", "omnisharp.json")(fname)
-						if not root then
-							local dir = vim.fn.fnamemodify(fname, ":h")
-							local dir_name = vim.fn.fnamemodify(dir, ":t")
-							local csproj_path = dir .. "/" .. dir_name .. ".csproj"
-							if vim.fn.filereadable(csproj_path) == 0 then
-								local csproj_content = [[<Project Sdk="Microsoft.NET.Sdk">
-                                            <PropertyGroup>
-                                                <OutputType>Exe</OutputType>
-                                                <TargetFramework>net8.0</TargetFramework>
-                                                <ImplicitUsings>enable</ImplicitUsings>
-                                                <Nullable>enable</Nullable>
-                                            </PropertyGroup>
-                                            </Project>]]
-								local file = io.open(csproj_path, "w")
-								if file then
-									file:write(csproj_content)
-									file:close()
-								end
-							end
-							return dir
-						end
-						return root
+						local root =
+							util.root_pattern("*.sln", "*.csproj", "omnisharp.json")(vim.api.nvim_buf_get_name(bufnr))
+						callback(root or vim.fn.getcwd())
 					end,
 					on_attach = function(client, bufnr)
 						if client.server_capabilities.completionProvider then
@@ -198,17 +334,31 @@ return {
 						msbuild = { loadProjectsOnDemand = true },
 					},
 				},
+
+				-- ── glsl ───────────────────────────────────────────────
 				glsl_analyzer = {
-					cmd = { "glsl_analyzer" },
+					enabled = true,
 					filetypes = { "glsl", "vert", "tesc", "tese", "frag", "geom", "comp" },
-					root_dir = function(fname)
-						return vim.fn.getcwd()
+					root_dir = function(_, callback)
+						callback(vim.fn.getcwd())
 					end,
-					on_attach = function(client, bufnr)
-						vim.diagnostic.enable(true, { bufnr = bufnr })
-					end,
+					capabilities = {
+						textDocument = {
+							completion = {
+								completionItem = {},
+							},
+							publishDiagnostics = {
+								relatedInformation = true,
+								tagSupport = { valueSet = { 1, 2 } },
+							},
+						},
+					},
 				},
+
+				-- ── css / html ─────────────────────────────────────────
 				cssls = {
+					enabled = true,
+					mason = false,
 					filetypes = {
 						"css",
 						"scss",
@@ -226,7 +376,10 @@ return {
 						provideFormatter = true,
 					},
 				},
+
 				html = {
+					enabled = true,
+					mason = false,
 					filetypes = { "html", "javascriptreact", "typescriptreact" },
 					init_options = {
 						configurationSection = { "html", "css", "javascript" },
@@ -238,118 +391,41 @@ return {
 					},
 				},
 
-				pasls = {
-					mason = false,
-					cmd = { vim.fn.expand("~/.local/bin/pasls") },
-					filetypes = { "pascal" },
-					root_dir = function(fname)
+				-- ── markdown ───────────────────────────────────────────
+				marksman = {
+					enabled = true,
+					filetypes = { "markdown", "markdown.mdx" },
+					root_dir = function(bufnr, callback)
 						local util = require("lspconfig.util")
-						return util.root_pattern("*.lpi", "*.lpr", "*.dpr", ".git")(fname) or vim.fn.getcwd()
+						local root =
+							util.root_pattern(".git", ".marksman.toml", "README.md")(vim.api.nvim_buf_get_name(bufnr))
+						callback(root or vim.fn.getcwd())
 					end,
-					settings = {
-					},
+				},
+
+				-- ── rust ───────────────────────────────────────────────
+				-- rust-analyzer is *started* by rustaceanvim (see
+				-- `lua/plugins/rustaceanvim.lua`), not by nvim-lspconfig.
+				-- It still has to be listed here so that
+				-- mason-lspconfig installs the binary, and the `setup`
+				-- hook below keeps lspconfig from starting a second,
+				-- conflicting client (rustaceanvim warns about exactly
+				-- that).
+				rust_analyzer = {
+					enabled = true,
 				},
 			},
-		},
-		config = function(_, opts)
-			vim.diagnostic.config(opts.diagnostics)
 
-			-- Allowing basedpyright and clangd to keep their tokens
-			vim.api.nvim_create_autocmd("LspAttach", {
-				callback = function(args)
-					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					if client then
-						client.server_capabilities.semanticTokensProvider = nil
-					end
+			-- `setup` is called for every server that nvim-lspconfig
+			-- would otherwise set up. Returning `true` means "I take
+			-- care of this server" and excludes it from
+			-- mason-lspconfig's `automatic_enable`.
+			setup = {
+				rust_analyzer = function()
+					return true
 				end,
-			})
-
-			local orig = vim.lsp.handlers["textDocument/publishDiagnostics"]
-			local lua_ls_ids = {}
-			local lua_ls_cfg = opts.servers.lua_ls
-			local lua_ls_upstream_attach = lua_ls_cfg.on_attach
-			lua_ls_cfg.on_attach = function(client, bufnr)
-				lua_ls_ids[client.id] = true
-				if lua_ls_upstream_attach then
-					lua_ls_upstream_attach(client, bufnr)
-				end
-			end
-
-			-- Single global timer for lua_ls: collapses the entire workspace
-			-- diagnostic flood (N buffers) into one callback 800ms after the
-			-- last push, instead of N independent per-buffer timers staggered
-			-- across the workspace.
-			local lua_ls_timer = nil
-			local timers = {}
-
-			vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, cfg)
-				if lua_ls_ids[ctx.client_id] then
-					if lua_ls_timer then
-						lua_ls_timer:stop()
-						lua_ls_timer:close()
-					end
-					lua_ls_timer = vim.defer_fn(function()
-						lua_ls_timer = nil
-						orig(err, result, ctx, cfg)
-					end, 800)
-					return
-				end
-
-				-- Non-lua_ls servers keep per-buffer debounce
-				local bufnr = vim.uri_to_bufnr(result.uri)
-				local key = bufnr .. "_" .. (ctx.client_id or 0)
-				if timers[key] then
-					timers[key]:stop()
-				end
-				timers[key] = vim.defer_fn(function()
-					timers[key] = nil
-					orig(err, result, ctx, cfg)
-				end, vim.o.updatetime)
-			end
-
-			local ok, lspconfig = pcall(require, "lspconfig")
-			if not ok then
-				return
-			end
-
-			local default_capabilities = vim.lsp.protocol.make_client_capabilities()
-			default_capabilities.general = default_capabilities.general or {}
-			default_capabilities.general.positionEncodings = { "utf-8" }
-
-			local skip_servers = {
-				copilot = true,
-				stylua = true,
-				tsserver = true,
-				ts_ls = true,
-				ruff = true,
-				ruff_lsp = true,
-				rust_analyzer = true,
-				r_language_server = true,
-				tsgo = true,
-				oxfmt = true,
-				["*"] = true,
-			}
-
-			for server_name, server_config in pairs(opts.servers) do
-				if not skip_servers[server_name] and lspconfig[server_name] then
-					local config = vim.deepcopy(server_config)
-					config.capabilities =
-						vim.tbl_deep_extend("force", {}, default_capabilities, config.capabilities or {})
-
-					config.offsetEncoding = "utf-8"
-
-					if
-						config.capabilities.textDocument
-						and config.capabilities.textDocument.completion
-						and config.capabilities.textDocument.completion.completionItem
-					then
-						config.capabilities.textDocument.completion.completionItem.snippetSupport = true
-					end
-
-					lspconfig[server_name].setup(config)
-				end
-			end
-		end,
+			},
+		},
 	},
 	{
 		"3rd/image.nvim",

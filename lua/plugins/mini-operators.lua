@@ -21,7 +21,11 @@ return {
 				exchange = { prefix = "gzx" },
 				multiply = { prefix = "gzm" },
 				replace = { prefix = "gzr" },
-				sort = { prefix = "gzr" },
+				-- `sort` used to share the "gzr" prefix with `replace`.
+				-- mini.operators maps `prefix` and `prefix .. <last char>`,
+				-- so both operators produced the exact same mappings and
+				-- `sort` (mapped last) overwrote `replace` entirely.
+				sort = { prefix = "gzs" },
 			},
 		},
 		config = function(_, opts)

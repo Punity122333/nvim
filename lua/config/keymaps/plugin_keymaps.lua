@@ -43,7 +43,6 @@ vim.keymap.set("n", "<leader>bp", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev
 vim.keymap.set("n", "<leader>rb", "<cmd>edit!<cr>", { desc = "Refresh Buffer" })
 
 
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
 vim.keymap.set("n", "<A-S-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
 vim.keymap.set("n", "<A-S-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height" })
 vim.keymap.set("n", "<A-S-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
@@ -312,7 +311,9 @@ cmd("BrowseMDN", function()
 	require("browse.mdn").search()
 end, opts2)
 
-vim.keymap.del("n", "hi", {})
+-- NOTE: `vim.keymap.del("n", "hi", {})` used to live here. It removed the
+-- `hi` -> `:Inspect<CR>` mapping that `init.lua` sets, so the mapping
+-- never worked. The mapping is now defined in `init.lua` only.
 
 vim.keymap.set({ "i", "s" }, "<C-Tab>", function()
 	if vim.snippet and vim.snippet.active({ direction = 1 }) then

@@ -15,7 +15,9 @@ return {
 				enable_on_insert = false,
 				throttle = 1500,
 				overflow = { mode = "truncate" },
-				max_width = 60,
+				-- NOTE: `max_width` is not a tiny-inline-diagnostic option
+				-- (it only exists as an internal renderer variable). The
+				-- 60 column truncation is implemented by hand below.
 			},
 		})
 		local ns = vim.api.nvim_create_namespace("cursor_line_diag_patch")

@@ -5,7 +5,9 @@ return {
 	config = function()
 		require("toggleterm").setup({
 			size = 20,
-			open_mapping = [[<c-s-\>]],
+			-- The old value was `[[<c-s-\>]]`, which termcodes to
+			-- <Esc><C-S><C-\> instead of <C-\>.
+			open_mapping = [[<c-\>]],
 			shade_terminals = false,
 			close_on_exit = true,
 			direction = "float",
@@ -17,11 +19,9 @@ return {
 				Normal = { guibg = "#1a1b26" },
 				FloatBorder = { guifg = "#27a1b9", guibg = "#1a1b26" },
 			},
-			on_exit = function(t, job, exit_code, name)
-				if exit_code == 0 then
-					t:close()
-				end
-			end,
+			-- NOTE: there is no `on_exit` handler any more. The old one
+			-- called `t:close()` while `close_on_exit = true` was already
+			-- closing the terminal, so `on_close` ran twice.
 		})
 	end,
 }

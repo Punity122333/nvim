@@ -5,9 +5,17 @@ return {
 
 		-- Wrap the internal function that mints dynamic hex-colour groups.
 		-- Every new group gets bold=true injected right after creation.
+		--
+		-- The wrapper has to forward the third argument (`opts`) and cope
+		-- with the original returning `nil` (it does so once the
+		-- `max_number` limit is hit). Passing a `nil` group name to
+		-- `nvim_set_hl` raises "Invalid 'name': expected string, got nil".
 		local orig = hi.compute_hex_color_group
-		hi.compute_hex_color_group = function(hex, style)
-			local group = orig(hex, style)
+		hi.compute_hex_color_group = function(hex, style, group_opts)
+			local group = orig(hex, style, group_opts)
+			if not group then
+				return group
+			end
 			local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
 			hl.bold = true
 			vim.api.nvim_set_hl(0, group, hl)

@@ -34,31 +34,8 @@ return {
 			})
 		end,
 	},
-	{
-		"neovim/nvim-lspconfig",
-		optional = true,
-		opts = {
-			servers = {
-				glsl_analyzer = {
-					cmd = { "glsl_analyzer" },
-					filetypes = { "glsl", "vert", "tesc", "tese", "frag", "geom", "comp" },
-					single_file_support = true,
-					root_dir = function(fname)
-						return vim.fn.getcwd()
-					end,
-					capabilities = {
-						textDocument = {
-							completion = {
-								completionItem = {},
-							},
-							publishDiagnostics = {
-								relatedInformation = true,
-								tagSupport = { valueSet = { 1, 2 } },
-							},
-						},
-					},
-				},
-			},
-		},
-	},
+	-- NOTE: the `glsl_analyzer` server itself lives in `lua/plugins/lsp.lua`.
+	-- Keeping a second `nvim-lspconfig` spec here meant two different
+	-- definitions of the same server were deep-merged, which made it very
+	-- easy to end up with a half-applied configuration.
 }

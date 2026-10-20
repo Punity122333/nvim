@@ -5,7 +5,7 @@ return {
 			suggestion = {
 				enabled = false,
 				auto_trigger = false,
-        debounce = 300,
+				debounce = 300,
 				keymap = {
 					accept = false, -- handled by blink-cmp Tab keymap
 					accept_word = false,
@@ -16,7 +16,9 @@ return {
 				},
 			},
 			panel = { enabled = false },
-			cmp = { enabled = false },
+			-- NOTE: `cmp` is not a copilot.lua option (it has no nvim-cmp
+			-- integration any more), so `cmp = { enabled = false }` was
+			-- silently ignored.
 		},
 	},
 }

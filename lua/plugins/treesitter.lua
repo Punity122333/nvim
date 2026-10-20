@@ -1,4 +1,5 @@
 vim.opt.rtp:prepend(vim.fn.expand("~/.local/share/nvim/site"))
+local _ts_disable_cache = {}
 return {
 	
 	{
@@ -17,6 +18,7 @@ return {
 				"tsx",
 				"javascript",
 				"css",
+				"scss",
 				"html",
 				"glsl",
 				"hlsl",
@@ -28,10 +30,6 @@ return {
 				enable = true,
 				additional_vim_regex_highlighting = false,
 				disable = function(lang, buf)
-					local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-					if ok and stats and stats.size > 100 * 1024 then
-						return true
-					end
 					if vim.wo.diff then
 						return true
 					end
@@ -59,10 +57,20 @@ return {
 					if (lang == "c" or lang == "cpp") and vim.api.nvim_buf_line_count(buf) > 1000 then
 						return true
 					end
+					local name = vim.api.nvim_buf_get_name(buf)
+					local cached = _ts_disable_cache[name]
+					if cached ~= nil then
+						return cached
+					end
+					local ok, stats = pcall(vim.uv.fs_stat, name)
+					if ok and stats and stats.size > 100 * 1024 then
+						_ts_disable_cache[name] = true
+						return true
+					end
 					return false
 				end,
 			},
-			indent = { enable = false },
+			indent = { enable = true },
 			incremental_selection = {
 				enable = false,
 				keymaps = {},

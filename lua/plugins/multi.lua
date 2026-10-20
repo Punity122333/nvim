@@ -3,6 +3,10 @@ return {
 		"jake-stewart/multicursor.nvim",
 		branch = "main",
 		enabled = true,
+		-- Every mapping lives inside `config`, so without an explicit
+		-- trigger the plugin would never be loaded and all of them would
+		-- be dead.
+		lazy = false,
 		config = function()
 			local mc = require("multicursor-nvim")
 
