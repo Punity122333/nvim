@@ -12,6 +12,11 @@
 return {
 	"nickjvandyke/opencode.nvim",
 	config = function()
+		-- The plugin reads `vim.g.opencode_opts` when it loads and merges it
+		-- with its defaults.  `opencode.Opts` is declared by the plugin
+		-- itself, but that lives in the `lazy` directory, which the lua_ls
+		-- workspace ignores - so the type cannot be resolved here.
+		---@diagnostic disable-next-line: undefined-doc-name
 		---@type opencode.Opts
 		vim.g.opencode_opts = {}
 	end,

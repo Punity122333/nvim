@@ -66,6 +66,7 @@ local function patch_inline_hint_background()
 	vim.g.avante_inline_hint_patched = true
 
 	local orig = vim.api.nvim_buf_set_extmark
+	---@diagnostic disable-next-line: duplicate-set-field
 	vim.api.nvim_buf_set_extmark = function(buf, ns, row, col, opts)
 		if type(opts) == "table" and is_inline_hint(opts) then
 			opts = vim.tbl_extend("force", opts, { hl_mode = "combine" })
@@ -208,7 +209,8 @@ return {
 							if not is_online() then
 								return
 							end
-							local ok2, err = pcall(original, ...)
+							-- pcall swallows whatever the original throws
+							pcall(original, ...)
 						end
 					end
 				end,
