@@ -1,10 +1,6 @@
-local COLOR_BG_PRIMARY = "#1a1b26"
-local COLOR_BG_SELECTION = "#28344a"
-local COLOR_FG_MARKDOWN_BOLD = "#ff9e64"
-local COLOR_UNUSED_DIAGNOSTIC = "#6c7086"
-local COLOR_CURSOR_FG = "#000000"
-local COLOR_CURSOR_BG = "#00ff00"
-local FLAG_FORCE_ALL = os.getenv("NO_LAZY") == "1"
+-- NOTE: the palette lives in `config.highlights` so that every colour is
+-- defined exactly once.  The aliases are resolved right after that module
+-- has been loaded (see the `require` calls further down).
 
 vim.g.python3_host_prog = vim.fn.expand("~/.local/share/molten/venv/bin/python")
 if vim.loader then
@@ -16,11 +12,32 @@ do
 		home .. "/.npm-global/bin",
 		home .. "/.local/bin",
 		home .. "/.local/share/nvim/mason/bin",
+		-- ghcup (ghcup, cabal) and cabal's user bin dir. Needed by mason
+		-- to install the Haskell language server / debug adapter.
+		home .. "/.ghcup/bin",
+		home .. "/.cabal/bin",
 		vim.env.PATH,
 	}, ":")
 	local lr = home .. "/.luarocks"
 	package.path = package.path .. ";" .. lr .. "/share/lua/5.1/?/init.lua;" .. lr .. "/share/lua/5.1/?.lua;"
 	package.cpath = package.cpath .. ";" .. lr .. "/lib/lua/5.1/?.so;"
+end
+-- rust-analyzer needs the standard library *sources* to resolve `std`
+-- items. They ship in the `rust-src` package, which is not installed
+-- system-wide here, so without them rust-analyzer does not even know
+-- about `println!`, `String` or `Vec` and only completes the primitive
+-- types. Point it at a local copy of the sources.
+do
+	local local_src = vim.fn.expand("~/.local/share/rust-src/usr/lib/rustlib/src/rust/library")
+	if vim.uv.fs_stat(local_src) then
+		local ok, sysroot = pcall(function()
+			return vim.trim(vim.fn.system({ "rustc", "--print", "sysroot" }))
+		end)
+		-- Prefer the system-wide sources when they are installed.
+		if ok and sysroot ~= "" and not vim.uv.fs_stat(sysroot .. "/lib/rustlib/src/rust/library") then
+			vim.env.RUST_SRC_PATH = local_src
+		end
+	end
 end
 local orig_ts_start = vim.treesitter.start
 ---@diagnostic disable-next-line: duplicate-set-field
@@ -33,22 +50,14 @@ vim.treesitter.start = function(buf, lang)
 	orig_ts_start(buf, lang)
 end
 
-local ok, rm = pcall(require, "render-markdown")
-if ok then
-	local orig_rm_attach = rm.attach
-	rm.attach = function(buf)
-		buf = buf or vim.api.nvim_get_current_buf()
-		if vim.bo[buf].filetype:match("^snacks_") then
-			return
-		end
-		orig_rm_attach(buf)
-	end
-end
+-- NOTE: render-markdown is disabled in `lua/plugins/render-markdown.lua`,
+-- so the `rm.attach` patch below could never run. It was removed together
+-- with the `require` below, which poked lazy.nvim's module loader on every
+-- startup for a plugin that is not installed.
+
 vim.opt.relativenumber = true
 vim.opt.number = true
 vim.opt.concealcursor = ""
-vim.g.VM_THEME = ""
-vim.g.VM_SET_STATUSLINE = 0
 
 if vim.fn.has("wayland") == 1 then
 	vim.g.clipboard = {
@@ -60,17 +69,18 @@ if vim.fn.has("wayland") == 1 then
 end
 
 require("config.lazy")
-require("config.highlights")
+local highlights = require("config.highlights")
+require("config.indent_predicates").setup()
 
-vim.defer_fn(function()
-	pcall(require, "lspconfig")
-	local ft = vim.bo.filetype
-	if not FLAG_FORCE_ALL and ft ~= "" and ft ~= "lazy" and ft ~= "dashboard" then
-		vim.cmd("doautocmd BufEnter")
-	end
-end, 300)
+-- Palette aliases, see the note at the top of this file.
+local COLOR_BG_PRIMARY = highlights.colors.background_primary
+local COLOR_BG_SELECTION = highlights.colors.selection_blue
+local COLOR_FG_MARKDOWN_BOLD = highlights.colors.markdown_bold
+local COLOR_UNUSED_DIAGNOSTIC = highlights.colors.unused_diagnostic
+local COLOR_CURSOR_FG = highlights.colors.cursor_fg
+local COLOR_CURSOR_BG = highlights.colors.cursor_bg
 
-vim.keymap.set("n", "hi", ":Inspect<CR>")
+vim.keymap.set("n", "hi", "<cmd>Inspect<cr>", { desc = "Inspect the word under the cursor" })
 vim.api.nvim_create_user_command("RefreshAll", "bufdo edit!", { desc = "Reload all buffers from disk" })
 
 vim.api.nvim_create_user_command("Format", function(args)
@@ -81,14 +91,16 @@ vim.api.nvim_create_user_command("Format", function(args)
 	})
 end, { range = true })
 
-local orig_notify = vim.notify
----@diagnostic disable-next-line: duplicate-set-field
-vim.notify = function(msg, level, opts)
-	if type(msg) == "string" and msg:find("Avante") then
-		return
-	end
-	orig_notify(msg, level, opts)
-end
+-- NOTE: there used to be a `vim.notify` override here that swallowed every
+-- message containing the word "Avante". It was broken twice over:
+--   * it captured `vim.notify` *before* snacks/noice had replaced it, so it
+--     captured LazyVim's temporary collector - the queue of pending
+--     notifications was then never drained and eventually overflowed
+--     ("table overflow");
+--   * noice replaced the override again, so it never actually silenced
+--     anything - and noice's healthcheck reports the overwrite as an error.
+-- Avante's errors and warnings are worth seeing, so nothing is filtered
+-- here anymore.
 
 local PROTECTED_PATTERNS = {
 	"Border",
@@ -198,34 +210,30 @@ local function apply_theme()
 	end
 	set(0, "DiagnosticUnnecessary", { fg = COLOR_UNUSED_DIAGNOSTIC, strikethrough = true, force = true })
 
+	-- Groups owned by `config.highlights` that have to survive the re-tint
+	-- loop above (and a colorscheme change).
+	highlights.apply_overrides()
+
 	for _, g in ipairs({ "LspReferenceText" }) do
 		set(0, g, { bg = COLOR_BG_SELECTION, force = true })
 	end
-	set(0, "LspReferenceRead", { bg = "NONE", force = true })
 	set(0, "LspReferenceWrite", { bg = "NONE", force = true })
 
 	set(0, "MarkdownBold", { fg = COLOR_FG_MARKDOWN_BOLD, bold = true, force = true })
-	set(0, "@markup.strong", { fg = COLOR_FG_MARKDOWN_BOLD, bold = true, force = true })
 
 	set(0, "BlinkCmpKindFile", { bg = "NONE", force = true })
 	set(0, "LspKindFile", { bg = "NONE", force = true })
-	set(0, "BlinkCmpSignatureHelpBorder", { fg = "#27a1b9", bg = COLOR_BG_PRIMARY, force = true })
-	set(0, "BlinkCmpSignatureHelp", { bg = COLOR_BG_PRIMARY, force = true })
-	set(0, "BlinkCmpSignatureActiveParameter", { bg = COLOR_BG_PRIMARY, force = true })
 
-	set(0, "StatusLine", { bg = "#16161e", force = true })
-	set(0, "StatusLineNC", { bg = "#16161e", force = true })
-
-	set(0, "RgPreviewLine", { bg = "#7aa2f7", fg = "#1a1b26", bold = true })
-	set(0, "RgPreviewLineCur", { bg = "#e07840", fg = "#1a1b26", bold = true })
-	set(0, "SnacksBackdrop", { bg = "#1a1b26", blend = 0, force = true })
+	set(0, "RgPreviewLine", { bg = "#7aa2f7", fg = COLOR_BG_PRIMARY, bold = true })
+	set(0, "RgPreviewLineCur", { bg = "#e07840", fg = COLOR_BG_PRIMARY, bold = true })
+	set(0, "SnacksBackdrop", { bg = COLOR_BG_PRIMARY, blend = 0, force = true })
 
 	vim.api.nvim_set_hl(0, "MiniSnippetsCurrent", { blend = 100 })
 	vim.api.nvim_set_hl(0, "MiniSnippetsVisited", { blend = 100 })
 	vim.api.nvim_set_hl(0, "MiniSnippetsUnvisited", { blend = 100 })
 	set(0, "NavPreviewLine", { bg = COLOR_BG_PRIMARY, force = true })
 end
--- Hi man this is a test comment!
+
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 	group = vim.api.nvim_create_augroup("ThemeGodMode", { clear = true }),
 	callback = apply_theme,
@@ -240,7 +248,7 @@ vim.filetype.add({
 })
 vim.opt.formatoptions:remove({ "o", "r" })
 vim.opt.paste = false
-vim.opt.autoindent = false
+vim.opt.autoindent = true
 vim.opt.smartindent = false
 vim.opt.cindent = false
 
