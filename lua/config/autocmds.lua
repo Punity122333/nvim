@@ -7,6 +7,14 @@ vim.api.nvim_set_hl(0, "LineNr", { fg = COLOR_LINE_NUMBER, bg = COLOR_NONE })
 vim.api.nvim_set_hl(0, "EndOfBuffer", { fg = COLOR_NONE, bg = COLOR_NONE })
 
 local codeaction_timers = {}
+-- The key of the diagnostics that were last asked for, per buffer.
+--
+-- NOTE: the request itself is thrown away (the callback does nothing with
+-- the result), so it is only sent when the diagnostics under the cursor
+-- actually changed.  Asking the server on *every* cursor stop was pure
+-- overhead - and the answer came back right when the user stopped moving
+-- the cursor, which is exactly when a repaint is the most noticeable.
+local codeaction_state = {}
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
@@ -49,6 +57,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
 					local params = vim.lsp.util.make_range_params(nil, "utf-16")
 
 					params.context = { diagnostics = vim.diagnostic.get(args.buf, { lnum = vim.fn.line(".") - 1 }) }
+
+					-- Nothing changed since the last request: the server
+					-- would answer with the same actions.
+					local key = table.concat(
+						vim.tbl_map(function(d)
+							return table.concat({ d.severity, d.code, d.lnum, d.col, d.source }, ":")
+						end, params.context.diagnostics),
+						"|"
+					)
+					if codeaction_state[args.buf] == key then
+						return
+					end
+					codeaction_state[args.buf] = key
+
 					vim.lsp.buf_request(
 						args.buf,
 						"textDocument/codeAction",
@@ -102,9 +124,23 @@ local vm_augroup = vim.api.nvim_create_augroup("VMLagFix", { clear = true })
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "cpp" },
-	callback = function(args)
-		vim.cmd("redraw!")
-		vim.api.nvim_set_current_buf(args.buf)
+	callback = function()
+		-- The C++ syntax is only correct after a redraw, so ask for one.
+		--
+		-- NOTE: this must not touch the buffer.  The `FileType` event also
+		-- fires for the *temporary* buffers that Neovim uses to evaluate a
+		-- filetype option (`vim.filetype.get_option()`), and those buffers
+		-- are already gone when the callback runs: `nvim_set_current_buf()`
+		-- then failed with "Buffer N does not exist".  That error was
+		-- raised *inside* the comment operators (they ask for
+		-- 'commentstring' that way) and made `gcc` do nothing.
+		--
+		-- The redraw is scheduled because doing it in the middle of the
+		-- event paints a half-finished screen (the old cursor cell stays
+		-- visible for a moment - the "ghosting" of the cursor).
+		vim.schedule(function()
+			vim.cmd("redraw")
+		end)
 	end,
 })
 
@@ -186,9 +222,19 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- Parse the buffer right after it was read, so that the tree-sitter queries
+-- (folds, indent, ...) have their tree before the first key press.
+--
+-- NOTE: `parser:parse()` is *synchronous*: it blocks the main loop until the
+-- whole buffer is parsed.  For a big file that freezes the UI for a moment
+-- and the cursor visibly lags behind (the terminal keeps showing the old
+-- screen).  The limit is the same one the tree-sitter config uses for
+-- C/C++ files (see `lua/config/treesitter.lua`).
+local MAX_PARSE_LINES = 1000
+
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
 	callback = function(args)
-		if vim.api.nvim_buf_line_count(args.buf) > 5000 then
+		if vim.api.nvim_buf_line_count(args.buf) > MAX_PARSE_LINES then
 			return
 		end
 		vim.schedule(function()
@@ -203,139 +249,28 @@ vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
 	end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = {
-		"cpp",
-		"c",
-		"hpp",
-		"h",
-		"rust",
-		"go",
-		"zig",
-		"cuda",
-		"asm",
-		"nasm",
-		"objc",
-		"objcpp",
-		"swift",
-		"fortran",
-		"verilog",
-		"vhdl",
-		"julia",
-		"prolog",
-		"ocaml",
-		"erlang",
-		"haskell",
-		"clojure",
-		"elixir",
-		"fsharp",
-		"lisp",
-		"scheme",
-		"racket",
-		"coq",
-		"idris",
-		"kotlin",
-		"dart",
-		"java",
-		"scala",
-		"groovy",
-		"android",
-		"python",
-		"lua",
-		"ruby",
-		"perl",
-		"php",
-		"nim",
-		"tcl",
-		"r",
-		"javascript",
-		"typescript",
-		"typescriptreact",
-		"javascriptreact",
-		"html",
-		"css",
-		"scss",
-		"sass",
-		"less",
-		"vue",
-		"svelte",
-		"astro",
-		"graphql",
-		"solidity",
-		"json",
-		"jsonc",
-		"yaml",
-		"toml",
-		"xml",
-		"ron",
-		"sql",
-		"csv",
-		"tsv",
-		"dhall",
-		"sh",
-		"bash",
-		"zsh",
-		"fish",
-		"cmake",
-		"make",
-		"just",
-		"ninja",
-		"dockerfile",
-		"makefile",
-		"conf",
-		"config",
-		"ini",
-		"bitbake",
-		"markdown",
-		"latex",
-		"tex",
-		"bib",
-		"org",
-		"rst",
-		"typst",
-		"asciidoc",
-		"terraform",
-		"hcl",
-		"k8s",
-		"docker-compose",
-		"nginx",
-		"sshconfig",
-		"gitconfig",
-		"gitignore",
-		"helm",
-		"hyprlang",
-		"kitty",
-		"waybar",
-		"xdefaults",
-		"desktop",
-		"tmux",
-		"nix",
-		"desktop",
-	},
-	callback = function()
-		local ft = vim.bo.filetype
-		local bufname = vim.api.nvim_buf_get_name(0):lower()
-     
-		if
-			vim.bo.buftype == ""
-			and ft ~= ""
-			and not ft:find("snacks")
-			and not ft:find("avante")
-			and not ft:find("grug%-far")
-			and not bufname:find("avante")
-			and not bufname:find("grug%-far")
-		then
-			local buf = vim.api.nvim_get_current_buf()
-			vim.schedule(function()
-				if not vim.api.nvim_buf_is_valid(buf) then
-					return
-				end
-				local keys = vim.api.nvim_replace_termcodes("a<Esc>", true, false, true)
-				vim.api.nvim_feedkeys(keys, "n", false)
-			end)
-		end
-	end,
-})
+-- The `a<Esc>` hack that used to live here is gone.
+--
+-- It entered insert mode and left it again right after a file was opened,
+-- to "prime" the buffer (see commit 852cefe).  Two things were wrong with
+-- it:
+--
+--   * `nvim_feedkeys()` puts the keys *into the typeahead*, so they end up
+--     *between* the keys the user types.  A fast "gcc" was split into
+--     "g" + "a<Esc>" + "cc": the "g" got the "a" as its argument, the
+--     comment never happened and the leftover "cc" changed the line.  That
+--     is why commenting only worked when the keys were typed slowly.
+--   * the insert-mode round trip changes the cursor shape (the block
+--     cursor becomes the thin insert cursor and back), so the cursor
+--     flickered on every file open - that is most of the "ghosting" that
+--     was reported.
+--
+-- The hack did not do anything useful either: it does not evaluate
+-- 'indentexpr' and it does not change the buffer.
+--
+-- If the priming is ever needed again, do it *without* the typeahead
+-- (e.g. `vim.api.nvim_exec_autocmds("InsertEnter", ...)`), never with
+-- `nvim_feedkeys()`.
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "Avante" },
@@ -367,8 +302,11 @@ vim.api.nvim_create_autocmd("FileType", {
 local function redraw_signs()
 	vim.schedule(function()
 		vim.schedule(function()
-			vim.cmd("redraw!")
-			vim.cmd("")
+			-- NOTE: `redraw` and not `redraw!`: the bang repaints the whole
+			-- screen, which flickers and leaves the cell of the old cursor
+			-- position visible for a moment (the "ghosting" of the cursor).
+			-- Only the sign column has to be refreshed here.
+			vim.cmd("redraw")
 		end)
 	end)
 end
@@ -425,15 +363,44 @@ local ns = vim.api.nvim_create_namespace("cursor_bold_char")
 local _cb_buf = nil
 local _cb_row = nil
 local _cb_col = nil
+local _cb_mark = nil
 
+-- Draw the character under the cursor in bold.
+--
+-- NOTE: this is *off* by default, because it repaints the cell under the
+-- cursor *after* the cursor has already moved on.  The terminal caches the
+-- cell under the cursor (kitty does, and it also restores that copy when
+-- the cursor leaves) - so a cell that is repainted afterwards comes back
+-- with the stale content: that was the "ghost" of the old cursor
+-- position.
+--
+-- Set `vim.g.cursor_bold_char = true` to get the bold character back.
 local function highlight_cursor_char()
 	local bufnr = vim.api.nvim_get_current_buf()
+
+	-- The feature was switched off: remove the mark again.
+	if not vim.g.cursor_bold_char then
+		if _cb_mark then
+			pcall(vim.api.nvim_buf_del_extmark, bufnr, ns, _cb_mark)
+			_cb_mark = nil
+			_cb_buf = nil
+		end
+		return
+	end
+
 	local pos = vim.api.nvim_win_get_cursor(0)
 	local row, col = pos[1] - 1, pos[2]
 
 	if bufnr == _cb_buf and row == _cb_row and col == _cb_col then
 		return
 	end
+
+	-- Another buffer: the mark of the old buffer is not needed any more.
+	if bufnr ~= _cb_buf and _cb_buf and _cb_mark then
+		pcall(vim.api.nvim_buf_del_extmark, _cb_buf, ns, _cb_mark)
+		_cb_mark = nil
+	end
+
 	_cb_buf = bufnr
 	_cb_row = row
 	_cb_col = col
@@ -442,16 +409,26 @@ local function highlight_cursor_char()
 	local line_len = #line_content
 
 	if line_len == 0 or line_len > 1000 or col >= line_len then
-		vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+		if _cb_mark then
+			pcall(vim.api.nvim_buf_del_extmark, bufnr, ns, _cb_mark)
+			_cb_mark = nil
+		end
 		return
 	end
 
-	vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
-	vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
-		end_col = col + 1,
-		hl_group = "CursorBoldChar",
-		strict = false,
-	})
+	if _cb_mark then
+		pcall(vim.api.nvim_buf_set_extmark, bufnr, ns, _cb_mark, row, col, {
+			end_col = col + 1,
+			hl_group = "CursorBoldChar",
+			strict = false,
+		})
+	else
+		_cb_mark = vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
+			end_col = col + 1,
+			hl_group = "CursorBoldChar",
+			strict = false,
+		})
+	end
 end
 
 vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {

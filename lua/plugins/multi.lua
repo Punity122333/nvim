@@ -36,7 +36,13 @@ return {
 
 			local set = vim.keymap.set
 
-			set({ "n", "v" }, "L", function()
+			-- NOTE: `H`/`L` used to be mapped to the cursor navigation here.
+			-- They are the screen edges in Vim, LazyVim's bufferline maps
+			-- `<S-h>`/`<S-l>` (the very same key sequence) to prev/next
+			-- buffer, and `lua/config/keymaps.lua` maps `H`/`L` to the
+			-- screen edges.  The navigation lives in the `\` family now,
+			-- next to the other `\x` commands of this plugin.
+			set({ "n", "v" }, "\\l", function()
 				if not mc.hasCursors() then
 					vim.cmd("normal! n")
 				else
@@ -44,7 +50,7 @@ return {
 				end
 			end, { desc = "Next cursor/search" })
 
-			set({ "n", "v" }, "H", function()
+			set({ "n", "v" }, "\\h", function()
 				if not mc.hasCursors() then
 					vim.cmd("normal! N")
 				else

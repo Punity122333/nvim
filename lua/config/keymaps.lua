@@ -154,6 +154,22 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FocusGained" }, {
 	end,
 })
 
+-- `H`/`L` are the screen edges and belong to *this* file.
+--
+-- Three different plugins wanted them:
+--   * LazyVim's bufferline maps `<S-h>`/`<S-l>` to prev/next buffer.  That
+--     is the *same* key sequence as `H`/`L`, so the two silently fought
+--     over one key.
+--   * `lua/plugins/multi.lua` mapped `H`/`L` to prev/next multicursor.
+--   * this file maps them to the screen edges.
+-- The bufferline mappings are removed explicitly (below) so that `:map`
+-- does not show two different actions for one key, and the multicursor
+-- actions moved to `\h`/`\l` (see `lua/plugins/multi.lua`).
+--
+-- NOTE: `vim.keymap.del` throws when the mapping does not exist, hence the
+-- `pcall`.
+pcall(vim.keymap.del, "n", "<S-h>")
+pcall(vim.keymap.del, "n", "<S-l>")
 vim.keymap.set("n", "H", "H", { desc = "Move to top of screen" })
 vim.keymap.set("n", "L", "L", { desc = "Move to bottom of screen" })
 
@@ -220,7 +236,11 @@ end, { silent = true, desc = "Prev todo comment" })
 -- file and executed with a relative `./<name>` path; the terminal therefore
 -- runs with `cwd` set to the directory of the buffer, which keeps the
 -- relative path valid even when the file lives outside of nvim's cwd.
-vim.keymap.set("n", "<leader>cr", function()
+--
+-- NOTE: the key used to be `<leader>cr`, which is LazyVim's *LSP rename*.
+-- The two mappings silently fought over the key and the rename was
+-- unreachable; the compile & run moved to `<leader>cx` so that both work.
+vim.keymap.set("n", "<leader>cx", function()
 	if vim.bo.filetype ~= "cpp" then
 		vim.notify("Compile & Run only works for C++ files", vim.log.levels.WARN)
 		return

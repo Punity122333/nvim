@@ -48,12 +48,16 @@ vim.keymap.set("n", "<A-S-Down>", "<cmd>resize -2<cr>", { desc = "Decrease windo
 vim.keymap.set("n", "<A-S-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
 vim.keymap.set("n", "<A-S-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
 
-vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 vim.keymap.set("n", "<leader>Po", ":silent !zathura <cfile> &<CR>", { desc = "Open PDF in Zathura" })
 
+-- NOTE: `<leader>ca` (code action) used to be defined here *and* in
+-- `lua/config/keymaps/lsp_keymaps.lua`.  A duplicate mapping does not raise
+-- an error, it silently replaces the previous one, so one of the two
+-- definitions was always dead.  The code action lives in `lsp_keymaps.lua`
+-- now.
+
 vim.keymap.set("n", "<leader>uN", function()
-	local rn = not vim.wo.relativenumber
-	vim.wo.relativenumber = rn
+	local rn = require("config.numbers").toggle()
 	vim.notify(rn and "Relative numbers" or "Absolute numbers", vim.log.levels.INFO)
 end, { desc = "Toggle relative/absolute line numbers" })
 
@@ -277,13 +281,9 @@ vim.keymap.set("i", "<C-S-k>", function()
 	require("avante.suggestion").show({})
 end, { desc = "Manual Avante suggestion" })
 
-vim.keymap.set("n", "<C-q>", function()
-	require("case-dial").dial_normal()
-end, { desc = "Dial Case" })
-vim.keymap.set("v", "<C-q>", function()
-	require("case-dial").dial_visual()
-end, { desc = "Dial Case" })
-
+-- NOTE: `<C-q>` used to be mapped here *and* in
+-- `lua/plugins/case-dial.lua`, which owns the plugin and its mappings.
+-- The plugin's mapping is the one that is used.
 vim.keymap.set("n", "<leader>db", function()
 	require("dap").toggle_breakpoint()
 	vim.cmd("redraw!")

@@ -39,12 +39,19 @@ do
 		end
 	end
 end
+-- The tree-sitter highlighter is not wanted everywhere: the rules live in
+-- `lua/config/treesitter.lua`.  The `highlight.disable` option of
+-- nvim-treesitter only knows *languages*, so the buffer rules (size, diff,
+-- ...) are applied here, one level below the plugin.
 local orig_ts_start = vim.treesitter.start
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.treesitter.start = function(buf, lang)
 	buf = buf or vim.api.nvim_get_current_buf()
 	if vim.bo[buf].filetype:match("^snacks_") then
 		vim.bo[buf].syntax = "on"
+		return
+	end
+	if require("config.treesitter").disabled(buf, lang) then
 		return
 	end
 	orig_ts_start(buf, lang)
@@ -57,7 +64,6 @@ end
 
 vim.opt.relativenumber = true
 vim.opt.number = true
-vim.opt.concealcursor = ""
 
 if vim.fn.has("wayland") == 1 then
 	vim.g.clipboard = {
@@ -201,7 +207,13 @@ local function apply_theme()
 	set(0, "SnacksPickerSelected", { bg = "NONE", fg = "#27a1b9", force = true })
 	set(0, "SnacksPickerUnselected", { bg = "NONE", force = true })
 
-	set(0, "Cursor", { fg = COLOR_CURSOR_FG, bg = COLOR_CURSOR_BG, bold = true })
+	-- NOTE: no `bold` here.  The cursor is drawn by the *terminal* (see
+	-- 'guicursor' in `lua/config/highlights.lua`): Neovim only sends the
+	-- colour (OSC 12) and kitty paints the block itself.  kitty caches the
+	-- cell under the cursor and restores that copy when the cursor leaves
+	-- - with the bold attribute the restored cell was bold, which showed up
+	-- as a "ghost" of the old cursor position.
+	set(0, "Cursor", { fg = COLOR_CURSOR_FG, bg = COLOR_CURSOR_BG })
 	set(0, "CursorInsert", { fg = COLOR_CURSOR_FG, bg = COLOR_CURSOR_BG })
 
 	for _, g in ipairs({ "Error", "Warn", "Info", "Hint", "Ok" }) do

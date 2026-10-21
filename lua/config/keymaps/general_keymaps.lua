@@ -1,5 +1,9 @@
 -- General Keymaps
-vim.keymap.set("n", "<leader>rb", "<cmd>edit!<cr>", { desc = "Refresh Buffer" })
+--
+-- NOTE: `<leader>rb` (refresh buffer) used to be mapped here *and* in
+-- `lua/config/keymaps/plugin_keymaps.lua`, where the other buffer commands
+-- live.  A duplicate mapping silently replaces the previous one, so one of
+-- the two was always dead; the plugin file keeps it.
 vim.keymap.set("v", ">", function()
 	local saved = vim.o.lazyredraw
 	vim.o.lazyredraw = true

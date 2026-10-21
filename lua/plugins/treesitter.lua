@@ -1,81 +1,74 @@
-vim.opt.rtp:prepend(vim.fn.expand("~/.local/share/nvim/site"))
-local _ts_disable_cache = {}
+-- Tree-sitter setup.
+--
+-- The current `nvim-treesitter` (the rewritten `main` branch) has a
+-- different API than the old one:
+--   * `opts.ensure_installed`  - the parsers that get installed.
+--   * `opts.highlight.disable` - a *list of languages*, not a function.
+--   * `opts.indent.enable` / `opts.folds.enable` - the features to turn on.
+-- The options below are merged into LazyVim's own tree-sitter options (see
+-- `opts = function(_, opts)`), so LazyVim's defaults - and the ones the
+-- enabled extras add - are kept.  The old options that no longer exist
+-- (`sync_install`, `auto_install`, `incremental_selection`,
+-- `additional_vim_regex_highlighting`) are gone.
+--
+-- NOTE: this spec deliberately does NOT define a `config` function: a user
+-- `config` replaces LazyVim's, and LazyVim's is what installs the missing
+-- parsers and registers the `FileType` autocmd that starts the highlighter.
+local treesitter = require("config.treesitter")
+
+-- Parsers that LazyVim's defaults (and the enabled extras) do not ask for.
+-- Everything else - bash, c, diff, json, lua, markdown, python, toml,
+-- yaml, ... - comes from LazyVim itself.
+local EXTRA_PARSERS = {
+	"css",
+	"glsl",
+	"hlsl",
+	"wgsl",
+}
+
+--- Add the values that are not in `list` yet.
+---@param list string[]
+---@param extra string[]
+---@return string[]
+local function extend(list, extra)
+	local ret = vim.deepcopy(list or {})
+	for _, value in ipairs(extra) do
+		if not vim.tbl_contains(ret, value) then
+			ret[#ret + 1] = value
+		end
+	end
+	return ret
+end
+
 return {
-	
 	{
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
-		build = ":TSUpdate",
-		opts = {
-			ensure_installed = {
-				"c",
-				"cpp",
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"typescript",
-				"tsx",
-				"javascript",
-				"css",
-				"scss",
-				"html",
-				"glsl",
-				"hlsl",
-				"wgsl",
-			},
-			sync_install = false,
-			auto_install = false,
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,
-				disable = function(lang, buf)
-					if vim.wo.diff then
-						return true
-					end
-					local disabled_filetypes = {
-						"help",
-						"dashboard",
-						"avante",
-						"avante-input",
-						"gitcommit",
-						"markdown",
-						"oil",
-						"TelescopePrompt",
-						"alpha",
-						"NvimTree",
-						"snacks_picker_list",
-						"snacks_picker_preview",
-					}
-					local ft = vim.bo[buf].filetype
-					for _, dft in ipairs(disabled_filetypes) do
-						if ft == dft then
-							return true
-						end
-					end
+		opts = function(_, opts)
+			-- The parsers are installed into `stdpath("data")/site`.  Passing
+			-- `install_dir` makes nvim-treesitter put that directory on the
+			-- runtimepath itself, so the parsers and their queries are found
+			-- without any manual `rtp` juggling.
+			opts.install_dir = opts.install_dir or vim.fs.joinpath(vim.fn.stdpath("data"), "site")
 
-					if (lang == "c" or lang == "cpp") and vim.api.nvim_buf_line_count(buf) > 1000 then
-						return true
-					end
-					local name = vim.api.nvim_buf_get_name(buf)
-					local cached = _ts_disable_cache[name]
-					if cached ~= nil then
-						return cached
-					end
-					local ok, stats = pcall(vim.uv.fs_stat, name)
-					if ok and stats and stats.size > 100 * 1024 then
-						_ts_disable_cache[name] = true
-						return true
-					end
-					return false
-				end,
-			},
-			indent = { enable = true },
-			incremental_selection = {
-				enable = false,
-				keymaps = {},
-			},
-		},
+			-- Keep every parser LazyVim (and the enabled extras) ask for and
+			-- add the ones this config needs on top.
+			opts.ensure_installed = extend(opts.ensure_installed, EXTRA_PARSERS)
+
+			-- `highlight.disable` is a list of languages.  The entries the
+			-- extras bring (e.g. "latex") are kept.
+			opts.highlight = opts.highlight or {}
+			opts.highlight.enable = true
+			opts.highlight.disable = extend(opts.highlight.disable, treesitter.disable_langs)
+
+			opts.indent = opts.indent or {}
+			opts.indent.enable = true
+
+			opts.folds = opts.folds or {}
+			opts.folds.enable = true
+
+			return opts
+		end,
 	},
 	{ "nvim-treesitter/nvim-treesitter-textobjects", enabled = true, lazy = false },
 }

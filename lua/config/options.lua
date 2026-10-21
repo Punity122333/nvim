@@ -2,6 +2,8 @@ vim.ui.open = function(path)
 	vim.fn.jobstart({ "xdg-open", path }, { detach = true })
 end
 
+local numbers = require("config.numbers")
+
 local COLOR_SIGNATURE_BG = "#15151c"
 local COLOR_SIGNATURE_BORDER = "#232330"
 local COLOR_ALPHA_HEADER = "#7aa2f7"
@@ -18,7 +20,14 @@ local LOCAL_BIN = "~/.local/bin:"
 local MASON_BIN = "~/.local/share/nvim/mason/bin:"
 
 vim.opt.timeoutlen = 300
-vim.opt.ttimeoutlen = 10
+-- NOTE: 'ttimeoutlen' was 10ms here, which is shorter than the gap between
+-- two key presses of a human.  mini.comment maps both "gc" (operator) and
+-- "gcc" (line), and the "gc" mapping is a *timeout* mapping (it ends in the
+-- `g@` operator).  Neovim therefore only waited 10ms for the third key
+-- before running "gc" - the leftover "c" then changed the line instead of
+-- commenting it.  The value is the same as 'timeoutlen' so that "gcc" is
+-- recognised no matter how fast it is typed.
+vim.opt.ttimeoutlen = 300
 vim.g.autoformat = false
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
@@ -95,6 +104,11 @@ vim.opt.sidescrolloff = 8
 vim.opt.scrolloff = 8
 
 vim.opt.list = false
+-- NOTE: 'concealcursor' is set *once*, here.  It was set twice before:
+-- `init.lua` wanted "" (never conceal the cursor) and this file set "nvc"
+-- later, so the second one won.  With 'conceallevel' = 3 the cursor
+-- disappeared over concealed text (markdown headings, LaTeX, ...) - which
+-- looks like the cursor is not where it should be.
 vim.opt.concealcursor = ""
 -- Indentation: one level is `INDENT_WIDTH` columns everywhere (see
 -- `lua/config/indent_width.lua`). LazyVim loads its own defaults
@@ -245,12 +259,16 @@ end
 --     at most every 500ms so new signs show up quickly.
 local _sc_namespaces = nil
 local _sc_candidates = {} ---@type table<integer, { ns: integer[], at: number }>
+---@type table<integer, { at: number, signs: table<integer, ScSign>, gitsigns: table<integer, ScSign> }>
+local _sc_signs = {}
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "LazyLoad",
 	desc = "statuscolumn: invalidate the namespace cache",
 	callback = function()
 		_sc_namespaces = nil
+		_sc_candidates = {}
+		_sc_signs = {}
 	end,
 })
 
@@ -288,31 +306,82 @@ local function sc_candidates(buf)
 	return ns
 end
 
-_G.StatusColumnSimple = function()
-	local buf = vim.api.nvim_get_current_buf()
-	local lnum = vim.v.lnum
-	local sign_col = EMPTY
-	local best_p = -1
-	for _, ns_id in ipairs(sc_candidates(buf)) do
-		local ok, ems = pcall(
-			vim.api.nvim_buf_get_extmarks,
-			buf,
-			ns_id,
-			{ lnum - 1, 0 },
-			{ lnum - 1, -1 },
-			{ details = true }
-		)
-		if ok then
-			for _, em in ipairs(ems) do
-				local d = em[4]
-				if d and d.sign_text and d.sign_text ~= "" and (d.priority or 0) > best_p then
-					best_p = d.priority or 0
-					sign_col = "%#" .. (d.sign_hl_group or "SignColumn") .. "#" .. d.sign_text
-				end
+-- The signs of the buffer, indexed by line.
+--
+-- NOTE: `StatusColumnSimple` is evaluated for *every rendered line*, and an
+-- extmark query is not free: with a dozen namespaces and a screen full of
+-- lines that is hundreds of API calls per redraw.  A redraw that takes
+-- longer than the terminal expects means that the terminal keeps showing
+-- the old screen while the cursor has already moved - that is the
+-- "lagging cursor" (and the ghost of the old cursor position).
+--
+-- The marks are therefore read once per refresh and indexed by line.  A
+-- refresh happens at most every `SC_REFRESH_NS`; the signs of a buffer
+-- change far less often than the cursor moves.
+local SC_REFRESH_NS = 100 * 1000000
+
+---@class ScSign
+---@field priority number
+---@field text string
+
+---@param ns_id integer
+---@param buf integer
+---@param into table<integer, ScSign>
+local function sc_collect(buf, ns_id, into)
+	local ok, ems = pcall(vim.api.nvim_buf_get_extmarks, buf, ns_id, 0, -1, { details = true })
+	if not ok then
+		return
+	end
+	for _, em in ipairs(ems) do
+		local d = em[4]
+		if d and d.sign_text and d.sign_text ~= "" then
+			local lnum = em[2] + 1
+			local priority = d.priority or 0
+			local current = into[lnum]
+			if not current or priority > current.priority then
+				into[lnum] = {
+					priority = priority,
+					text = "%#" .. (d.sign_hl_group or "SignColumn") .. "#" .. d.sign_text,
+				}
 			end
 		end
 	end
-	return sign_col .. make_number(buf, lnum) .. extmark_sign("gitsigns_signs_", buf, lnum)
+end
+
+---@param buf integer
+---@return { signs: table<integer, ScSign>, gitsigns: table<integer, ScSign> }
+local function sc_signs(buf)
+	local now = vim.uv.hrtime()
+	local cached = _sc_signs[buf]
+	if cached and (now - cached.at) < SC_REFRESH_NS then
+		return cached
+	end
+
+	local signs = {}
+	local gitsigns = {}
+	for _, ns_id in ipairs(sc_candidates(buf)) do
+		sc_collect(buf, ns_id, signs)
+	end
+	-- gitsigns has its own column, it is not part of `sc_candidates()`
+	local gs_ns = vim.api.nvim_get_namespaces()["gitsigns_signs_"]
+	if gs_ns then
+		sc_collect(buf, gs_ns, gitsigns)
+	end
+
+	cached = { at = now, signs = signs, gitsigns = gitsigns }
+	_sc_signs[buf] = cached
+	return cached
+end
+
+_G.StatusColumnSimple = function()
+	local buf = vim.api.nvim_get_current_buf()
+	local lnum = vim.v.lnum
+	local signs = sc_signs(buf)
+	local sign = signs.signs[lnum]
+	local gs = signs.gitsigns[lnum]
+	return (sign and sign.text or EMPTY)
+		.. make_number(buf, lnum)
+		.. (gs and gs.text or EMPTY)
 end
 
 -- ── toggle ─────────────────────────────────────────────────────────────────
@@ -426,12 +495,14 @@ local function init_sc()
 		return
 	end
 
-	-- a normal buffer: use the global template and show the numbers.
-	-- The local value has to be reset, because a buffer that was e.g. a
-	-- `nofile` buffer before still carries the old local override.
+	-- a normal buffer: use the global template and follow the global
+	-- line-number options.
+	-- The local value has to be set (and not left alone), because a buffer
+	-- that was e.g. a `nofile` buffer before still carries the old local
+	-- override.  The *global* value is the one that the `<leader>uN`
+	-- toggle changes, so it is copied in here - see `config.numbers`.
 	vim.opt_local.statuscolumn = _sc_template
-	vim.opt_local.number = true
-	vim.opt_local.relativenumber = true
+	numbers.sync()
 end
 set_sc_global()
 init_sc()
@@ -462,6 +533,5 @@ vim.opt.ttyfast = true
 vim.opt.swapfile = false
 vim.opt.clipboard = ""
 vim.opt.conceallevel = 3
-vim.opt.concealcursor = "nvc"
 vim.api.nvim_set_hl(0, "SnippetsTabstop", { fg = "NONE", bg = "NONE", blend = 100 })
 vim.api.nvim_set_hl(0, "SnippetsPlaceholder", { fg = "NONE", bg = "NONE", blend = 100 })
