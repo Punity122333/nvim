@@ -1,6 +1,6 @@
 # misc/multi.lua
 
-Source: `lua/plugins/misc/multi.lua`
+Source: `lua/plugins/multi.lua`
 
 ## Purpose
 Provides multi-cursor editing with custom navigation and selection keymaps.

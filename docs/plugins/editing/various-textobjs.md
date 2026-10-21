@@ -1,6 +1,6 @@
 # editing/various-textobjs.lua
 
-Source: `lua/plugins/editing/various-textobjs.lua`
+Source: `lua/plugins/various-textobjs.lua`
 
 ## Purpose
 Adds many extra textobjects with custom keymaps defined elsewhere.

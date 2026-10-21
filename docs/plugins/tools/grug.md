@@ -1,6 +1,6 @@
 # tools/grug.lua
 
-Source: `lua/plugins/tools/grug.lua`
+Source: `lua/plugins/grug.lua`
 
 ## Purpose
 Project-wide search and replace UI.

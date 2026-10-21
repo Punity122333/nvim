@@ -1,6 +1,6 @@
 # tools/spider.lua
 
-Source: `lua/plugins/tools/spider.lua`
+Source: `lua/plugins/spider.lua`
 
 ## Purpose
 Sub-word motions and operator helpers.

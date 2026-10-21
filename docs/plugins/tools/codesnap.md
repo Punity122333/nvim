@@ -1,6 +1,6 @@
 # tools/codesnap.lua
 
-Source: `lua/plugins/tools/codesnap.lua`
+Source: `lua/plugins/codesnap.lua`
 
 ## Purpose
 Creates code snapshots and copies/saves them with custom styling.

@@ -1,6 +1,6 @@
 # editing/surround.lua
 
-Source: `lua/plugins/editing/surround.lua`
+Source: `lua/plugins/surround.lua`
 
 ## Purpose
 Provides surround add/delete/replace actions with custom mappings.

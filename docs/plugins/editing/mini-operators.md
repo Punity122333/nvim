@@ -1,6 +1,6 @@
 # editing/mini-operators.lua
 
-Source: `lua/plugins/editing/mini-operators.lua`
+Source: `lua/plugins/mini-operators.lua`
 
 ## Purpose
 Adds custom operators for evaluation, exchange, multiply, replace, and sort.

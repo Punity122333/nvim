@@ -1,6 +1,6 @@
 # tools/refactoring.lua
 
-Source: `lua/plugins/tools/refactoring.lua`
+Source: `lua/plugins/refactoring.lua`
 
 ## Purpose
 Provides common refactors like extract and inline.

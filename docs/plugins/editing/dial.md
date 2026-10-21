@@ -1,6 +1,6 @@
 # editing/dial.lua
 
-Source: `lua/plugins/editing/dial.lua`
+Source: `lua/plugins/dial.lua`
 
 ## Purpose
 Provides increment/decrement "dial" targets for numbers and booleans.

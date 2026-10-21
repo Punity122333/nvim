@@ -1,6 +1,6 @@
 # tools/rip-sub.lua
 
-Source: `lua/plugins/tools/rip-sub.lua`
+Source: `lua/plugins/rip-sub.lua`
 
 ## Purpose
 Interactive search and replace with preview.

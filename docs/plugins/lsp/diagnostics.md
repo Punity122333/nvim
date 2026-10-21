@@ -1,6 +1,6 @@
 # lsp/diagnostics.lua
 
-Source: `lua/plugins/lsp/diagnostics.lua`
+Source: `lua/plugins/diagnostics.lua`
 
 ## Purpose
 Disables animation and scroll effects that conflict with diagnostics UX.

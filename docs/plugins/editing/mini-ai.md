@@ -1,6 +1,6 @@
 # editing/mini-ai.lua
 
-Source: `lua/plugins/editing/mini-ai.lua`
+Source: `lua/plugins/mini-ai.lua`
 
 ## Purpose
 Adds extended textobjects with large search windows.

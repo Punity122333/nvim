@@ -1,6 +1,6 @@
 # tools/emoji.lua
 
-Source: `lua/plugins/tools/emoji.lua`
+Source: `lua/plugins/emoji.lua`
 
 ## Purpose
 Adds emoji completion and Telescope search.

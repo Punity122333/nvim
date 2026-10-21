@@ -1,6 +1,6 @@
 # tools/hexinspector.lua
 
-Source: `lua/plugins/tools/hexinspector.lua`
+Source: `lua/plugins/hexinspector.lua`
 
 ## Purpose
 Hex editor interface for files or buffers.

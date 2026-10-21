@@ -1,6 +1,6 @@
 # lsp/glsl-lint.lua
 
-Source: `lua/plugins/lsp/glsl-lint.lua`
+Source: `lua/plugins/glsl-lint.lua`
 
 ## Purpose
 Runs `glslangValidator` via `nvim-lint` for GLSL files.

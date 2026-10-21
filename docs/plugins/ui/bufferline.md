@@ -1,6 +1,6 @@
 # ui/bufferline.lua
 
-Source: `lua/plugins/ui/bufferline.lua`
+Source: `lua/plugins/bufferline.lua`
 
 ## Purpose
 Tabline buffer UI with custom numbering, styling, and selection emphasis.

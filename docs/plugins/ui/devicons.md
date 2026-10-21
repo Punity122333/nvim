@@ -1,6 +1,6 @@
 # ui/devicons.lua
 
-Source: `lua/plugins/ui/devicons.lua`
+Source: `lua/plugins/devicons.lua`
 
 ## Purpose
 Icon configuration for filetypes and extensions.

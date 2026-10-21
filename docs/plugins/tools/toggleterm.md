@@ -1,6 +1,6 @@
 # tools/toggleterm.lua
 
-Source: `lua/plugins/tools/toggleterm.lua`
+Source: `lua/plugins/toggleterm.lua`
 
 ## Purpose
 Terminal management with floating terminals and custom highlights.

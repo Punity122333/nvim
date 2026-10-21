@@ -1,6 +1,6 @@
 # editing/swap.lua
 
-Source: `lua/plugins/editing/swap.lua`
+Source: `lua/plugins/swap.lua`
 
 ## Purpose
 Swaps words, opposites, chains, and case with quick mappings.

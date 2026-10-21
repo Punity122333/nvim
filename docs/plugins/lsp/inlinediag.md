@@ -1,6 +1,6 @@
 # lsp/inlinediag.lua
 
-Source: `lua/plugins/lsp/inlinediag.lua`
+Source: `lua/plugins/inlinediag.lua`
 
 ## Purpose
 Renders inline diagnostics at end-of-line with cursor-aware updates.

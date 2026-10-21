@@ -1,7 +1,9 @@
 # Plugin Docs Index
 
-## Entry
-- `init.md`
+One page per plugin spec in `lua/plugins/`. The core of the configuration
+(options, keymaps, autocmds, palette, indent) is documented in
+[`../config/`](../config/index.md), the entry point in
+[`../init.md`](../init.md).
 
 ## Completion
 - `completion/blink-cmp.md`
@@ -13,6 +15,7 @@
 - `editing/case-dial.md`
 - `editing/dial.md`
 - `editing/mini-ai.md`
+- `editing/mini-comment.md`
 - `editing/mini-operators.md`
 - `editing/move.md`
 - `editing/splitjoin.md`
@@ -37,6 +40,9 @@
 - `lsp/rustaceanvim.md`
 - `lsp/treesitter.md`
 
+## VCS
+- `vcs/git-blame.md`
+
 ## UI
 - `ui/bufferline.md`
 - `ui/colorscheme.md`
@@ -47,6 +53,8 @@
 - `ui/noice.md`
 - `ui/rainbowfast.md`
 - `ui/render-markdown.md`
+- `ui/smart-splits.md`
+- `ui/transparent.md`
 - `ui/ui.md`
 
 ## Tools
@@ -63,9 +71,14 @@
 - `tools/goto-preview.md`
 - `tools/grug.md`
 - `tools/hexinspector.md`
+- `tools/live-server.md`
 - `tools/marks.md`
+- `tools/molten.md`
 - `tools/oil.md`
+- `tools/opencode.md`
+- `tools/otter.md`
 - `tools/outline.md`
+- `tools/pdfreader.md`
 - `tools/persistence.md`
 - `tools/refactoring.md`
 - `tools/rip-sub.md`

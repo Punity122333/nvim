@@ -1,6 +1,6 @@
 # editing/case-dial.lua
 
-Source: `lua/plugins/editing/case-dial.lua`
+Source: `lua/plugins/case-dial.lua`
 
 ## Purpose
 Cycles word cases using explicit keymaps.

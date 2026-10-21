@@ -1,6 +1,6 @@
 # editing/substitute.lua
 
-Source: `lua/plugins/editing/substitute.lua`
+Source: `lua/plugins/substitute.lua`
 
 ## Purpose
 Provides operator and line-based substitution commands.

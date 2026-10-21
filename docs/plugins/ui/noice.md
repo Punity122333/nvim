@@ -1,6 +1,6 @@
 # ui/noice.lua
 
-Source: `lua/plugins/ui/noice.lua`
+Source: `lua/plugins/noice.lua`
 
 ## Purpose
 Custom LSP hover/signature UI with manual focus/close behavior.

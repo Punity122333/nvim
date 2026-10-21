@@ -1,6 +1,6 @@
 # tools/dap.lua
 
-Source: `lua/plugins/tools/dap.lua`
+Source: `lua/plugins/dap.lua`
 
 ## Purpose
 Configures DAP UI layout and auto-refresh behavior.

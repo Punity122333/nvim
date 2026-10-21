@@ -1,6 +1,6 @@
 # tools/oil.lua
 
-Source: `lua/plugins/tools/oil.lua`
+Source: `lua/plugins/oil.lua`
 
 ## Purpose
 File explorer with a toggleable sidebar and custom keymaps.

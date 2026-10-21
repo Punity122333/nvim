@@ -1,6 +1,6 @@
 # tools/autosave.lua
 
-Source: `lua/plugins/tools/autosave.lua`
+Source: `lua/plugins/autosave.lua`
 
 ## Purpose
 Automatically saves files on specific events with safety checks.

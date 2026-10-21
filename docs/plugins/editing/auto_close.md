@@ -1,6 +1,6 @@
 # editing/auto_close.lua
 
-Source: `lua/plugins/editing/auto_close.lua`
+Source: `lua/plugins/auto_close.lua`
 
 ## Purpose
 Automatically closes and renames HTML/XML-style tags for web filetypes.

@@ -1,6 +1,6 @@
 # ui/rainbowfast.lua
 
-Source: `lua/plugins/ui/rainbowfast.lua`
+Source: `lua/plugins/rainbowfast.lua`
 
 ## Purpose
 Rainbow highlighting for brackets and keywords.

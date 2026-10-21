@@ -1,6 +1,6 @@
 # lsp/illuminate.lua
 
-Source: `lua/plugins/lsp/illuminate.lua`
+Source: `lua/plugins/illuminate.lua`
 
 ## Purpose
 Documented as disabled reference for symbol highlighting.

@@ -1,6 +1,6 @@
 # lsp/fidget.lua
 
-Source: `lua/plugins/lsp/fidget.lua`
+Source: `lua/plugins/fidget.lua`
 
 ## Purpose
 Shows LSP progress and notifications with lightweight UI.

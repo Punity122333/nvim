@@ -1,6 +1,6 @@
 # editing/autopairs.lua
 
-Source: `lua/plugins/editing/autopairs.lua`
+Source: `lua/plugins/autopairs.lua`
 
 ## Purpose
 Provides automatic pair insertion with Treesitter awareness and custom CR behavior.

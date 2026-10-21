@@ -1,6 +1,6 @@
 # ui/hipatterns.lua
 
-Source: `lua/plugins/ui/hipatterns.lua`
+Source: `lua/plugins/hipatterns.lua`
 
 ## Purpose
 Highlights hex colors and keywords with bold styling.

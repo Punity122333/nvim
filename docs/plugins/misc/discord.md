@@ -1,6 +1,6 @@
 # misc/discord.lua
 
-Source: `lua/plugins/misc/discord.lua`
+Source: `lua/plugins/discord.lua`
 
 ## Purpose
 Discord Rich Presence integration.

@@ -1,6 +1,6 @@
 # completion/blink-cmp.lua
 
-Source: `lua/plugins/completion/blink-cmp.lua`
+Source: `lua/plugins/blink-cmp.lua`
 
 ## Purpose
 Completion engine configuration with custom snippet expansion and smart accept behavior.

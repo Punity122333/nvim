@@ -1,6 +1,6 @@
 # tools/dap-virtual-text.lua
 
-Source: `lua/plugins/tools/dap-virtual-text.lua`
+Source: `lua/plugins/dap-virtual-text.lua`
 
 ## Purpose
 Shows inline variable values while debugging.

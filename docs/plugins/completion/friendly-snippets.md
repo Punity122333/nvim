@@ -1,6 +1,6 @@
 # completion/friendly-snippets.lua
 
-Source: `lua/plugins/completion/friendly-snippets.lua`
+Source: `lua/plugins/friendly-snippets.lua`
 
 ## Purpose
 Provides a curated snippets collection for the completion engine.

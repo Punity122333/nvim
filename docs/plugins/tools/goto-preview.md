@@ -1,6 +1,6 @@
 # tools/goto-preview.lua
 
-Source: `lua/plugins/tools/goto-preview.lua`
+Source: `lua/plugins/goto-preview.lua`
 
 ## Purpose
 Opens definition/implementation previews in floating windows.

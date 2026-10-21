@@ -1,6 +1,6 @@
 # editing/move.lua
 
-Source: `lua/plugins/editing/move.lua`
+Source: `lua/plugins/move.lua`
 
 ## Purpose
 Adds moving text and lines with Alt-based mappings.

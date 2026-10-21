@@ -1,6 +1,6 @@
 # editing/splitjoin.lua
 
-Source: `lua/plugins/editing/splitjoin.lua`
+Source: `lua/plugins/splitjoin.lua`
 
 ## Purpose
 Toggles between split and joined argument/structure forms.

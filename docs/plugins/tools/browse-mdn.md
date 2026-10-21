@@ -1,6 +1,6 @@
 # tools/browse-mdn.lua
 
-Source: `lua/plugins/tools/browse-mdn.lua`
+Source: `lua/plugins/browse-mdn.lua`
 
 ## Purpose
 Provides quick web search and DevDocs browsing via Telescope.

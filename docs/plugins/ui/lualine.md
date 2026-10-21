@@ -1,6 +1,6 @@
 # ui/lualine.lua
 
-Source: `lua/plugins/ui/lualine.lua`
+Source: `lua/plugins/lualine.lua`
 
 ## Purpose
 Statusline configuration with snippet state awareness.

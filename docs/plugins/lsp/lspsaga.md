@@ -1,6 +1,6 @@
 # lsp/lspsaga.lua
 
-Source: `lua/plugins/lsp/lspsaga.lua`
+Source: `lua/plugins/lspsaga.lua`
 
 ## Purpose
 Adds enhanced LSP UI (hover, finder, outline, diagnostics).

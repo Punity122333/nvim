@@ -1,6 +1,6 @@
 # tools/trouble.lua
 
-Source: `lua/plugins/tools/trouble.lua`
+Source: `lua/plugins/trouble.lua`
 
 ## Purpose
 Diagnostics list UI with a safer jump action.

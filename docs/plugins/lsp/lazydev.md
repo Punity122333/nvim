@@ -1,6 +1,6 @@
 # lsp/lazydev.lua
 
-Source: `lua/plugins/lsp/lazydev.lua`
+Source: `lua/plugins/lazydev.lua`
 
 ## Purpose
 Improves Lua development by adding library type information.

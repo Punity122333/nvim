@@ -1,6 +1,6 @@
 # lsp/mason.lua
 
-Source: `lua/plugins/lsp/mason.lua`
+Source: `lua/plugins/mason.lua`
 
 ## Purpose
 Provides a UI for managing external LSP/formatter/debugger binaries.

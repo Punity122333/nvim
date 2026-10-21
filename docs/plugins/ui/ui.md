@@ -1,6 +1,6 @@
 # ui/ui.lua
 
-Source: `lua/plugins/ui/ui.lua`
+Source: `lua/plugins/ui.lua`
 
 ## Purpose
 Aggregates UI-focused overrides for LazyVim, Tokyonight, Which-key, Render Markdown, and Avante.

@@ -1,6 +1,6 @@
 # tools/conform.lua
 
-Source: `lua/plugins/tools/conform.lua`
+Source: `lua/plugins/conform.lua`
 
 ## Purpose
 Formatter orchestration for multiple languages.

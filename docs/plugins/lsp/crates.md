@@ -1,6 +1,6 @@
 # lsp/crates.lua
 
-Source: `lua/plugins/lsp/crates.lua`
+Source: `lua/plugins/crates.lua`
 
 ## Purpose
 Enhances Cargo.toml editing with crate info, updates, and LSP integration.

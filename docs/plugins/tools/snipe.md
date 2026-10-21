@@ -1,6 +1,6 @@
 # tools/snipe.lua
 
-Source: `lua/plugins/tools/snipe.lua`
+Source: `lua/plugins/snipe.lua`
 
 ## Purpose
 Custom picker/search integration used by keymaps.

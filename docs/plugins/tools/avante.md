@@ -1,6 +1,6 @@
 # tools/avante.lua
 
-Source: `lua/plugins/tools/avante.lua`
+Source: `lua/plugins/avante.lua`
 
 ## Purpose
 AI assistant integration with agentic mode and Gemini provider.

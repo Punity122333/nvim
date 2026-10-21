@@ -1,6 +1,6 @@
 # tools/persistence.lua
 
-Source: `lua/plugins/tools/persistence.lua`
+Source: `lua/plugins/persistence.lua`
 
 ## Purpose
 Session management with auto-restore for non-home directories.

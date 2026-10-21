@@ -1,6 +1,6 @@
 # editing/vimtex.lua
 
-Source: `lua/plugins/editing/vimtex.lua`
+Source: `lua/plugins/vimtex.lua`
 
 ## Purpose
 Provides LaTeX tooling with strict conceal and indent control.

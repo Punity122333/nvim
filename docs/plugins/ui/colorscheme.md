@@ -1,6 +1,6 @@
 # ui/colorscheme.lua
 
-Source: `lua/plugins/ui/colorscheme.lua`
+Source: `lua/plugins/colorscheme.lua`
 
 ## Purpose
 Configures the Tokyonight colorscheme with UI-specific highlight tweaks.

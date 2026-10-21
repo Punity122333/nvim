@@ -1,6 +1,6 @@
 # misc/snacks.lua
 
-Source: `lua/plugins/misc/snacks.lua`
+Source: `lua/plugins/snacks.lua`
 
 ## Purpose
 Enables Snacks UI components like explorer, picker, input, and scratch.

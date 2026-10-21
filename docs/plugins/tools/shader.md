@@ -1,6 +1,6 @@
 # tools/shader.lua
 
-Source: `lua/plugins/tools/shader.lua`
+Source: `lua/plugins/shader.lua`
 
 ## Purpose
 Adds shader filetype detection and optional LSP config.

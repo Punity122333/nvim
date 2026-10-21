@@ -1,6 +1,6 @@
 # tools/marks.lua
 
-Source: `lua/plugins/tools/marks.lua`
+Source: `lua/plugins/marks.lua`
 
 ## Purpose
 Improves mark visualization and management.

@@ -1,6 +1,6 @@
 # tools/outline.lua
 
-Source: `lua/plugins/tools/outline.lua`
+Source: `lua/plugins/outline.lua`
 
 ## Purpose
 Symbol outline window with LSP/Markdown providers.

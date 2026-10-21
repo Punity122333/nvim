@@ -1,6 +1,6 @@
 # misc/disabled.lua
 
-Source: `lua/plugins/misc/disabled.lua`
+Source: `lua/plugins/disabled.lua`
 
 ## Purpose
 Centralizes disabled plugin specs.

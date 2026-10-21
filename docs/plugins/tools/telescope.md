@@ -1,6 +1,6 @@
 # tools/telescope.lua
 
-Source: `lua/plugins/tools/telescope.lua`
+Source: `lua/plugins/telescope.lua`
 
 ## Purpose
 Fuzzy finder and picker UI with close-on-q mapping.

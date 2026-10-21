@@ -1,6 +1,6 @@
 # ui/dashboard.lua
 
-Source: `lua/plugins/ui/dashboard.lua`
+Source: `lua/plugins/dashboard.lua`
 
 ## Purpose
 Snacks dashboard with custom header and quick actions.

@@ -1,6 +1,6 @@
 # editing/yanky.lua
 
-Source: `lua/plugins/editing/yanky.lua`
+Source: `lua/plugins/yanky.lua`
 
 ## Purpose
 Improves yank/paste history with a ring and highlight feedback.
