@@ -30,6 +30,9 @@ return {
 		--    keystroke, so its pushes are collapsed into a single callback
 		--    800ms after the last one.
 		--  * every other server is debounced by 'updatetime'.
+		--  * basedpyright is *pulled*, and every pull makes it re-check the
+		--    file, so the pulls are debounced by 1200ms (the same interval
+		--    the rust-analyzer flyCheck uses).
 		init = function()
 			-- Turn off LSP semantic tokens for every client.
 			--
@@ -42,6 +45,80 @@ return {
 			--  * client side: no request, no extmarks, no redraw churn
 			--  * server side: the server does not do the work at all
 			vim.lsp.semantic_tokens.enable(false)
+
+			-- Debounce the *pull* diagnostics of basedpyright.
+			--
+			-- basedpyright (like pyright) uses the pull model: it never
+			-- pushes diagnostics, the client has to ask for them with
+			-- `textDocument/diagnostic`. Neovim does that automatically
+			-- on every `textDocument/didChange` (see
+			-- `vim.lsp.diagnostic._enable`), so the type checker re-analyses
+			-- the file on every single keystroke - and twice at that,
+			-- because basedpyright answers with a
+			-- `workspace/diagnostic/refresh` request that triggers yet
+			-- another pull.
+			--
+			-- rust-analyzer is configured the other way round in
+			-- `lua/plugins/rustaceanvim.lua`: `checkOnSave = false` plus a
+			-- debounced `flyCheck` that only runs once the user has been
+			-- idle for a moment. This does the same for basedpyright:
+			-- the pull request is postponed until the file has been quiet
+			-- for the delay below, which is the same interval the
+			-- rust-analyzer flyCheck uses.
+			--
+			-- Add a server here to debounce its pull diagnostics as well.
+			local PULL_DEBOUNCE_MS = {
+				basedpyright = 1200,
+			}
+
+			-- Guard against wrapping twice (the plugin can be reloaded).
+			local debounce = vim.lsp.diagnostic.__pull_debounce
+			if not debounce then
+				debounce = { orig = vim.lsp.diagnostic._refresh, timers = {} }
+				vim.lsp.diagnostic.__pull_debounce = debounce
+
+				vim.lsp.diagnostic._refresh = function(bufnr, client_id, only_visible)
+					bufnr = vim._resolve_bufnr(bufnr)
+
+					-- Find the client of this buffer that has its pull
+					-- diagnostics debounced. If there is none, refresh as
+					-- usual.
+					local client, delay
+					for _, c in ipairs(vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/diagnostic" })) do
+						delay = PULL_DEBOUNCE_MS[c.name]
+						if delay then
+							client = c
+							break
+						end
+					end
+
+					if not client then
+						return debounce.orig(bufnr, client_id, only_visible)
+					end
+
+					-- Restart the timer: only the last refresh of a burst
+					-- is actually sent to the server.
+					if debounce.timers[bufnr] then
+						debounce.timers[bufnr]:stop()
+						debounce.timers[bufnr] = nil
+					end
+					debounce.timers[bufnr] = vim.defer_fn(function()
+						debounce.timers[bufnr] = nil
+						if not vim.api.nvim_buf_is_valid(bufnr) then
+							return
+						end
+						if not vim.lsp.buf_is_attached(bufnr, client.id) then
+							return
+						end
+						-- `only_visible = false`: the check runs even when
+						-- the buffer is not the current one, so the
+						-- diagnostics are up to date when the user switches
+						-- back to it (the rust-analyzer flyCheck behaves
+						-- the same way).
+						debounce.orig(bufnr, client.id, false)
+					end, delay)
+				end
+			end
 
 			local orig = vim.lsp.handlers["textDocument/publishDiagnostics"]
 			if not orig then
